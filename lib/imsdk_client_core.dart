@@ -1,6 +1,3 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library imsdk_client_core;
 
 export 'src/model/business.dart';
@@ -19,4 +16,4 @@ export 'src/netclient.dart';
 
 export '/src/tool/comtools.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+export 'package:shelf_easy/shelf_easy.dart' show ObjectId, EasyLogLevel;

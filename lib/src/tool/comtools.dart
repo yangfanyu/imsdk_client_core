@@ -1,5 +1,6 @@
 import 'package:shelf_easy/shelf_easy.dart';
 
+import '../model/constant.dart';
 import '../model/team.dart';
 import '../model/teamship.dart';
 import '../model/user.dart';
@@ -50,18 +51,35 @@ class ComTools {
     }
   }
 
-  ///格式化用户昵称
+  ///格式化用户显示账号
+  static String formatUserNo(User user, {required String empty}) {
+    if (user.no.isNotEmpty) return user.no;
+    return empty;
+  }
+
+  ///格式化用户显示昵称
   static String formatUserNick(User user) {
     if (user.nick.isNotEmpty) return user.nick;
     if (user.no.isNotEmpty) return user.no;
     return user.id.toHexString();
   }
 
-  ///格式化群组名称
+  ///格式化群组显示名称
   static String formatTeamNick(Team team) {
     if (team.nick.isNotEmpty) return team.nick;
     if (team.no.isNotEmpty) return team.no;
     return team.id.toHexString();
+  }
+
+  ///格式化用户显示地址
+  static String formatUserShowArea(User who) {
+    return '${who.province} ${who.city} ${who.district}';
+  }
+
+  ///格式化好友申请内容
+  static String formatWaitShipApply(UserShip ship, {required String empty}) {
+    if (ship.apply.isNotEmpty) return ship.apply;
+    return empty;
   }
 
   ///格式化用户好友昵称
@@ -104,5 +122,15 @@ class ComTools {
   static bool isTeamNormalAdmin(Team team, ObjectId uid) {
     if (uid == team.owner) return false;
     return team.admin.any((element) => element == uid);
+  }
+
+  ///是否为来源于系统级的用户关系
+  static bool isUserShipFromSystem(UserShip ship) {
+    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromCustomHelper;
+  }
+
+  ///是否为来源于系统级的群组关系
+  static bool isTeamShipFromSystem(TeamShip ship) {
+    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromCustomHelper;
   }
 }

@@ -16,4 +16,4 @@ export 'src/netclient.dart';
 
 export '/src/tool/comtools.dart';
 
-export 'package:shelf_easy/shelf_easy.dart' show ObjectId, EasyLogLevel;
+export 'package:shelf_easy/shelf_easy.dart' show ObjectId, EasyLogLevel, EasyPacket;

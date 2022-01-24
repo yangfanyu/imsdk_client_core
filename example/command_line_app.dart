@@ -656,6 +656,26 @@ class CommandLineApp extends EasyLogger {
           Future.delayed(delayDuration, () => infomationPage());
         }
       }),
+      MenuItem('批量上传图片', () async {
+        logInfo(['图片上传中...']);
+        final filepath = '${Directory.current.path}/example/icon.png';
+        final result = await _netClient.attachUpload(
+          type: Constant.metaTypeForever,
+          fileBytes: [
+            File(filepath).readAsBytesSync(),
+            File(filepath).readAsBytesSync(),
+            File(filepath).readAsBytesSync(),
+          ],
+          mediaType: MediaType.parse('image/png'),
+        );
+        if (result.ok) {
+          logDebug([result.extra]);
+          Future.delayed(delayDuration, () => infomationPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => infomationPage());
+        }
+      }),
       MenuItem('打印我的信息', () {
         logDebug(['我的信息: ']);
         logDebug([_netClient.user]);

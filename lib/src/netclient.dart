@@ -4,6 +4,7 @@ import 'package:shelf_easy/shelf_easy.dart';
 import 'model/constant.dart';
 import 'model/location.dart';
 import 'model/message.dart';
+import 'model/metadata.dart';
 import 'model/team.dart';
 import 'model/teamship.dart';
 import 'model/user.dart';
@@ -155,6 +156,17 @@ class NetClient {
   Future<EasyPacket<void>> sendRandcode({required String phone}) async {
     final response = await _guestClient.httpRequest('$host/sendRandcode', data: {'bsid': bsid, 'phone': phone});
     return response;
+  }
+
+  ///文件上传，[type]为[Constant.metaTypeMessage]或[Constant.metaTypeForever]
+  Future<EasyPacket<List<Metadata>>> attachUpload({required int type, required List<List<int>> fileBytes, required MediaType mediaType}) async {
+    final response = await _aliveClient.httpRequest('$host/attachUpload', data: {'bsid': bsid, 'uid': user.id, 'type': type}, fileBytes: fileBytes, mediaType: mediaType);
+    if (response.ok) {
+      final metaList = response.data!['metaList'] as List;
+      return response.cloneExtra(metaList.map((e) => Metadata.fromJson(e)).toList());
+    } else {
+      return response.cloneExtra(null);
+    }
   }
 
   /* **************** websocket请求 **************** */

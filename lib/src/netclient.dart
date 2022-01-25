@@ -513,10 +513,12 @@ class NetClient {
 
   ///读取用户
   User getUser(ObjectId uid) {
-    var item = _userMap[uid.toHexString()];
+    final key = uid.toHexString();
+    var item = _userMap[key];
     if (item == null) {
       //创建一个临时用户实例
       item = User(bsid: DbQueryField.hexstr2ObjectId(bsid), id: uid);
+      _userMap[key] = item;
       //获取未缓存的用户信息
       userFetch(uids: [uid]).then((result) {
         if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'onUserFetchedEvent', data: result.data));
@@ -527,10 +529,12 @@ class NetClient {
 
   ///读取群组
   Team getTeam(ObjectId tid) {
-    var item = _teamMap[tid.toHexString()];
+    final key = tid.toHexString();
+    var item = _teamMap[key];
     if (item == null) {
       //创建一个临时群组实例
       item = Team(bsid: DbQueryField.hexstr2ObjectId(bsid), id: tid);
+      _teamMap[key] = item;
       //获取未缓存的群组信息
       teamFetch(tids: [tid]).then((result) {
         if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'onTeamFetchedEvent', data: result.data));

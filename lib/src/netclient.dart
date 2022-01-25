@@ -543,6 +543,18 @@ class NetClient {
     return item;
   }
 
+  ///读取好友申请
+  UserShip? getWaitShip(ObjectId uid) => _waitships[uid.toHexString()];
+
+  ///读取好友关系
+  UserShip? getUserShip(ObjectId uid) => _userships[uid.toHexString()];
+
+  ///读取群组关系
+  TeamShip? getTeamShip(ObjectId tid) => _teamships[tid.toHexString()];
+
+  ///读取群组成员
+  TeamShip? getTeamUser(ObjectId tid, ObjectId uid) => _teamusersMap[tid.toHexString()]?[uid.toHexString()];
+
   ///读取激活会话状态
   NetClientAzState get sessionState {
     if (_dirtySessionState) {
@@ -797,18 +809,6 @@ class NetClient {
     }
     return _teamuserState;
   }
-
-  ///是否存在与[uid]对应的用户的申请关系
-  bool existWaitShip(ObjectId uid) => _waitships.containsKey(uid.toHexString());
-
-  ///是否存在与[uid]对应的用户的好友关系
-  bool existUserShip(ObjectId uid) => _userships.containsKey(uid.toHexString());
-
-  ///是否存在与[tid]对应的群组的群组关系
-  bool existTeamShip(ObjectId tid) => _teamships.containsKey(tid.toHexString());
-
-  ///[tid]对应的群组中是否存在[uid]对应的群组成员
-  bool existTeamUser(ObjectId tid, ObjectId uid) => _teamusersMap.containsKey(tid.toHexString()) && _teamusersMap[tid.toHexString()]!.containsKey(uid.toHexString());
 
   ///设置用户信息获取完成的监听器---此事件由本地触发
   void setOnUserFetchedWatcher(void Function(EasyPacket packet) ondata, {required bool remove}) {

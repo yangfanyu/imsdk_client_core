@@ -152,6 +152,32 @@ class NetClient {
     return response;
   }
 
+  ///通过Apple账号登录
+  Future<EasyPacket<void>> loginByApple({required String appleUid, required String appleUname, required String authorizationCode}) async {
+    final response = await _guestClient.httpRequest('$host/loginByApple', data: {'bsid': bsid, 'appleUid': appleUid, 'appleUname': appleUname, 'authorizationCode': authorizationCode});
+    if (response.ok) {
+      user.updateFields(response.data!['user']);
+      _resetAliveClient(response.data!['url'], response.data!['pwd']);
+      onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
+    } else if (response.code == 401) {
+      onCredentials(ComTools.formatUserNick(user), null);
+    }
+    return response;
+  }
+
+  ///通过Wechat账号登录
+  Future<EasyPacket<void>> loginByWechat({required String wechatCode}) async {
+    final response = await _guestClient.httpRequest('$host/loginByWechat', data: {'bsid': bsid, 'wechatCode': wechatCode});
+    if (response.ok) {
+      user.updateFields(response.data!['user']);
+      _resetAliveClient(response.data!['url'], response.data!['pwd']);
+      onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
+    } else if (response.code == 401) {
+      onCredentials(ComTools.formatUserNick(user), null);
+    }
+    return response;
+  }
+
   ///发送验证码到[phone]
   Future<EasyPacket<void>> sendRandcode({required String phone}) async {
     final response = await _guestClient.httpRequest('$host/sendRandcode', data: {'bsid': bsid, 'phone': phone});

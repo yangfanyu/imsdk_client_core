@@ -794,6 +794,15 @@ class NetClient {
     return _teamuserState;
   }
 
+  ///是否存在与[uid]对应用户的申请关系
+  bool existWaitShip(ObjectId uid) => _waitships.containsKey(uid.toHexString());
+
+  ///是否存在与[uid]对应用户的好友关系
+  bool existUserShip(ObjectId uid) => _userships.containsKey(uid.toHexString());
+
+  ///是否存在与[tid]对应群组的群组关系
+  bool existTeamShip(ObjectId tid) => _teamships.containsKey(tid.toHexString());
+
   ///设置用户信息获取完成的监听器---此事件由本地触发
   void setOnUserFetchedWatcher(void Function(EasyPacket packet) ondata, {required bool remove}) {
     if (remove) {

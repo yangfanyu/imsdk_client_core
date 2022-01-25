@@ -211,7 +211,12 @@ class NetClient {
     );
   }
 
-  ///websocket长连接登入
+  ///释放websocket长连接
+  void destroy() {
+    _aliveClient.destroy();
+  }
+
+  ///长连接登入
   Future<EasyPacket<void>> userEnter() async {
     final mill = DateTime.now().millisecondsSinceEpoch;
     final sign = ComTools.generateUserEnterSign(secret, user.token, user.id.toHexString(), mill);
@@ -244,7 +249,7 @@ class NetClient {
     return response;
   }
 
-  ///websocket长连接登出
+  ///长连接登出
   Future<EasyPacket<void>> userLeave() async {
     final response = await _aliveClient.websocketRequest('userLeave', data: {'bsid': bsid});
     if (response.ok) {

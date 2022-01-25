@@ -488,7 +488,7 @@ class NetClient {
       item = User(bsid: DbQueryField.hexstr2ObjectId(bsid), id: uid);
       //获取未缓存的用户信息
       userFetch(uids: [uid]).then((result) {
-        if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'userFetchedEvent', data: result.data));
+        if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'onUserFetchedEvent', data: result.data));
       });
     }
     return item;
@@ -502,7 +502,7 @@ class NetClient {
       item = Team(bsid: DbQueryField.hexstr2ObjectId(bsid), id: tid);
       //获取未缓存的群组信息
       teamFetch(tids: [tid]).then((result) {
-        if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'teamFetchedEvent', data: result.data));
+        if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'onTeamFetchedEvent', data: result.data));
       });
     }
     return item;
@@ -728,20 +728,20 @@ class NetClient {
   }
 
   ///设置用户信息获取完成的监听器---此事件由本地触发
-  void setUserFetchedWatcher(void Function(EasyPacket packet) ondata, {required bool remove}) {
+  void setOnUserFetchedWatcher(void Function(EasyPacket packet) ondata, {required bool remove}) {
     if (remove) {
-      _aliveClient.removeListener('userFetchedEvent', ondata: ondata);
+      _aliveClient.removeListener('onUserFetchedEvent', ondata: ondata);
     } else {
-      _aliveClient.addListener('userFetchedEvent', ondata);
+      _aliveClient.addListener('onUserFetchedEvent', ondata);
     }
   }
 
   ///设置群组信息获取完成的监听器---此事件由本地触发
-  void setTeamFetchedWatcher(void Function(EasyPacket packet) ondata, {required bool remove}) {
+  void setOnTeamFetchedWatcher(void Function(EasyPacket packet) ondata, {required bool remove}) {
     if (remove) {
-      _aliveClient.removeListener('teamFetchedEvent', ondata: ondata);
+      _aliveClient.removeListener('onTeamFetchedEvent', ondata: ondata);
     } else {
-      _aliveClient.addListener('teamFetchedEvent', ondata);
+      _aliveClient.addListener('onTeamFetchedEvent', ondata);
     }
   }
 

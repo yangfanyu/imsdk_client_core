@@ -62,12 +62,6 @@ class UserShip extends DbBaseModel {
   ///对话激活时间
   int active;
 
-  ///消息加载序号，仅客户端拥有此字段
-  int msgasync;
-
-  ///消息缓存列表，仅客户端拥有此字段
-  List<Message> msgcache;
-
   ///唯一id
   ObjectId get id => _id;
 
@@ -79,6 +73,36 @@ class UserShip extends DbBaseModel {
 
   ///自定义数据
   Map<String, String> get extra => _extra;
+
+  ///
+  ///展示的名称
+  ///
+  String displayNick = '';
+
+  ///
+  ///展示的名称对应的拼音
+  ///
+  String displayPinyin = '';
+
+  ///
+  ///展示的图标
+  ///
+  String displayIcon = '';
+
+  ///
+  ///展示的头像
+  ///
+  List<String> displayHead = [];
+
+  ///
+  ///消息加载序号
+  ///
+  int msgasync = 0;
+
+  ///
+  ///消息缓存列表
+  ///
+  List<Message> msgcache = [];
 
   UserShip({
     ObjectId? id,
@@ -100,8 +124,6 @@ class UserShip extends DbBaseModel {
     String? recent,
     int? update,
     int? active,
-    int? msgasync,
-    List<Message>? msgcache,
   })  : _id = id ?? ObjectId(),
         _bsid = bsid ?? ObjectId(),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
@@ -120,9 +142,7 @@ class UserShip extends DbBaseModel {
         unread = unread ?? 0,
         recent = recent ?? '',
         update = update ?? DateTime.now().millisecondsSinceEpoch,
-        active = active ?? DateTime.now().millisecondsSinceEpoch,
-        msgasync = msgasync ?? 0,
-        msgcache = msgcache ?? [];
+        active = active ?? DateTime.now().millisecondsSinceEpoch;
 
   factory UserShip.fromJson(Map<String, dynamic> map) {
     return UserShip(
@@ -145,8 +165,6 @@ class UserShip extends DbBaseModel {
       recent: map['recent'],
       update: map['update'],
       active: map['active'],
-      msgasync: map['msgasync'],
-      msgcache: (map['msgcache'] as List?)?.map((v) => Message.fromJson(v)).toList(),
     );
   }
 
@@ -172,8 +190,6 @@ class UserShip extends DbBaseModel {
       'recent': DbQueryField.convertToBaseType(recent),
       'update': DbQueryField.convertToBaseType(update),
       'active': DbQueryField.convertToBaseType(active),
-      'msgasync': DbQueryField.convertToBaseType(msgasync),
-      'msgcache': DbQueryField.convertToBaseType(msgcache),
     };
   }
 
@@ -198,8 +214,6 @@ class UserShip extends DbBaseModel {
     if (map.containsKey('recent')) recent = parser.recent;
     if (map.containsKey('update')) update = parser.update;
     if (map.containsKey('active')) active = parser.active;
-    if (map.containsKey('msgasync')) msgasync = parser.msgasync;
-    if (map.containsKey('msgcache')) msgcache = parser.msgcache;
   }
 }
 
@@ -262,10 +276,4 @@ class UserShipDirty {
 
   ///对话激活时间
   set active(int value) => data['active'] = DbQueryField.convertToBaseType(value);
-
-  ///消息加载序号，仅客户端拥有此字段
-  set msgasync(int value) => data['msgasync'] = DbQueryField.convertToBaseType(value);
-
-  ///消息缓存列表，仅客户端拥有此字段
-  set msgcache(List<Message> value) => data['msgcache'] = DbQueryField.convertToBaseType(value);
 }

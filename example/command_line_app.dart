@@ -280,7 +280,7 @@ class CommandLineApp extends EasyLogger {
               no++,
               'uid(${element.rid.toHexString()})',
               'sid(${element.sid.toHexString()})',
-              'nick(${ComTools.formatUserShipNick(element, _netClient.getUser(element.rid))})',
+              'nick(${element.displayNick})',
               'unread(${element.unread})',
               'recent(${element.recent})',
               'top(${element.top})',
@@ -295,7 +295,7 @@ class CommandLineApp extends EasyLogger {
               no++,
               'tid(${element.rid.toHexString()})',
               'sid(${element.sid.toHexString()})',
-              'nick(${ComTools.formatTeamNick(_netClient.getTeam(element.rid))})',
+              'nick(${element.displayNick})',
               'unread(${element.unread})',
               'recent(${element.recent})',
               'top(${element.top})',
@@ -402,7 +402,7 @@ class CommandLineApp extends EasyLogger {
             logDebug([
               'id(${element.id.toHexString()})',
               'uid(${element.rid.toHexString()})',
-              ComTools.formatUserShipNick(element, _netClient.getUser(element.rid)),
+              element.displayNick,
               readConstMap(element.state),
               ComTools.formatDateTime(
                 element.time,
@@ -498,7 +498,7 @@ class CommandLineApp extends EasyLogger {
               logDebug([
                 'id(${element.id.toHexString()})',
                 'uid(${element.uid.toHexString()})',
-                ComTools.formatTeamUserNick(element, _netClient.getUser(element.uid)),
+                element.displayNick,
                 readConstMap(element.state),
                 element.apply,
                 ComTools.formatDateTime(
@@ -583,7 +583,7 @@ class CommandLineApp extends EasyLogger {
             logDebug([
               'id(${element.id.toHexString()})',
               'tid(${element.rid.toHexString()})',
-              ComTools.formatTeamNick(_netClient.getTeam(element.rid)),
+              element.displayNick,
               readConstMap(element.state),
               element.apply,
               ComTools.formatDateTime(
@@ -633,7 +633,7 @@ class CommandLineApp extends EasyLogger {
         logDebug(['共$unread条好友申请信息:']);
         for (var element in okList) {
           if (element is UserShip) {
-            logDebug(['uid(${element.uid.toHexString()})', ComTools.formatUserNick(_netClient.getUser(element.uid)), readConstMap(element.state), element.apply, ComTools.formatDateTime(element.time, yyMMdd: true, hhmmss: true)]);
+            logDebug(['uid(${element.uid.toHexString()})', element.displayNick, readConstMap(element.state), element.apply, ComTools.formatDateTime(element.time, yyMMdd: true, hhmmss: true)]);
           }
         }
         Future.delayed(delayDuration, () => waitshipsPage());

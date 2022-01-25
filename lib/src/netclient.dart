@@ -544,12 +544,22 @@ class NetClient {
         if (value.dialog) {
           okList.add(value);
           unread += value.unread;
+          //计算展示信息
+          final target = getUser(value.rid);
+          value.displayNick = ComTools.formatUserShipNick(value, target);
+          value.displayIcon = target.icon;
+          value.displayHead = target.head;
         }
       });
       _teamships.forEach((key, value) {
         if (value.dialog) {
           okList.add(value);
           unread += value.unread;
+          //计算展示信息
+          final target = getTeam(value.rid);
+          value.displayNick = ComTools.formatTeamNick(target);
+          value.displayIcon = target.icon;
+          value.displayHead = target.head;
         }
       });
       //按最近消息时间降序排列（注意使用的是动态类型）
@@ -574,7 +584,14 @@ class NetClient {
     if (_dirtyWaitshipState) {
       //构建列表
       final okList = <UserShip>[];
-      _waitships.forEach((key, value) => okList.add(value));
+      _waitships.forEach((key, value) {
+        okList.add(value);
+        //计算展示信息
+        final target = getUser(value.uid);
+        value.displayNick = ComTools.formatUserNick(target);
+        value.displayIcon = target.icon;
+        value.displayHead = target.head;
+      });
       //按发起申请时间降序排列
       okList.sort((a, b) => a.time > b.time ? -1 : 1);
       //更新状态
@@ -589,13 +606,20 @@ class NetClient {
     if (_dirtyUsershipState) {
       //构建列表
       final azList = <Object>[...NetClientAzState.letters];
-      _userships.forEach((key, value) => azList.add(value));
+      _userships.forEach((key, value) {
+        azList.add(value);
+        //计算展示信息
+        final target = getUser(value.rid);
+        value.displayNick = ComTools.formatUserShipNick(value, target);
+        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
+        value.displayIcon = target.icon;
+        value.displayHead = target.head;
+        if (value.displayPinyin.isEmpty || !NetClientAzState.letters.contains(value.displayPinyin[0])) value.displayPinyin = '#${value.displayPinyin}';
+      });
       //字母列表排序
       azList.sort((a, b) {
-        String pyA = a is UserShip ? PinyinHelper.getPinyinE(ComTools.formatUserShipNick(a, getUser(a.rid)), separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase() : (a as String);
-        String pyB = b is UserShip ? PinyinHelper.getPinyinE(ComTools.formatUserShipNick(b, getUser(b.rid)), separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase() : (b as String);
-        if (pyA.isEmpty || !NetClientAzState.letters.contains(pyA[0])) pyA = '#' + pyA;
-        if (pyB.isEmpty || !NetClientAzState.letters.contains(pyB[0])) pyB = '#' + pyB;
+        final pyA = a is UserShip ? a.displayPinyin : (a as String);
+        final pyB = b is UserShip ? b.displayPinyin : (b as String);
         if (pyA.startsWith('#') && !pyB.startsWith('#')) {
           return 1;
         } else if (!pyA.startsWith('#') && pyB.startsWith('#')) {
@@ -638,13 +662,20 @@ class NetClient {
     if (_dirtyTeamshipState) {
       //构建列表
       final azList = <Object>[...NetClientAzState.letters];
-      _teamships.forEach((key, value) => azList.add(value));
+      _teamships.forEach((key, value) {
+        azList.add(value);
+        //计算展示信息
+        final target = getTeam(value.rid);
+        value.displayNick = ComTools.formatTeamNick(target);
+        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
+        value.displayIcon = target.icon;
+        value.displayHead = target.head;
+        if (value.displayPinyin.isEmpty || !NetClientAzState.letters.contains(value.displayPinyin[0])) value.displayPinyin = '#${value.displayPinyin}';
+      });
       //字母列表排序
       azList.sort((a, b) {
-        String pyA = a is TeamShip ? PinyinHelper.getPinyinE(ComTools.formatTeamNick(getTeam(a.rid)), separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase() : (a as String);
-        String pyB = b is TeamShip ? PinyinHelper.getPinyinE(ComTools.formatTeamNick(getTeam(b.rid)), separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase() : (b as String);
-        if (pyA.isEmpty || !NetClientAzState.letters.contains(pyA[0])) pyA = '#' + pyA;
-        if (pyB.isEmpty || !NetClientAzState.letters.contains(pyB[0])) pyB = '#' + pyB;
+        final pyA = a is TeamShip ? a.displayPinyin : (a as String);
+        final pyB = b is TeamShip ? b.displayPinyin : (b as String);
         if (pyA.startsWith('#') && !pyB.startsWith('#')) {
           return 1;
         } else if (!pyA.startsWith('#') && pyB.startsWith('#')) {
@@ -704,13 +735,18 @@ class NetClient {
         } else {
           azList.add(value);
         }
+        //计算展示信息
+        final target = getUser(value.uid);
+        value.displayNick = ComTools.formatTeamUserNick(value, target);
+        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
+        value.displayIcon = target.icon;
+        value.displayHead = target.head;
+        if (value.displayPinyin.isEmpty || !NetClientAzState.letters.contains(value.displayPinyin[0])) value.displayPinyin = '#${value.displayPinyin}';
       });
       //字母列表排序
       azList.sort((a, b) {
-        String pyA = a is TeamShip ? PinyinHelper.getPinyinE(ComTools.formatTeamUserNick(a, getUser(a.uid)), separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase() : (a as String);
-        String pyB = b is TeamShip ? PinyinHelper.getPinyinE(ComTools.formatTeamUserNick(b, getUser(b.uid)), separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase() : (b as String);
-        if (pyA.isEmpty || !NetClientAzState.letters.contains(pyA[0])) pyA = '#' + pyA;
-        if (pyB.isEmpty || !NetClientAzState.letters.contains(pyB[0])) pyB = '#' + pyB;
+        final pyA = a is TeamShip ? a.displayPinyin : (a as String);
+        final pyB = b is TeamShip ? b.displayPinyin : (b as String);
         if (pyA.startsWith('#') && !pyB.startsWith('#')) {
           return 1;
         } else if (!pyA.startsWith('#') && pyB.startsWith('#')) {

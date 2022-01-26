@@ -13,6 +13,9 @@ import 'tool/comtools.dart';
 import 'tool/session.dart';
 
 class NetClient {
+  ///日志处理方法
+  final EasyLogHandler logger;
+
   ///日志输出级别
   final EasyLogLevel logLevel;
 
@@ -88,7 +91,7 @@ class NetClient {
   ///标记[_teamuserStateMap]是否需要重新构建，key为群组id
   final Map<String, bool> _dirtyTeamuserStateMap;
 
-  NetClient({this.logLevel = EasyLogLevel.debug, required this.host, required this.bsid, required this.secret, this.binary = true, required this.onCredentials})
+  NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, required this.host, required this.bsid, required this.secret, this.binary = true, required this.onCredentials})
       : user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
         _sessionState = NetClientAzState(),
         _waitshipState = NetClientAzState(),
@@ -101,8 +104,8 @@ class NetClient {
         _usershipMap = {},
         _teamshipMap = {},
         _teamuserMapMap = {},
-        _guestClient = EasyClient(config: EasyClientConfig(logLevel: logLevel, url: host, binary: binary))..bindUser(bsid, token: secret),
-        _aliveClient = EasyClient(config: EasyClientConfig(logLevel: logLevel, url: host, binary: binary)),
+        _guestClient = EasyClient(config: EasyClientConfig(logger: logger, logLevel: logLevel, url: host, binary: binary))..bindUser(bsid, token: secret),
+        _aliveClient = EasyClient(config: EasyClientConfig(logger: logger, logLevel: logLevel, url: host, binary: binary)),
         _dirtySessionState = true,
         _dirtyWaitshipState = true,
         _dirtyUsershipState = true,
@@ -866,7 +869,7 @@ class NetClient {
   ///重新创建已登陆wss客户端
   void _resetAliveClient(String url, String? pwd) {
     _aliveClient.destroy(); //先销毁旧的
-    _aliveClient = EasyClient(config: EasyClientConfig(logLevel: logLevel, url: url, pwd: pwd, binary: binary)); //创建新的
+    _aliveClient = EasyClient(config: EasyClientConfig(logger: logger, logLevel: logLevel, url: url, pwd: pwd, binary: binary)); //创建新的
     _aliveClient.addListener('onUserUpdate', (packet) => user.updateFields(packet.data!));
     _aliveClient.addListener('onTeamUpdate', (packet) => _cacheTeam(packet.data));
     _aliveClient.addListener('onWaitShipUpdate', (packet) => _cacheUserShip(packet.data));

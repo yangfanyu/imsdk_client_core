@@ -15,5 +15,6 @@ export 'src/model/validator.dart';
 export 'src/netclient.dart';
 
 export '/src/tool/comtools.dart';
+export '/src/tool/session.dart';
 
 export 'package:shelf_easy/shelf_easy.dart' show ObjectId, MediaType, EasyLogLevel, EasyPacket;

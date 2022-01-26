@@ -10,6 +10,7 @@ import 'model/teamship.dart';
 import 'model/user.dart';
 import 'model/usership.dart';
 import 'tool/comtools.dart';
+import 'tool/session.dart';
 
 class NetClient {
   ///日志输出级别
@@ -55,16 +56,16 @@ class NetClient {
   final Map<String, Team> _teamMap;
 
   ///好友申请，key为用户id
-  final Map<String, UserShip> _waitships;
+  final Map<String, UserShip> _waitshipMap;
 
   ///好友关系，key为用户id
-  final Map<String, UserShip> _userships;
+  final Map<String, UserShip> _usershipMap;
 
   ///群组关系，key为群组id
-  final Map<String, TeamShip> _teamships;
+  final Map<String, TeamShip> _teamshipMap;
 
   ///群组成员，key为群组id，子级key为用户id
-  final Map<String, Map<String, TeamShip>> _teamusersMap;
+  final Map<String, Map<String, TeamShip>> _teamuserMapMap;
 
   ///未登录web客户端
   final EasyClient _guestClient;
@@ -96,10 +97,10 @@ class NetClient {
         _teamuserStateMap = {},
         _userMap = {},
         _teamMap = {},
-        _waitships = {},
-        _userships = {},
-        _teamships = {},
-        _teamusersMap = {},
+        _waitshipMap = {},
+        _usershipMap = {},
+        _teamshipMap = {},
+        _teamuserMapMap = {},
         _guestClient = EasyClient(config: EasyClientConfig(logLevel: logLevel, url: host, binary: binary))..bindUser(bsid, token: secret),
         _aliveClient = EasyClient(config: EasyClientConfig(logLevel: logLevel, url: host, binary: binary)),
         _dirtySessionState = true,
@@ -227,22 +228,22 @@ class NetClient {
       _aliveClient.bindUser(user.id.toHexString(), token: user.token); //立即绑定口令信息
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
       //更新其他缓存
-      final waitshipsKeys = <String>{};
-      final usershipsKeys = <String>{};
-      final teamshipsKeys = <String>{};
-      _cacheUserShipList(response.data!['waitships'], saveKeys: waitshipsKeys);
-      _cacheUserShipList(response.data!['userships'], saveKeys: usershipsKeys);
-      _cacheTeamShipList(response.data!['teamships'], saveKeys: teamshipsKeys);
+      final waitshipKeys = <String>{};
+      final usershipKeys = <String>{};
+      final teamshipKeys = <String>{};
+      _cacheUserShipList(response.data!['waitships'], saveKeys: waitshipKeys);
+      _cacheUserShipList(response.data!['userships'], saveKeys: usershipKeys);
+      _cacheTeamShipList(response.data!['teamships'], saveKeys: teamshipKeys);
       _cacheUserList(response.data!['userList']);
       _cacheTeamList(response.data!['teamList']);
       //清除废弃数据
-      _waitships.removeWhere((key, value) => !waitshipsKeys.contains(key));
-      _userships.removeWhere((key, value) => !usershipsKeys.contains(key));
-      _teamships.removeWhere((key, value) => !teamshipsKeys.contains(key));
+      _waitshipMap.removeWhere((key, value) => !waitshipKeys.contains(key));
+      _usershipMap.removeWhere((key, value) => !usershipKeys.contains(key));
+      _teamshipMap.removeWhere((key, value) => !teamshipKeys.contains(key));
       //清除废弃数据-群组成员相关
-      _teamuserStateMap.removeWhere((key, value) => !teamshipsKeys.contains(key));
-      _teamusersMap.removeWhere((key, value) => !teamshipsKeys.contains(key));
-      _dirtyTeamuserStateMap.removeWhere((key, value) => !teamshipsKeys.contains(key));
+      _teamuserStateMap.removeWhere((key, value) => !teamshipKeys.contains(key));
+      _teamuserMapMap.removeWhere((key, value) => !teamshipKeys.contains(key));
+      _dirtyTeamuserStateMap.removeWhere((key, value) => !teamshipKeys.contains(key));
     } else if (response.code == 401) {
       onCredentials(ComTools.formatUserNick(user), null);
     }
@@ -332,10 +333,10 @@ class NetClient {
       _cacheUserList(response.data!['userList']);
       //更新成员缓存
       final teamKey = tid.toHexString();
-      final teamusersKeys = <String>{};
-      final teamshipList = _cacheTeamUserList(teamKey, response.data!['shipList'], saveKeys: teamusersKeys);
+      final teamuserKeys = <String>{};
+      final teamshipList = _cacheTeamUserList(teamKey, response.data!['shipList'], saveKeys: teamuserKeys);
       //清除废弃数据
-      _teamusersMap[teamKey]?.removeWhere((key, value) => !teamusersKeys.contains(key));
+      _teamuserMapMap[teamKey]?.removeWhere((key, value) => !teamuserKeys.contains(key));
       return response.cloneExtra(teamshipList);
     } else {
       return response.cloneExtra(null);
@@ -452,52 +453,23 @@ class NetClient {
   }
 
   ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据
-  Future<EasyPacket<bool>> messageLoadForUserShip({required UserShip ship, bool reload = false}) async {
-    if (reload) ship.msgcache.clear(); //清除缓存
-    final last = ship.msgcache.isEmpty ? 3742732800000 : ship.msgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
+  Future<EasyPacket<bool>> messageLoad({required Session session, bool reload = false}) async {
+    if (reload) session.msgcache.clear(); //清除缓存
+    final last = session.msgcache.isEmpty ? 3742732800000 : session.msgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
     final nin = <ObjectId>[]; //排除重复
-    for (int i = ship.msgcache.length - 1; i >= 0; i--) {
-      final item = ship.msgcache[i];
+    for (int i = session.msgcache.length - 1; i >= 0; i--) {
+      final item = session.msgcache[i];
       if (item.time != last) break;
       nin.add(item.id);
     }
-    ship.msgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('messageLoad', data: {'bsid': bsid, 'sid': ship.sid, 'from': Constant.msgFromUser, 'last': last, 'nin': nin, 'msgasync': ship.msgasync});
+    session.msgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('messageLoad', data: {'bsid': bsid, 'sid': session.sid, 'from': session.msgfrom, 'last': last, 'nin': nin, 'msgasync': session.msgasync});
     if (response.ok) {
       final msgasync = response.data!['msgasync'] as int;
       final msgcache = response.data!['msgcache'] as List;
-      if (msgasync == ship.msgasync) {
+      if (msgasync == session.msgasync) {
         for (var data in msgcache) {
-          ship.msgcache.add(Message.fromJson(data));
-        }
-        return response.cloneExtra(msgcache.isEmpty); //是否已加载全部数据
-      } else {
-        _aliveClient.logError(['messageLoad =>', '远程响应号已过期 $msgasync']);
-        return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
-      }
-    } else {
-      return response.cloneExtra(null);
-    }
-  }
-
-  ///加载消息-群组消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据
-  Future<EasyPacket<bool>> messageLoadForTeamShip({required TeamShip ship, bool reload = false}) async {
-    if (reload) ship.msgcache.clear(); //清除缓存
-    final last = ship.msgcache.isEmpty ? 3742732800000 : ship.msgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
-    final nin = <ObjectId>[]; //排除重复
-    for (int i = ship.msgcache.length - 1; i >= 0; i--) {
-      final item = ship.msgcache[i];
-      if (item.time != last) break;
-      nin.add(item.id);
-    }
-    ship.msgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('messageLoad', data: {'bsid': bsid, 'sid': ship.sid, 'from': Constant.msgFromTeam, 'last': last, 'nin': nin, 'msgasync': ship.msgasync});
-    if (response.ok) {
-      final msgasync = response.data!['msgasync'] as int;
-      final msgcache = response.data!['msgcache'] as List;
-      if (msgasync == ship.msgasync) {
-        for (var data in msgcache) {
-          ship.msgcache.add(Message.fromJson(data));
+          session.msgcache.add(_parseMessage(data));
         }
         return response.cloneExtra(msgcache.isEmpty); //是否已加载全部数据
       } else {
@@ -510,6 +482,13 @@ class NetClient {
   }
 
   /* **************** 工具方法 **************** */
+
+  ///创建会话
+  Session createSession({UserShip? usership, TeamShip? teamship}) {
+    if (usership != null) return Session.fromUserShip(usership, getUser(usership.rid));
+    if (teamship != null) return Session.fromTeamShip(teamship, getTeam(teamship.rid));
+    throw 'usership == null && teamship == null';
+  }
 
   ///读取用户
   User getUser(ObjectId uid) {
@@ -544,16 +523,16 @@ class NetClient {
   }
 
   ///读取好友申请
-  UserShip? getWaitShip(ObjectId uid) => _waitships[uid.toHexString()];
+  UserShip? getWaitShip(ObjectId uid) => _waitshipMap[uid.toHexString()];
 
   ///读取好友关系
-  UserShip? getUserShip(ObjectId uid) => _userships[uid.toHexString()];
+  UserShip? getUserShip(ObjectId uid) => _usershipMap[uid.toHexString()];
 
   ///读取群组关系
-  TeamShip? getTeamShip(ObjectId tid) => _teamships[tid.toHexString()];
+  TeamShip? getTeamShip(ObjectId tid) => _teamshipMap[tid.toHexString()];
 
   ///读取群组成员
-  TeamShip? getTeamUser(ObjectId tid, ObjectId uid) => _teamusersMap[tid.toHexString()]?[uid.toHexString()];
+  TeamShip? getTeamUser(ObjectId tid, ObjectId uid) => _teamuserMapMap[tid.toHexString()]?[uid.toHexString()];
 
   ///读取激活会话状态
   NetClientAzState get sessionState {
@@ -561,7 +540,7 @@ class NetClient {
       //构建列表
       final okList = <Object>[];
       int unread = 0;
-      _userships.forEach((key, value) {
+      _usershipMap.forEach((key, value) {
         if (value.dialog) {
           okList.add(value);
           unread += value.unread;
@@ -572,7 +551,7 @@ class NetClient {
           value.displayHead = target.head;
         }
       });
-      _teamships.forEach((key, value) {
+      _teamshipMap.forEach((key, value) {
         if (value.dialog) {
           okList.add(value);
           unread += value.unread;
@@ -605,7 +584,7 @@ class NetClient {
     if (_dirtyWaitshipState) {
       //构建列表
       final okList = <UserShip>[];
-      _waitships.forEach((key, value) {
+      _waitshipMap.forEach((key, value) {
         okList.add(value);
         //计算展示信息
         final target = getUser(value.uid);
@@ -627,14 +606,14 @@ class NetClient {
     if (_dirtyUsershipState) {
       //构建列表
       final azList = <Object>[...NetClientAzState.letters];
-      _userships.forEach((key, value) {
+      _usershipMap.forEach((key, value) {
         azList.add(value);
         //计算展示信息
         final target = getUser(value.rid);
         value.displayNick = ComTools.formatUserShipNick(value, target);
-        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
         value.displayIcon = target.icon;
         value.displayHead = target.head;
+        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
         if (value.displayPinyin.isEmpty || !NetClientAzState.letters.contains(value.displayPinyin[0])) value.displayPinyin = '#${value.displayPinyin}';
       });
       //字母列表排序
@@ -670,7 +649,7 @@ class NetClient {
         }
       }
       //最后插入数量
-      azList.add(_userships.length);
+      azList.add(_usershipMap.length);
       //更新状态
       _usershipState.update(azMap: azMap, azList: azList);
       _dirtyUsershipState = false;
@@ -683,14 +662,14 @@ class NetClient {
     if (_dirtyTeamshipState) {
       //构建列表
       final azList = <Object>[...NetClientAzState.letters];
-      _teamships.forEach((key, value) {
+      _teamshipMap.forEach((key, value) {
         azList.add(value);
         //计算展示信息
         final target = getTeam(value.rid);
         value.displayNick = ComTools.formatTeamNick(target);
-        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
         value.displayIcon = target.icon;
         value.displayHead = target.head;
+        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
         if (value.displayPinyin.isEmpty || !NetClientAzState.letters.contains(value.displayPinyin[0])) value.displayPinyin = '#${value.displayPinyin}';
       });
       //字母列表排序
@@ -726,7 +705,7 @@ class NetClient {
         }
       }
       //最后插入数量
-      azList.add(_teamships.length);
+      azList.add(_teamshipMap.length);
       //更新状态
       _teamshipState.update(azMap: azMap, azList: azList);
       _dirtyTeamshipState = false;
@@ -738,9 +717,9 @@ class NetClient {
   NetClientAzState getTeamuserState(ObjectId tid) {
     final _teamKey = tid.toHexString();
     final _teamuserState = _teamuserStateMap[_teamKey];
-    final _teamusers = _teamusersMap[_teamKey];
+    final _teamuserMap = _teamuserMapMap[_teamKey];
     final _dirtyTeamuserState = _dirtyTeamuserStateMap[_teamKey];
-    if (_teamuserState == null || _teamusers == null || _dirtyTeamuserState == null) {
+    if (_teamuserState == null || _teamuserMap == null || _dirtyTeamuserState == null) {
       return NetClientAzState()..update(azList: [0]); //这种情况说明没有加入这个群组
     }
     if (_dirtyTeamuserState) {
@@ -748,7 +727,7 @@ class NetClient {
       final team = getTeam(tid);
       final admins = <Object>[];
       final azList = <Object>[...NetClientAzState.letters];
-      _teamusers.forEach((key, value) {
+      _teamuserMap.forEach((key, value) {
         if (ComTools.isTeamSuperAdmin(team, value.uid)) {
           admins.insert(0, value);
         } else if (ComTools.isTeamNormalAdmin(team, value.uid)) {
@@ -759,9 +738,9 @@ class NetClient {
         //计算展示信息
         final target = getUser(value.uid);
         value.displayNick = ComTools.formatTeamUserNick(value, target);
-        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
         value.displayIcon = target.icon;
         value.displayHead = target.head;
+        value.displayPinyin = PinyinHelper.getPinyinE(value.displayNick, separator: '', defPinyin: '#', format: PinyinFormat.WITHOUT_TONE).toUpperCase();
         if (value.displayPinyin.isEmpty || !NetClientAzState.letters.contains(value.displayPinyin[0])) value.displayPinyin = '#${value.displayPinyin}';
       });
       //字母列表排序
@@ -802,7 +781,7 @@ class NetClient {
       azMap[NetClientAzState.header] = 0;
       azList.insertAll(0, admins);
       //最后插入数量
-      azList.add(_teamusers.length);
+      azList.add(_teamuserMap.length);
       //更新状态
       _teamuserState.update(azMap: azMap, azList: azList);
       _dirtyTeamuserStateMap[_teamKey] = false;
@@ -894,13 +873,31 @@ class NetClient {
     _aliveClient.addListener('onUserShipUpdate', (packet) => _cacheUserShip(packet.data));
     _aliveClient.addListener('onTeamShipUpdate', (packet) => _cacheTeamShip(packet.data));
     _aliveClient.addListener('onMessageSend', (packet) {
-      final message = Message.fromJson(packet.data!['message']);
+      final message = _parseMessage(packet.data!['message']);
       if (message.from == Constant.msgFromUser) {
         _cacheUserShip(packet.data!['ship'], message: message);
       } else if (message.from == Constant.msgFromTeam) {
         _cacheTeamShip(packet.data!['ship'], message: message);
       }
     });
+  }
+
+  ///解析消息
+  Message _parseMessage(Map<String, dynamic> data) {
+    final message = Message.fromJson(data);
+    final target = message.uid == user.id ? user : getUser(message.uid);
+    if (message.from == Constant.msgFromUser) {
+      final ship = getUserShip(message.uid);
+      message.displayNick = ship == null ? ComTools.formatUserNick(target) : ComTools.formatUserShipNick(ship, target);
+      message.displayIcon = target.icon;
+      message.displayHead = target.head;
+    } else if (message.from == Constant.msgFromTeam) {
+      final ship = getTeamUser(message.sid, message.uid);
+      message.displayNick = ship == null ? ComTools.formatUserNick(target) : ComTools.formatTeamUserNick(ship, target);
+      message.displayIcon = target.icon;
+      message.displayHead = target.head;
+    }
+    return message;
   }
 
   ///更新[_userMap]缓存
@@ -914,7 +911,7 @@ class NetClient {
       _userMap[key] = item;
     }
     //标记要刷新的状态
-    if (_userships.containsKey(key)) {
+    if (_usershipMap.containsKey(key)) {
       _dirtySessionState = true;
       _dirtyUsershipState = true;
     }
@@ -932,28 +929,28 @@ class NetClient {
       _teamMap[key] = item;
     }
     //标记要刷新的状态
-    if (_teamships.containsKey(key)) {
+    if (_teamshipMap.containsKey(key)) {
       _dirtySessionState = true;
       _dirtyTeamshipState = true;
     }
     return item;
   }
 
-  ///更新[_waitships] 或 [_userships]缓存，如果数据仍然被缓存则将key放入[saveKeys]中。如果[message]不为空则添加到[UserShip.msgcache]中
+  ///更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中。如果[message]不为空则添加到[UserShip.msgcache]中
   UserShip _cacheUserShip(dynamic data, {Set<String>? saveKeys, Message? message}) {
     final item = UserShip.fromJson(data);
     if (item.rid == user.id) {
       //更新好友申请缓存
       final key = item.uid.toHexString(); //uid is key
       if (item.state == Constant.shipStateWait) {
-        if (_waitships.containsKey(key)) {
-          _waitships[key]?.updateFields(data, parser: item);
+        if (_waitshipMap.containsKey(key)) {
+          _waitshipMap[key]?.updateFields(data, parser: item);
         } else {
-          _waitships[key] = item;
+          _waitshipMap[key] = item;
         }
         saveKeys?.add(key);
       } else {
-        _waitships.remove(key);
+        _waitshipMap.remove(key);
       }
       //标记要刷新的状态
       _dirtySessionState = true;
@@ -962,15 +959,15 @@ class NetClient {
       //更新好友关系缓存
       final key = item.rid.toHexString(); //rid is key
       if (item.state == Constant.shipStatePass) {
-        if (_userships.containsKey(key)) {
-          _userships[key]?.updateFields(data, parser: item);
+        if (_usershipMap.containsKey(key)) {
+          _usershipMap[key]?.updateFields(data, parser: item);
         } else {
-          _userships[key] = item;
+          _usershipMap[key] = item;
         }
         saveKeys?.add(key);
-        if (message != null) _userships[key]?.msgcache.add(message); //缓存消息
+        if (message != null) _usershipMap[key]?.msgcache.add(message); //缓存消息
       } else {
-        _userships.remove(key);
+        _usershipMap.remove(key);
       }
       //标记要刷新的状态
       _dirtySessionState = true;
@@ -979,28 +976,28 @@ class NetClient {
     return item;
   }
 
-  ///更新[_teamships]缓存，如果数据仍然被缓存则将key放入[saveKeys]中。如果[message]不为空则添加到[TeamShip.msgcache]中
+  ///更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中。如果[message]不为空则添加到[TeamShip.msgcache]中
   TeamShip _cacheTeamShip(dynamic data, {Set<String>? saveKeys, Message? message}) {
     final item = TeamShip.fromJson(data);
     //更新群组关系缓存
     final key = item.rid.toHexString(); //rid is key
     if (item.state == Constant.shipStatePass) {
-      if (_teamships.containsKey(key)) {
-        _teamships[key]?.updateFields(data, parser: item);
+      if (_teamshipMap.containsKey(key)) {
+        _teamshipMap[key]?.updateFields(data, parser: item);
       } else {
-        _teamships[key] = item;
+        _teamshipMap[key] = item;
       }
       saveKeys?.add(key);
-      if (message != null) _teamships[key]?.msgcache.add(message); //缓存消息
+      if (message != null) _teamshipMap[key]?.msgcache.add(message); //缓存消息
       //添加群组成员相关
       _teamuserStateMap[key] = _teamuserStateMap[key] ?? NetClientAzState();
-      _teamusersMap[key] = _teamusersMap[key] ?? {};
+      _teamuserMapMap[key] = _teamuserMapMap[key] ?? {};
       _dirtyTeamuserStateMap[key] = _dirtyTeamuserStateMap[key] ?? true;
     } else {
-      _teamships.remove(key);
+      _teamshipMap.remove(key);
       //移除群组成员相关
       _teamuserStateMap.remove(key);
-      _teamusersMap.remove(key);
+      _teamuserMapMap.remove(key);
       _dirtyTeamuserStateMap.remove(key);
     }
     //标记要刷新的状态
@@ -1009,22 +1006,22 @@ class NetClient {
     return item;
   }
 
-  ///更新[_teamusersMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  ///更新[_teamuserMapMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
   TeamShip _cacheTeamUser(String teamKey, dynamic data, {Set<String>? saveKeys}) {
-    final _teamusers = _teamusersMap[teamKey];
+    final _teamuserMap = _teamuserMapMap[teamKey];
     final item = TeamShip.fromJson(data);
-    if (_teamusers != null && item.rid.toHexString() == teamKey) {
+    if (_teamuserMap != null && item.rid.toHexString() == teamKey) {
       //更新群组成员缓存
       final key = item.uid.toHexString(); //uid is key
       if (item.state == Constant.shipStatePass) {
-        if (_teamusers.containsKey(key)) {
-          _teamusers[key]?.updateFields(data, parser: item);
+        if (_teamuserMap.containsKey(key)) {
+          _teamuserMap[key]?.updateFields(data, parser: item);
         } else {
-          _teamusers[key] = item;
+          _teamuserMap[key] = item;
         }
         saveKeys?.add(key);
       } else {
-        _teamusers.remove(key);
+        _teamuserMap.remove(key);
       }
       //标记要刷新的状态
       _dirtyTeamuserStateMap[teamKey] = true;
@@ -1038,13 +1035,13 @@ class NetClient {
   ///批量更新[_teamMap]缓存
   List<Team> _cacheTeamList(List dataList) => dataList.map((e) => _cacheTeam(e)).toList();
 
-  ///批量更新[_waitships] 或 [_userships]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  ///批量更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
   List<UserShip> _cacheUserShipList(List dataList, {Set<String>? saveKeys}) => dataList.map((e) => _cacheUserShip(e, saveKeys: saveKeys)).toList();
 
-  ///批量更新[_teamships]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  ///批量更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
   List<TeamShip> _cacheTeamShipList(List dataList, {Set<String>? saveKeys}) => dataList.map((e) => _cacheTeamShip(e, saveKeys: saveKeys)).toList();
 
-  ///批量更新[_teamusersMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  ///批量更新[_teamuserMapMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
   List<TeamShip> _cacheTeamUserList(String teamKey, List dataList, {Set<String>? saveKeys}) => dataList.map((e) => _cacheTeamUser(teamKey, e, saveKeys: saveKeys)).toList();
 
   /* **************** 静态方法 **************** */

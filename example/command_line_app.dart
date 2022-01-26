@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:imsdk_client_core/imsdk_client_core.dart';
+import 'package:imsdk_client_core/src/tool/session.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
 class CommandLineApp extends EasyLogger {
@@ -238,14 +239,14 @@ class CommandLineApp extends EasyLogger {
         final reload = (await readStdinLine()).trim();
         final ship = _netClient.sessionState.okList[int.parse(no)];
         if (ship is UserShip) {
-          _netClient.messageLoadForUserShip(ship: ship, reload: reload == 'true');
-          _netClient.messageLoadForUserShip(ship: ship, reload: reload == 'true');
-          _netClient.messageLoadForUserShip(ship: ship, reload: reload == 'true');
-          _netClient.messageLoadForUserShip(ship: ship, reload: reload == 'true');
-          final result = await _netClient.messageLoadForUserShip(ship: ship, reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(usership: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(usership: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(usership: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(usership: ship), reload: reload == 'true');
+          final result = await _netClient.messageLoad(session: _netClient.createSession(usership: ship), reload: reload == 'true');
           if (result.ok) {
             for (var message in ship.msgcache) {
-              logDebug([message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
+              logDebug(['sender(${message.displayNick})', message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
             }
             Future.delayed(delayDuration, () => sessionsPage());
           } else {
@@ -253,14 +254,15 @@ class CommandLineApp extends EasyLogger {
             Future.delayed(delayDuration, () => sessionsPage());
           }
         } else if (ship is TeamShip) {
-          _netClient.messageLoadForTeamShip(ship: ship, reload: reload == 'true');
-          _netClient.messageLoadForTeamShip(ship: ship, reload: reload == 'true');
-          _netClient.messageLoadForTeamShip(ship: ship, reload: reload == 'true');
-          _netClient.messageLoadForTeamShip(ship: ship, reload: reload == 'true');
-          final result = await _netClient.messageLoadForTeamShip(ship: ship, reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
+          _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
+          final result = await _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
           if (result.ok) {
             for (var message in ship.msgcache) {
-              logDebug([message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
+              logDebug(['sender(${message.displayNick})', message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
             }
             Future.delayed(delayDuration, () => sessionsPage());
           } else {

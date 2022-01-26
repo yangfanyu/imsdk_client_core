@@ -86,6 +86,21 @@ class Message extends DbBaseModel {
   ///自定义数据
   Map<String, String> get extra => _extra;
 
+  ///
+  ///展示的名称
+  ///
+  String displayNick = '';
+
+  ///
+  ///展示的图标
+  ///
+  String displayIcon = '';
+
+  ///
+  ///展示的头像
+  ///
+  List<String> displayHead = [];
+
   Message({
     ObjectId? id,
     ObjectId? bsid,

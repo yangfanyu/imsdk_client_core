@@ -80,11 +80,6 @@ class UserShip extends DbBaseModel {
   String displayNick = '';
 
   ///
-  ///展示的名称对应的拼音
-  ///
-  String displayPinyin = '';
-
-  ///
   ///展示的图标
   ///
   String displayIcon = '';
@@ -93,6 +88,11 @@ class UserShip extends DbBaseModel {
   ///展示的头像
   ///
   List<String> displayHead = [];
+
+  ///
+  ///展示的名称对应的拼音
+  ///
+  String displayPinyin = '';
 
   ///
   ///消息加载序号

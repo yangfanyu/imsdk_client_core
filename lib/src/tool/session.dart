@@ -1,3 +1,4 @@
+import 'package:imsdk_client_core/imsdk_client_core.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
 import '../model/constant.dart';
@@ -112,5 +113,12 @@ class Session {
   set msgasync(int value) {
     if (_usership != null) _usership?.msgasync = value;
     if (_teamship != null) _teamship?.msgasync = value;
+  }
+
+  ///消息聊天标题
+  String get chatTitle {
+    if (_usership != null && _user != null) return ComTools.formatUserShipNick(_usership!, _user!);
+    if (_teamship != null && _team != null) return '${ComTools.formatCNcharacters(ComTools.formatTeamNick(_team!))} (${_team!.member})';
+    return sid.toHexString();
   }
 }

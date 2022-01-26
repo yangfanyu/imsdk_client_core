@@ -1,4 +1,3 @@
-import 'package:imsdk_client_core/imsdk_client_core.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
 import '../model/constant.dart';
@@ -7,6 +6,7 @@ import '../model/team.dart';
 import '../model/teamship.dart';
 import '../model/user.dart';
 import '../model/usership.dart';
+import 'comtools.dart';
 
 class Session {
   ///好友关系

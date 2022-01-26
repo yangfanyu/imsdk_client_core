@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:imsdk_client_core/imsdk_client_core.dart';
-import 'package:imsdk_client_core/src/tool/session.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
 class CommandLineApp extends EasyLogger {

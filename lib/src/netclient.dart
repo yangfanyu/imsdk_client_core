@@ -972,7 +972,7 @@ class NetClient {
           _usershipMap[key] = item;
         }
         saveKeys?.add(key);
-        if (message != null) _usershipMap[key]?.msgcache.add(message); //缓存消息
+        if (message != null) _usershipMap[key]?.msgcache.insert(0, message); //缓存消息
       } else {
         _usershipMap.remove(key);
       }
@@ -995,7 +995,7 @@ class NetClient {
         _teamshipMap[key] = item;
       }
       saveKeys?.add(key);
-      if (message != null) _teamshipMap[key]?.msgcache.add(message); //缓存消息
+      if (message != null) _teamshipMap[key]?.msgcache.insert(0, message); //缓存消息
       //添加群组成员相关
       _teamuserStateMap[key] = _teamuserStateMap[key] ?? NetClientAzState();
       _teamuserMapMap[key] = _teamuserMapMap[key] ?? {};

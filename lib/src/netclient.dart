@@ -914,6 +914,10 @@ class NetClient {
       _userMap[key] = item;
     }
     //标记要刷新的状态
+    if (_waitshipMap.containsKey(key)) {
+      _dirtySessionState = true;
+      _dirtyWaitshipState = true;
+    }
     if (_usershipMap.containsKey(key)) {
       _dirtySessionState = true;
       _dirtyUsershipState = true;

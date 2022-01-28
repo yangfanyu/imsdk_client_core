@@ -438,8 +438,8 @@ class NetClient {
   }
 
   ///发送消息-位置分享
-  Future<EasyPacket<void>> messageSendShareLocation({required ObjectId sid, required int from, required Location location}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareLocation, 'location': location.toJson()});
+  Future<EasyPacket<void>> messageSendShareLocation({required ObjectId sid, required int from, required Location shareLocation}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareLocation, 'shareLocation': shareLocation});
     return response;
   }
 

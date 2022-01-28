@@ -32,7 +32,7 @@ class Constant extends DbBaseModel {
   static const int shipFromFileHelper = 103002;
 
   ///关系来源-客服助手
-  static const int shipFromCustomHelper = 103003;
+  static const int shipFromServiceHelper = 103003;
 
   ///关系来源-搜索
   static const int shipFromSearch = 103004;
@@ -44,7 +44,7 @@ class Constant extends DbBaseModel {
   static const int shipFromShareCard = 103006;
 
   ///关系来源-群组
-  static const int shipFromTeamMember = 103007;
+  static const int shipFromMember = 103007;
 
   ///关系来源-被拉入
   static const int shipFromTeamPulledIn = 103008;
@@ -197,12 +197,12 @@ class Constant extends DbBaseModel {
       102002: 'Woman',
       103001: 'System helper',
       103002: 'File helper',
-      103003: 'Customer helper',
+      103003: 'Service helper',
       103004: 'Search',
       103005: 'Qrcode',
       103006: 'Share card',
       103007: 'Team member',
-      103008: 'Pulled in',
+      103008: 'Be pulled in',
       103009: 'Team creator',
       104001: 'None',
       104002: 'Waiting',

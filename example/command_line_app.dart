@@ -256,7 +256,6 @@ class CommandLineApp extends EasyLogger {
           _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
           _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
           _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
-          _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
           final result = await _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
           if (result.ok) {
             for (var message in ship.msgcache) {
@@ -634,6 +633,8 @@ class CommandLineApp extends EasyLogger {
         for (var element in okList) {
           if (element is UserShip) {
             logDebug(['uid(${element.uid.toHexString()})', element.displayNick, readConstMap(element.state), element.apply, ComTools.formatDateTime(element.time, yyMMdd: true, hhmmss: true)]);
+          } else {
+            logDebug([element]);
           }
         }
         Future.delayed(delayDuration, () => waitshipsPage());

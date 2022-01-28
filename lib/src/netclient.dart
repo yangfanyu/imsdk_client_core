@@ -456,7 +456,7 @@ class NetClient {
   }
 
   ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据
-  Future<EasyPacket<bool>> messageLoad({required Session session, bool reload = false}) async {
+  Future<EasyPacket<bool>> messageLoad({required Session session, required bool reload}) async {
     if (reload) session.msgcache.clear(); //清除缓存
     final last = session.msgcache.isEmpty ? 3742732800000 : session.msgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
     final nin = <ObjectId>[]; //排除重复
@@ -469,12 +469,20 @@ class NetClient {
     final response = await _aliveClient.websocketRequest('messageLoad', data: {'bsid': bsid, 'sid': session.sid, 'from': session.msgfrom, 'last': last, 'nin': nin, 'msgasync': session.msgasync});
     if (response.ok) {
       final msgasync = response.data!['msgasync'] as int;
-      final msgcache = response.data!['msgcache'] as List;
+      final msgList = response.data!['msgList'] as List;
+      final shipList = response.data!['shipList'] as List?;
+      final userList = response.data!['userList'] as List?;
+      if (shipList != null && session.msgfrom == Constant.msgFromTeam) {
+        _cacheTeamUserList(session.rid.toHexString(), shipList);
+      }
+      if (userList != null) {
+        _cacheUserList(userList);
+      }
       if (msgasync == session.msgasync) {
-        for (var data in msgcache) {
+        for (var data in msgList) {
           session.msgcache.add(_parseMessage(data));
         }
-        return response.cloneExtra(msgcache.isEmpty); //是否已加载全部数据
+        return response.cloneExtra(msgList.isEmpty); //是否已加载全部数据
       } else {
         _aliveClient.logError(['messageLoad =>', '远程响应号已过期 $msgasync']);
         return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
@@ -586,7 +594,7 @@ class NetClient {
   NetClientAzState get waitshipState {
     if (_dirtyWaitshipState) {
       //构建列表
-      final okList = <UserShip>[];
+      final okList = <Object>[];
       _waitshipMap.forEach((key, value) {
         okList.add(value);
         //计算展示信息
@@ -596,9 +604,11 @@ class NetClient {
         value.displayHead = target.head;
       });
       //按发起申请时间降序排列
-      okList.sort((a, b) => a.time > b.time ? -1 : 1);
+      okList.sort((a, b) => (a as UserShip).time > (b as UserShip).time ? -1 : 1);
+      //最后插入数量
+      okList.add(_waitshipMap.length);
       //更新状态
-      _waitshipState.update(okList: okList, unread: okList.length);
+      _waitshipState.update(okList: okList, unread: _waitshipMap.length);
       _dirtyWaitshipState = false;
     }
     return _waitshipState;

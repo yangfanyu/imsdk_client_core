@@ -126,11 +126,11 @@ class ComTools {
 
   ///是否为来源于系统级的用户关系
   static bool isUserShipFromSystem(UserShip ship) {
-    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromCustomHelper;
+    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromServiceHelper;
   }
 
   ///是否为来源于系统级的群组关系
   static bool isTeamShipFromSystem(TeamShip ship) {
-    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromCustomHelper;
+    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromServiceHelper;
   }
 }

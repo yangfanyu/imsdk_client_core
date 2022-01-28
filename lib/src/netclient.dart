@@ -864,6 +864,9 @@ class NetClient {
     }
   }
 
+  ///[packet]是否为对应[session]的消息推送
+  bool isSessionMessage(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && Message.fromJson(packet.data!['message']).sid == session.sid;
+
   /* **************** 缓存方法 **************** */
 
   ///重新创建已登陆wss客户端

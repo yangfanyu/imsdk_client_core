@@ -444,14 +444,14 @@ class NetClient {
   }
 
   ///发送消息-用户名片
-  Future<EasyPacket<void>> messageSendShareCardUser({required ObjectId sid, required int from, required ObjectId shareCardId, required String shareIconUrl, required List<String> shareHeadUrl}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareCardUser, 'shareCardId': shareCardId, 'shareIconUrl': shareIconUrl, 'shareHeadUrl': shareHeadUrl});
+  Future<EasyPacket<void>> messageSendShareCardUser({required ObjectId sid, required int from, required String title, required String body, required ObjectId shareCardId, required String shareIconUrl, required List<String> shareHeadUrl}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareCardUser, 'title': title, 'body': body, 'shareCardId': shareCardId, 'shareIconUrl': shareIconUrl, 'shareHeadUrl': shareHeadUrl});
     return response;
   }
 
   ///发送消息-群组名片
-  Future<EasyPacket<void>> messageSendShareCardTeam({required ObjectId sid, required int from, required ObjectId shareCardId, required String shareIconUrl, required List<String> shareHeadUrl}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareCardTeam, 'shareCardId': shareCardId, 'shareIconUrl': shareIconUrl, 'shareHeadUrl': shareHeadUrl});
+  Future<EasyPacket<void>> messageSendShareCardTeam({required ObjectId sid, required int from, required String title, required String body, required ObjectId shareCardId, required String shareIconUrl, required List<String> shareHeadUrl}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareCardTeam, 'title': title, 'body': body, 'shareCardId': shareCardId, 'shareIconUrl': shareIconUrl, 'shareHeadUrl': shareHeadUrl});
     return response;
   }
 

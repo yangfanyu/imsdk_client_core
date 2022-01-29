@@ -215,9 +215,19 @@ class NetClient {
     );
   }
 
-  ///释放websocket长连接
-  void destroy() {
+  ///销毁长连接，释放缓存
+  void release() {
+    //销毁长连接
     _aliveClient.destroy();
+    //释放缓存
+    _teamuserStateMap.clear();
+    _userMap.clear();
+    _teamMap.clear();
+    _waitshipMap.clear();
+    _usershipMap.clear();
+    _teamshipMap.clear();
+    _teamuserMapMap.clear();
+    _dirtyTeamuserStateMap.clear();
   }
 
   ///长连接登入

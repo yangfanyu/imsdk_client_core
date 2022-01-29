@@ -86,7 +86,20 @@ class Business extends DbBaseModel {
   String appleKeyP8;
 
   ///苹果配置
-  String appleAuthConfig;
+  ///生成方法: openssl ec -in appleKey.p8 -pubout -out appleKey_public.p8 
+  String appleKeyP8Public;
+
+  ///苹果配置
+  String appleAuthClientId;
+
+  ///苹果配置
+  String appleAuthTeamId;
+
+  ///苹果配置
+  String appleAuthKeyId;
+
+  ///苹果配置
+  String appleAuthRedirectUri;
 
   ///苹果配置
   String appleAppSiteAssociation;
@@ -125,7 +138,11 @@ class Business extends DbBaseModel {
     String? alismsSignName,
     String? alismsTemplateCode,
     String? appleKeyP8,
-    String? appleAuthConfig,
+    String? appleKeyP8Public,
+    String? appleAuthClientId,
+    String? appleAuthTeamId,
+    String? appleAuthKeyId,
+    String? appleAuthRedirectUri,
     String? appleAppSiteAssociation,
   })  : _id = id ?? ObjectId(),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
@@ -154,7 +171,11 @@ class Business extends DbBaseModel {
         alismsSignName = alismsSignName ?? '',
         alismsTemplateCode = alismsTemplateCode ?? '',
         appleKeyP8 = appleKeyP8 ?? '',
-        appleAuthConfig = appleAuthConfig ?? '',
+        appleKeyP8Public = appleKeyP8Public ?? '',
+        appleAuthClientId = appleAuthClientId ?? '',
+        appleAuthTeamId = appleAuthTeamId ?? '',
+        appleAuthKeyId = appleAuthKeyId ?? '',
+        appleAuthRedirectUri = appleAuthRedirectUri ?? '',
         appleAppSiteAssociation = appleAppSiteAssociation ?? '';
 
   factory Business.fromJson(Map<String, dynamic> map) {
@@ -186,7 +207,11 @@ class Business extends DbBaseModel {
       alismsSignName: map['alismsSignName'],
       alismsTemplateCode: map['alismsTemplateCode'],
       appleKeyP8: map['appleKeyP8'],
-      appleAuthConfig: map['appleAuthConfig'],
+      appleKeyP8Public: map['appleKeyP8Public'],
+      appleAuthClientId: map['appleAuthClientId'],
+      appleAuthTeamId: map['appleAuthTeamId'],
+      appleAuthKeyId: map['appleAuthKeyId'],
+      appleAuthRedirectUri: map['appleAuthRedirectUri'],
       appleAppSiteAssociation: map['appleAppSiteAssociation'],
     );
   }
@@ -221,7 +246,11 @@ class Business extends DbBaseModel {
       'alismsSignName': DbQueryField.convertToBaseType(alismsSignName),
       'alismsTemplateCode': DbQueryField.convertToBaseType(alismsTemplateCode),
       'appleKeyP8': DbQueryField.convertToBaseType(appleKeyP8),
-      'appleAuthConfig': DbQueryField.convertToBaseType(appleAuthConfig),
+      'appleKeyP8Public': DbQueryField.convertToBaseType(appleKeyP8Public),
+      'appleAuthClientId': DbQueryField.convertToBaseType(appleAuthClientId),
+      'appleAuthTeamId': DbQueryField.convertToBaseType(appleAuthTeamId),
+      'appleAuthKeyId': DbQueryField.convertToBaseType(appleAuthKeyId),
+      'appleAuthRedirectUri': DbQueryField.convertToBaseType(appleAuthRedirectUri),
       'appleAppSiteAssociation': DbQueryField.convertToBaseType(appleAppSiteAssociation),
     };
   }
@@ -255,7 +284,11 @@ class Business extends DbBaseModel {
     if (map.containsKey('alismsSignName')) alismsSignName = parser.alismsSignName;
     if (map.containsKey('alismsTemplateCode')) alismsTemplateCode = parser.alismsTemplateCode;
     if (map.containsKey('appleKeyP8')) appleKeyP8 = parser.appleKeyP8;
-    if (map.containsKey('appleAuthConfig')) appleAuthConfig = parser.appleAuthConfig;
+    if (map.containsKey('appleKeyP8Public')) appleKeyP8Public = parser.appleKeyP8Public;
+    if (map.containsKey('appleAuthClientId')) appleAuthClientId = parser.appleAuthClientId;
+    if (map.containsKey('appleAuthTeamId')) appleAuthTeamId = parser.appleAuthTeamId;
+    if (map.containsKey('appleAuthKeyId')) appleAuthKeyId = parser.appleAuthKeyId;
+    if (map.containsKey('appleAuthRedirectUri')) appleAuthRedirectUri = parser.appleAuthRedirectUri;
     if (map.containsKey('appleAppSiteAssociation')) appleAppSiteAssociation = parser.appleAppSiteAssociation;
   }
 }
@@ -345,7 +378,20 @@ class BusinessDirty {
   set appleKeyP8(String value) => data['appleKeyP8'] = DbQueryField.convertToBaseType(value);
 
   ///苹果配置
-  set appleAuthConfig(String value) => data['appleAuthConfig'] = DbQueryField.convertToBaseType(value);
+  ///生成方法: openssl ec -in appleKey.p8 -pubout -out appleKey_public.p8 
+  set appleKeyP8Public(String value) => data['appleKeyP8Public'] = DbQueryField.convertToBaseType(value);
+
+  ///苹果配置
+  set appleAuthClientId(String value) => data['appleAuthClientId'] = DbQueryField.convertToBaseType(value);
+
+  ///苹果配置
+  set appleAuthTeamId(String value) => data['appleAuthTeamId'] = DbQueryField.convertToBaseType(value);
+
+  ///苹果配置
+  set appleAuthKeyId(String value) => data['appleAuthKeyId'] = DbQueryField.convertToBaseType(value);
+
+  ///苹果配置
+  set appleAuthRedirectUri(String value) => data['appleAuthRedirectUri'] = DbQueryField.convertToBaseType(value);
 
   ///苹果配置
   set appleAppSiteAssociation(String value) => data['appleAppSiteAssociation'] = DbQueryField.convertToBaseType(value);

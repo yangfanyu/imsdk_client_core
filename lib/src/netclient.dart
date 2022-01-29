@@ -157,7 +157,7 @@ class NetClient {
   }
 
   ///通过Apple账号登录
-  Future<EasyPacket<void>> loginByApple({required String appleUid, required String appleUname, required String authorizationCode, required String identityToken}) async {
+  Future<EasyPacket<void>> loginByApple({required String appleUid, required String appleUname, required String authorizationCode, String? identityToken}) async {
     final response = await _guestClient.httpRequest('$host/loginByApple', data: {'bsid': bsid, 'appleUid': appleUid, 'appleUname': appleUname, 'authorizationCode': authorizationCode, 'identityToken': identityToken});
     if (response.ok) {
       user.updateFields(response.data!['user']);

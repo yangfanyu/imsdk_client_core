@@ -10,6 +10,12 @@ class Validator extends DbBaseModel {
   ///群组单次拉人最大的数量
   static const int teamPullMax = 10;
 
+  ///实时通讯人数最大的数量
+  static const int realtimeMax = 9;
+
+  ///实时通讯人数最小的数量
+  static const int realtimeMin = 2;
+
   ///分页查询每页最大的数量
   static const int pageItemMax = 30;
 

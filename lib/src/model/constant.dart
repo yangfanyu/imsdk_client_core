@@ -82,29 +82,32 @@ class Constant extends DbBaseModel {
   ///消息类型-视频
   static const int msgTypeVideo = 106005;
 
-  ///消息类型-实时语音
+  ///消息类型-实时语音电话
   static const int msgTypeRealtimeVoice = 106006;
 
-  ///消息类型-实时视频
+  ///消息类型-实时视频电话
   static const int msgTypeRealtimeVideo = 106007;
 
+  ///消息类型-实时位置电话
+  static const int msgTypeRealtimeLocal = 106008;
+
   ///消息类型-网页分享
-  static const int msgTypeShareHtmlPage = 106008;
+  static const int msgTypeShareHtmlPage = 106009;
 
   ///消息类型-位置分享
-  static const int msgTypeShareLocation = 106009;
+  static const int msgTypeShareLocation = 106010;
 
   ///消息类型-用户名片
-  static const int msgTypeShareCardUser = 106010;
+  static const int msgTypeShareCardUser = 106011;
 
   ///消息类型-群组名片
-  static const int msgTypeShareCardTeam = 106011;
+  static const int msgTypeShareCardTeam = 106012;
 
   ///消息类型-普通红包
-  static const int msgTypeRedpackNormal = 106012;
+  static const int msgTypeRedpackNormal = 106013;
 
   ///消息类型-幸运红包
-  static const int msgTypeRedpackLuckly = 106013;
+  static const int msgTypeRedpackLuckly = 106014;
 
   ///消息类型-自定义
   static const int msgTypeCustom = 106088;
@@ -167,14 +170,15 @@ class Constant extends DbBaseModel {
       106003: '图片',
       106004: '语音',
       106005: '视频',
-      106006: '实时语音',
-      106007: '实时视频',
-      106008: '网页分享',
-      106009: '位置分享',
-      106010: '用户名片',
-      106011: '群组名片',
-      106012: '普通红包',
-      106013: '幸运红包',
+      106006: '语音电话',
+      106007: '视频电话',
+      106008: '位置电话',
+      106009: '网页分享',
+      106010: '位置分享',
+      106011: '用户名片',
+      106012: '群组名片',
+      106013: '普通红包',
+      106014: '幸运红包',
       106088: '自定义',
       107001: '永久文件',
       107002: '消息附件',
@@ -214,14 +218,15 @@ class Constant extends DbBaseModel {
       106003: 'Image',
       106004: 'Voice',
       106005: 'Video',
-      106006: 'Realtime voice',
-      106007: 'Realtime video',
-      106008: 'Share web page',
-      106009: 'Share location',
-      106010: 'Share user card',
-      106011: 'Share team card',
-      106012: 'Normal red envelope',
-      106013: 'Luckly red envelope',
+      106006: 'Realtime voice call',
+      106007: 'Realtime video call',
+      106008: 'Realtime local call',
+      106009: 'Share web page',
+      106010: 'Share location',
+      106011: 'Share user card',
+      106012: 'Share team card',
+      106013: 'Normal red envelope',
+      106014: 'Luckly red envelope',
       106088: 'Custom',
       107001: 'Forever file',
       107002: 'Message file',

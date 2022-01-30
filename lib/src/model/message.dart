@@ -68,7 +68,7 @@ class Message extends DbBaseModel {
   ///分享网址url、媒体附件url
   String shareLinkUrl;
 
-  ///位置消息的数据
+  ///位置分享消息的数据
   Location? shareLocation;
 
   ///本条是否已撤销
@@ -87,17 +87,17 @@ class Message extends DbBaseModel {
   Map<String, String> get extra => _extra;
 
   ///
-  ///展示的名称
+  ///消息发送者展示的名称
   ///
   String displayNick = '';
 
   ///
-  ///展示的图标
+  ///消息发送者展示的图标
   ///
   String displayIcon = '';
 
   ///
-  ///展示的头像
+  ///消息发送者展示的头像
   ///
   List<String> displayHead = [];
 
@@ -299,7 +299,7 @@ class MessageDirty {
   ///分享网址url、媒体附件url
   set shareLinkUrl(String value) => data['shareLinkUrl'] = DbQueryField.convertToBaseType(value);
 
-  ///位置消息的数据
+  ///位置分享消息的数据
   set shareLocation(Location value) => data['shareLocation'] = DbQueryField.convertToBaseType(value);
 
   ///本条是否已撤销

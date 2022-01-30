@@ -423,21 +423,39 @@ class NetClient {
     return response;
   }
 
-  ///发送消息-图片消息
-  Future<EasyPacket<void>> messageSendImage({required ObjectId sid, required int from, int mediaTimeE = 0, required String shareLinkUrl}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeImage, 'mediaTimeS': 0, 'mediaTimeE': mediaTimeE, 'shareLinkUrl': shareLinkUrl});
+  ///发送消息-图片消息，[mediaMillis]为图片播放毫秒时长
+  Future<EasyPacket<void>> messageSendImage({required ObjectId sid, required int from, required String shareLinkUrl, int mediaMillis = 0}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeImage, 'shareLinkUrl': shareLinkUrl, 'mediaMillis': mediaMillis});
     return response;
   }
 
-  ///发送消息-语音消息
-  Future<EasyPacket<void>> messageSendVoice({required ObjectId sid, required int from, int mediaTimeE = 0, required String shareLinkUrl}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeVoice, 'mediaTimeS': 0, 'mediaTimeE': mediaTimeE, 'shareLinkUrl': shareLinkUrl});
+  ///发送消息-语音消息，[mediaMillis]为语音播放毫秒时长
+  Future<EasyPacket<void>> messageSendVoice({required ObjectId sid, required int from, required String shareLinkUrl, int mediaMillis = 0}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeVoice, 'shareLinkUrl': shareLinkUrl, 'mediaMillis': mediaMillis});
     return response;
   }
 
-  ///发送消息-视频消息
-  Future<EasyPacket<void>> messageSendVideo({required ObjectId sid, required int from, int mediaTimeE = 0, required String shareLinkUrl}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeVideo, 'mediaTimeS': 0, 'mediaTimeE': mediaTimeE, 'shareLinkUrl': shareLinkUrl});
+  ///发送消息-视频消息，[mediaMillis]为视频播放毫秒时长
+  Future<EasyPacket<void>> messageSendVideo({required ObjectId sid, required int from, required String shareLinkUrl, int mediaMillis = 0}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeVideo, 'shareLinkUrl': shareLinkUrl, 'mediaMillis': mediaMillis});
+    return response;
+  }
+
+  ///发送消息-实时语音电话
+  Future<EasyPacket<void>> messageSendRealtimeVoice({required ObjectId sid, required int from, required List<ObjectId> mediaUids}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRealtimeVoice, 'mediaUids': mediaUids});
+    return response;
+  }
+
+  ///发送消息-实时视频电话
+  Future<EasyPacket<void>> messageSendRealtimeVideo({required ObjectId sid, required int from, required List<ObjectId> mediaUids}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRealtimeVideo, 'mediaUids': mediaUids});
+    return response;
+  }
+
+  ///发送消息-实时位置电话
+  Future<EasyPacket<void>> messageSendRealtimeLocal({required ObjectId sid, required int from, required List<ObjectId> mediaUids}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRealtimeLocal, 'mediaUids': mediaUids});
     return response;
   }
 
@@ -462,6 +480,18 @@ class NetClient {
   ///发送消息-群组名片
   Future<EasyPacket<void>> messageSendShareCardTeam({required ObjectId sid, required int from, required String title, required String body, required ObjectId shareCardId, required String shareIconUrl, required List<String> shareHeadUrl}) async {
     final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeShareCardTeam, 'title': title, 'body': body, 'shareCardId': shareCardId, 'shareIconUrl': shareIconUrl, 'shareHeadUrl': shareHeadUrl});
+    return response;
+  }
+
+  ///发送消息-普通红包，[rmbfenTotal]为红包总金额，[rmbfenCount]为红包个数
+  Future<EasyPacket<void>> messageSendRedpackNormal({required ObjectId sid, required int from, required int rmbfenTotal, required int rmbfenCount, required String cashPassword}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRedpackNormal, 'rmbfenTotal': rmbfenTotal, 'rmbfenCount': rmbfenCount, 'cashPassword': cashPassword});
+    return response;
+  }
+
+  ///发送消息-幸运红包，[rmbfenTotal]为红包总金额，[rmbfenCount]为红包个数
+  Future<EasyPacket<void>> messageSendRedpackLucky({required ObjectId sid, required int from, required int rmbfenTotal, required int rmbfenCount, required String cashPassword}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRedpackLuckly, 'rmbfenTotal': rmbfenTotal, 'rmbfenCount': rmbfenCount, 'cashPassword': cashPassword});
     return response;
   }
 
@@ -490,7 +520,9 @@ class NetClient {
       }
       if (msgasync == session.msgasync) {
         for (var data in msgList) {
-          session.msgcache.add(_parseMessage(data));
+          final message = Message.fromJson(data);
+          _fillMessage(message);
+          session.msgcache.add(message);
         }
         return response.cloneExtra(msgList.isEmpty); //是否已加载全部数据
       } else {
@@ -500,6 +532,18 @@ class NetClient {
     } else {
       return response.cloneExtra(null);
     }
+  }
+
+  ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeEnd]为true表示实时媒体电话结束
+  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeEnd = false}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeEnd': realtimeEnd});
+    return response;
+  }
+
+  ///发送实时媒体信令
+  Future<EasyPacket<void>> messageWebrtc({required ObjectId id, required Map<String, dynamic> signals}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'id': id, 'signals': signals});
+    return response;
   }
 
   /* **************** 工具方法 **************** */
@@ -884,8 +928,26 @@ class NetClient {
     }
   }
 
+  ///设置消息数据发生变化的监听器
+  void setOnMessageUpdateListener(void Function(EasyPacket packet) ondata, {required bool remove}) {
+    if (remove) {
+      _aliveClient.removeListener('onMessageUpdate', ondata: ondata);
+    } else {
+      _aliveClient.addListener('onMessageUpdate', ondata);
+    }
+  }
+
+  ///设置收到实时媒体信令的监听器
+  void setOnMessageWebrtcListener(void Function(EasyPacket packet) ondata, {required bool remove}) {
+    if (remove) {
+      _aliveClient.removeListener('onMessageWebrtc', ondata: ondata);
+    } else {
+      _aliveClient.addListener('onMessageWebrtc', ondata);
+    }
+  }
+
   ///[packet]是否为对应[session]的消息推送
-  bool isSessionMessage(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && Message.fromJson(packet.data!['message']).sid == session.sid;
+  bool isSessionMessageSend(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && Message.fromJson(packet.data!['message']).sid == session.sid;
 
   /* **************** 缓存方法 **************** */
 
@@ -899,18 +961,55 @@ class NetClient {
     _aliveClient.addListener('onUserShipUpdate', (packet) => _cacheUserShip(packet.data));
     _aliveClient.addListener('onTeamShipUpdate', (packet) => _cacheTeamShip(packet.data));
     _aliveClient.addListener('onMessageSend', (packet) {
-      final message = _parseMessage(packet.data!['message']);
+      final userData = packet.data!['user'];
+      final shipData = packet.data!['ship'];
+      final messageData = packet.data!['message'];
+      //更新发送者缓存
+      _cacheUser(userData);
+      //更新关系与消息缓存
+      final message = Message.fromJson(messageData);
       if (message.from == Constant.msgFromUser) {
-        _cacheUserShip(packet.data!['ship'], message: message);
+        final ship = _cacheUserShip(shipData);
+        ship.msgcache.insert(0, message);
+        _fillMessage(message);
       } else if (message.from == Constant.msgFromTeam) {
-        _cacheTeamShip(packet.data!['ship'], message: message);
+        final ship = _cacheTeamShip(shipData);
+        ship.msgcache.insert(0, message);
+        _fillMessage(message);
+      }
+    });
+    _aliveClient.addListener('onMessageUpdate', (packet) {
+      final userData = packet.data!['user'];
+      final shipData = packet.data!['ship'];
+      final messageData = packet.data!['message'];
+      //更新发送者缓存
+      _cacheUser(userData);
+      //更新关系与消息缓存
+      final message = Message.fromJson(messageData);
+      if (message.from == Constant.msgFromUser) {
+        final ship = _cacheUserShip(shipData);
+        for (var element in ship.msgcache) {
+          if (element.id == message.id) {
+            element.updateFields(messageData, parser: message);
+            _fillMessage(element);
+            break;
+          }
+        }
+      } else if (message.from == Constant.msgFromTeam) {
+        final ship = _cacheTeamShip(shipData);
+        for (var element in ship.msgcache) {
+          if (element.id == message.id) {
+            element.updateFields(messageData, parser: message);
+            _fillMessage(element);
+            break;
+          }
+        }
       }
     });
   }
 
-  ///解析消息
-  Message _parseMessage(Map<String, dynamic> data) {
-    final message = Message.fromJson(data);
+  ///填充消息展示字段
+  void _fillMessage(Message message) {
     final target = message.uid == user.id ? user : getUser(message.uid);
     if (message.from == Constant.msgFromUser) {
       final ship = getUserShip(message.uid);
@@ -923,7 +1022,6 @@ class NetClient {
       message.displayIcon = target.icon;
       message.displayHead = target.head;
     }
-    return message;
   }
 
   ///更新[_userMap]缓存
@@ -966,8 +1064,8 @@ class NetClient {
     return item;
   }
 
-  ///更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中。如果[message]不为空则添加到[UserShip.msgcache]中
-  UserShip _cacheUserShip(dynamic data, {Set<String>? saveKeys, Message? message}) {
+  ///更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  UserShip _cacheUserShip(dynamic data, {Set<String>? saveKeys}) {
     final item = UserShip.fromJson(data);
     if (item.rid == user.id) {
       //更新好友申请缓存
@@ -995,7 +1093,6 @@ class NetClient {
           _usershipMap[key] = item;
         }
         saveKeys?.add(key);
-        if (message != null) _usershipMap[key]?.msgcache.insert(0, message); //缓存消息
       } else {
         _usershipMap.remove(key);
       }
@@ -1006,8 +1103,8 @@ class NetClient {
     return item;
   }
 
-  ///更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中。如果[message]不为空则添加到[TeamShip.msgcache]中
-  TeamShip _cacheTeamShip(dynamic data, {Set<String>? saveKeys, Message? message}) {
+  ///更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  TeamShip _cacheTeamShip(dynamic data, {Set<String>? saveKeys}) {
     final item = TeamShip.fromJson(data);
     //更新群组关系缓存
     final key = item.rid.toHexString(); //rid is key
@@ -1018,7 +1115,6 @@ class NetClient {
         _teamshipMap[key] = item;
       }
       saveKeys?.add(key);
-      if (message != null) _teamshipMap[key]?.msgcache.insert(0, message); //缓存消息
       //添加群组成员相关
       _teamuserStateMap[key] = _teamuserStateMap[key] ?? NetClientAzState();
       _teamuserMapMap[key] = _teamuserMapMap[key] ?? {};

@@ -536,13 +536,13 @@ class NetClient {
 
   ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeEnd]为true表示实时媒体电话结束
   Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeEnd = false}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeEnd': realtimeEnd});
+    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeEnd': realtimeEnd});
     return response;
   }
 
   ///发送实时媒体信令
   Future<EasyPacket<void>> messageWebrtc({required ObjectId id, required Map<String, dynamic> signals}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'id': id, 'signals': signals});
+    final response = await _aliveClient.websocketRequest('messageWebtrc', data: {'bsid': bsid, 'id': id, 'signals': signals});
     return response;
   }
 
@@ -947,7 +947,7 @@ class NetClient {
   }
 
   ///[packet]是否为对应[session]的消息推送
-  bool isSessionMessageSend(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && Message.fromJson(packet.data!['message']).sid == session.sid;
+  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && Message.fromJson(packet.data!['message']).sid == session.sid;
 
   /* **************** 缓存方法 **************** */
 

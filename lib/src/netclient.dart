@@ -1043,7 +1043,7 @@ class NetClient {
       _dirtySessionState = true;
       _dirtyUsershipState = true;
     }
-    return item;
+    return _userMap[key] ?? item;
   }
 
   ///更新[_teamMap]缓存
@@ -1061,7 +1061,7 @@ class NetClient {
       _dirtySessionState = true;
       _dirtyTeamshipState = true;
     }
-    return item;
+    return _teamMap[key] ?? item;
   }
 
   ///更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
@@ -1083,6 +1083,7 @@ class NetClient {
       //标记要刷新的状态
       _dirtySessionState = true;
       _dirtyWaitshipState = true;
+      return _waitshipMap[key] ?? item;
     } else if (item.uid == user.id) {
       //更新好友关系缓存
       final key = item.rid.toHexString(); //rid is key
@@ -1099,8 +1100,10 @@ class NetClient {
       //标记要刷新的状态
       _dirtySessionState = true;
       _dirtyUsershipState = true;
+      return _usershipMap[key] ?? item;
+    } else {
+      return item;
     }
-    return item;
   }
 
   ///更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
@@ -1129,7 +1132,7 @@ class NetClient {
     //标记要刷新的状态
     _dirtySessionState = true;
     _dirtyTeamshipState = true;
-    return item;
+    return _teamshipMap[key] ?? item;
   }
 
   ///更新[_teamuserMapMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
@@ -1151,8 +1154,10 @@ class NetClient {
       }
       //标记要刷新的状态
       _dirtyTeamuserStateMap[teamKey] = true;
+      return _teamuserMap[key] ?? item;
+    } else {
+      return item;
     }
-    return item;
   }
 
   ///批量更新[_userMap]缓存

@@ -947,8 +947,10 @@ class NetClient {
   }
 
   ///[packet]是否为对应[session]的消息推送
-  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && Message.fromJson(packet.data!['message']).sid == session.sid;
+  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && parseFromMessageSend(packet).sid == session.sid;
 
+  ///从[packet]中解析出[Message]实例
+  Message parseFromMessageSend(EasyPacket packet) => packet.data!['_parsedMessage'] ?? Message.fromJson(packet.data!['message']);
   /* **************** 缓存方法 **************** */
 
   ///重新创建已登陆wss客户端
@@ -965,17 +967,25 @@ class NetClient {
       final shipData = packet.data!['ship'];
       final messageData = packet.data!['message'];
       //更新发送者缓存
-      _cacheUser(userData);
+      final user = _cacheUser(userData);
       //更新关系与消息缓存
       final message = Message.fromJson(messageData);
       if (message.from == Constant.msgFromUser) {
         final ship = _cacheUserShip(shipData);
         ship.msgcache.insert(0, message);
         _fillMessage(message);
+        //保存解析结果
+        packet.data!['_parsedUser'] = user;
+        packet.data!['_parsedShip'] = ship;
+        packet.data!['_parsedMessage'] = message;
       } else if (message.from == Constant.msgFromTeam) {
         final ship = _cacheTeamShip(shipData);
         ship.msgcache.insert(0, message);
         _fillMessage(message);
+        //保存解析结果
+        packet.data!['_parsedUser'] = user;
+        packet.data!['_parsedShip'] = ship;
+        packet.data!['_parsedMessage'] = message;
       }
     });
     _aliveClient.addListener('onMessageUpdate', (packet) {
@@ -983,7 +993,7 @@ class NetClient {
       final shipData = packet.data!['ship'];
       final messageData = packet.data!['message'];
       //更新发送者缓存
-      _cacheUser(userData);
+      final user = _cacheUser(userData);
       //更新关系与消息缓存
       final message = Message.fromJson(messageData);
       if (message.from == Constant.msgFromUser) {
@@ -992,6 +1002,10 @@ class NetClient {
           if (element.id == message.id) {
             element.updateFields(messageData, parser: message);
             _fillMessage(element);
+            //保存解析结果
+            packet.data!['_parsedUser'] = user;
+            packet.data!['_parsedShip'] = ship;
+            packet.data!['_parsedMessage'] = element;
             break;
           }
         }
@@ -1001,6 +1015,10 @@ class NetClient {
           if (element.id == message.id) {
             element.updateFields(messageData, parser: message);
             _fillMessage(element);
+            //保存解析结果
+            packet.data!['_parsedUser'] = user;
+            packet.data!['_parsedShip'] = ship;
+            packet.data!['_parsedMessage'] = element;
             break;
           }
         }

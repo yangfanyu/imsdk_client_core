@@ -535,8 +535,8 @@ class NetClient {
   }
 
   ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeEnd]为true表示实时媒体电话结束
-  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeEnd = false, String? mediaBody}) async {
-    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeEnd': realtimeEnd, 'mediaBody': mediaBody});
+  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeEnd = false, String? realtimeBody}) async {
+    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeEnd': realtimeEnd, 'realtimeBody': realtimeBody});
     return response;
   }
 

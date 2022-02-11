@@ -453,6 +453,12 @@ class NetClient {
     return response;
   }
 
+  ///发送消息-实时屏幕共享
+  Future<EasyPacket<void>> messageSendRealtimeShare({required ObjectId sid, required int from, required List<ObjectId> mediaUids}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRealtimeShare, 'mediaUids': mediaUids});
+    return response;
+  }
+
   ///发送消息-实时位置电话
   Future<EasyPacket<void>> messageSendRealtimeLocal({required ObjectId sid, required int from, required List<ObjectId> mediaUids}) async {
     final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRealtimeLocal, 'mediaUids': mediaUids});
@@ -540,9 +546,9 @@ class NetClient {
     return response;
   }
 
-  ///发送实时媒体信令
-  Future<EasyPacket<void>> messageWebrtc({required ObjectId id, required Map<String, dynamic> signals}) async {
-    final response = await _aliveClient.websocketRequest('messageWebtrc', data: {'bsid': bsid, 'id': id, 'signals': signals});
+  ///发送实时媒体信令，[toUid]为null时将信令广播给全部参与者，[toUid]不为null时将信令发送给指定参与者
+  Future<EasyPacket<void>> messageWebrtc({required ObjectId id, required ObjectId? toUid, required Map<String, dynamic> signals}) async {
+    final response = await _aliveClient.websocketRequest('messageWebtrc', data: {'bsid': bsid, 'id': id, 'toUid': toUid, 'signals': signals});
     return response;
   }
 

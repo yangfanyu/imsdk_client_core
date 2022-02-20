@@ -19,6 +19,12 @@ class Validator extends DbBaseModel {
   ///分页查询每页最大的数量
   static const int pageItemMax = 30;
 
+  ///WebRTC心跳发送间隔（秒）
+  static const int webrtcInterval = 10;
+
+  ///WebRTC心跳超时时间（秒）
+  static const int webrtcTimeouts = 60;
+
   ///ID最小长度
   static const int identLenMin = 8;
 

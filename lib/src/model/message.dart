@@ -44,11 +44,17 @@ class Message extends DbBaseModel {
   ///媒体的结束时间
   int mediaTimeE;
 
+  ///媒体正在进行中
+  bool mediaGoing;
+
   ///媒体读取或参与过的用户id
   List<ObjectId> mediaJoined;
 
   ///RMB金额总数
   int rmbfenTotal;
+
+  ///RMB已经被抢次数
+  int rmbfenCount;
 
   ///RMB金额分配情况
   List<int> rmbfenEvery;
@@ -115,8 +121,10 @@ class Message extends DbBaseModel {
     String? short,
     int? mediaTimeS,
     int? mediaTimeE,
+    bool? mediaGoing,
     List<ObjectId>? mediaJoined,
     int? rmbfenTotal,
+    int? rmbfenCount,
     List<int>? rmbfenEvery,
     List<ObjectId>? rmbfenLuckly,
     ObjectId? shareCardId,
@@ -138,8 +146,10 @@ class Message extends DbBaseModel {
         short = short ?? '',
         mediaTimeS = mediaTimeS ?? 0,
         mediaTimeE = mediaTimeE ?? 0,
+        mediaGoing = mediaGoing ?? false,
         mediaJoined = mediaJoined ?? [],
         rmbfenTotal = rmbfenTotal ?? 0,
+        rmbfenCount = rmbfenCount ?? 0,
         rmbfenEvery = rmbfenEvery ?? [],
         rmbfenLuckly = rmbfenLuckly ?? [],
         shareCardId = shareCardId ?? ObjectId(),
@@ -163,8 +173,10 @@ class Message extends DbBaseModel {
       short: map['short'],
       mediaTimeS: map['mediaTimeS'],
       mediaTimeE: map['mediaTimeE'],
+      mediaGoing: map['mediaGoing'],
       mediaJoined: (map['mediaJoined'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
       rmbfenTotal: map['rmbfenTotal'],
+      rmbfenCount: map['rmbfenCount'],
       rmbfenEvery: (map['rmbfenEvery'] as List?)?.map((v) => v as int).toList(),
       rmbfenLuckly: (map['rmbfenLuckly'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
       shareCardId: map['shareCardId'] is String ? ObjectId.fromHexString(map['shareCardId']) : map['shareCardId'],
@@ -192,8 +204,10 @@ class Message extends DbBaseModel {
       'short': DbQueryField.convertToBaseType(short),
       'mediaTimeS': DbQueryField.convertToBaseType(mediaTimeS),
       'mediaTimeE': DbQueryField.convertToBaseType(mediaTimeE),
+      'mediaGoing': DbQueryField.convertToBaseType(mediaGoing),
       'mediaJoined': DbQueryField.convertToBaseType(mediaJoined),
       'rmbfenTotal': DbQueryField.convertToBaseType(rmbfenTotal),
+      'rmbfenCount': DbQueryField.convertToBaseType(rmbfenCount),
       'rmbfenEvery': DbQueryField.convertToBaseType(rmbfenEvery),
       'rmbfenLuckly': DbQueryField.convertToBaseType(rmbfenLuckly),
       'shareCardId': DbQueryField.convertToBaseType(shareCardId),
@@ -220,8 +234,10 @@ class Message extends DbBaseModel {
     if (map.containsKey('short')) short = parser.short;
     if (map.containsKey('mediaTimeS')) mediaTimeS = parser.mediaTimeS;
     if (map.containsKey('mediaTimeE')) mediaTimeE = parser.mediaTimeE;
+    if (map.containsKey('mediaGoing')) mediaGoing = parser.mediaGoing;
     if (map.containsKey('mediaJoined')) mediaJoined = parser.mediaJoined;
     if (map.containsKey('rmbfenTotal')) rmbfenTotal = parser.rmbfenTotal;
+    if (map.containsKey('rmbfenCount')) rmbfenCount = parser.rmbfenCount;
     if (map.containsKey('rmbfenEvery')) rmbfenEvery = parser.rmbfenEvery;
     if (map.containsKey('rmbfenLuckly')) rmbfenLuckly = parser.rmbfenLuckly;
     if (map.containsKey('shareCardId')) shareCardId = parser.shareCardId;
@@ -275,11 +291,17 @@ class MessageDirty {
   ///媒体的结束时间
   set mediaTimeE(int value) => data['mediaTimeE'] = DbQueryField.convertToBaseType(value);
 
+  ///媒体正在进行中
+  set mediaGoing(bool value) => data['mediaGoing'] = DbQueryField.convertToBaseType(value);
+
   ///媒体读取或参与过的用户id
   set mediaJoined(List<ObjectId> value) => data['mediaJoined'] = DbQueryField.convertToBaseType(value);
 
   ///RMB金额总数
   set rmbfenTotal(int value) => data['rmbfenTotal'] = DbQueryField.convertToBaseType(value);
+
+  ///RMB已经被抢次数
+  set rmbfenCount(int value) => data['rmbfenCount'] = DbQueryField.convertToBaseType(value);
 
   ///RMB金额分配情况
   set rmbfenEvery(List<int> value) => data['rmbfenEvery'] = DbQueryField.convertToBaseType(value);

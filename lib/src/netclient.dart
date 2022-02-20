@@ -50,25 +50,25 @@ class NetClient {
   final NetClientAzState _teamshipState;
 
   ///群组成员状态，key为群组id
-  final Map<String, NetClientAzState> _teamuserStateMap;
+  final Map<ObjectId, NetClientAzState> _teamuserStateMap;
 
   ///用户信息，key为用户id
-  final Map<String, User> _userMap;
+  final Map<ObjectId, User> _userMap;
 
   ///群组信息，key为群组id
-  final Map<String, Team> _teamMap;
+  final Map<ObjectId, Team> _teamMap;
 
   ///好友申请，key为用户id
-  final Map<String, UserShip> _waitshipMap;
+  final Map<ObjectId, UserShip> _waitshipMap;
 
   ///好友关系，key为用户id
-  final Map<String, UserShip> _usershipMap;
+  final Map<ObjectId, UserShip> _usershipMap;
 
   ///群组关系，key为群组id
-  final Map<String, TeamShip> _teamshipMap;
+  final Map<ObjectId, TeamShip> _teamshipMap;
 
   ///群组成员，key为群组id，子级key为用户id
-  final Map<String, Map<String, TeamShip>> _teamuserMapMap;
+  final Map<ObjectId, Map<ObjectId, TeamShip>> _teamuserMapMap;
 
   ///未登录web客户端
   final EasyClient _guestClient;
@@ -89,7 +89,7 @@ class NetClient {
   bool _dirtyTeamshipState;
 
   ///标记[_teamuserStateMap]是否需要重新构建，key为群组id
-  final Map<String, bool> _dirtyTeamuserStateMap;
+  final Map<ObjectId, bool> _dirtyTeamuserStateMap;
 
   NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, required this.host, required this.bsid, required this.secret, this.binary = true, required this.onCredentials})
       : user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
@@ -241,9 +241,9 @@ class NetClient {
       _aliveClient.bindUser(user.id.toHexString(), token: user.token); //立即绑定口令信息
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
       //更新其他缓存
-      final waitshipKeys = <String>{};
-      final usershipKeys = <String>{};
-      final teamshipKeys = <String>{};
+      final waitshipKeys = <ObjectId>{};
+      final usershipKeys = <ObjectId>{};
+      final teamshipKeys = <ObjectId>{};
       _cacheUserShipList(response.data!['waitships'], saveKeys: waitshipKeys);
       _cacheUserShipList(response.data!['userships'], saveKeys: usershipKeys);
       _cacheTeamShipList(response.data!['teamships'], saveKeys: teamshipKeys);
@@ -345,11 +345,10 @@ class NetClient {
     if (response.ok) {
       _cacheUserList(response.data!['userList']);
       //更新成员缓存
-      final teamKey = tid.toHexString();
-      final teamuserKeys = <String>{};
-      final teamshipList = _cacheTeamUserList(teamKey, response.data!['shipList'], saveKeys: teamuserKeys);
+      final teamuserKeys = <ObjectId>{};
+      final teamshipList = _cacheTeamUserList(tid, response.data!['shipList'], saveKeys: teamuserKeys);
       //清除废弃数据
-      _teamuserMapMap[teamKey]?.removeWhere((key, value) => !teamuserKeys.contains(key));
+      _teamuserMapMap[tid]?.removeWhere((key, value) => !teamuserKeys.contains(key));
       return response.cloneExtra(teamshipList);
     } else {
       return response.cloneExtra(null);
@@ -519,7 +518,7 @@ class NetClient {
       final shipList = response.data!['shipList'] as List?;
       final userList = response.data!['userList'] as List?;
       if (shipList != null && session.msgfrom == Constant.msgFromTeam) {
-        _cacheTeamUserList(session.rid.toHexString(), shipList);
+        _cacheTeamUserList(session.rid, shipList);
       }
       if (userList != null) {
         _cacheUserList(userList);
@@ -540,9 +539,9 @@ class NetClient {
     }
   }
 
-  ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeEnd]为true表示实时媒体电话结束
-  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeEnd = false, String? realtimeBody}) async {
-    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeEnd': realtimeEnd, 'realtimeBody': realtimeBody});
+  ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeStart]为true表示实时媒体电话接通，[realtimeEnd]为true表示实时媒体电话挂断,[realtimeBody]为实时媒体电话当前的描述信息
+  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeStart = false, bool realtimeEnd = false, String? realtimeBody}) async {
+    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeStart': realtimeStart, 'realtimeEnd': realtimeEnd, 'realtimeBody': realtimeBody});
     return response;
   }
 
@@ -563,12 +562,11 @@ class NetClient {
 
   ///读取用户
   User getUser(ObjectId uid) {
-    final key = uid.toHexString();
-    var item = _userMap[key];
+    var item = _userMap[uid];
     if (item == null) {
       //创建一个临时用户实例
       item = User(bsid: DbQueryField.hexstr2ObjectId(bsid), id: uid);
-      _userMap[key] = item;
+      _userMap[uid] = item;
       //获取未缓存的用户信息
       userFetch(uids: [uid]).then((result) {
         if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'onUserFetchedEvent', data: result.data));
@@ -579,12 +577,11 @@ class NetClient {
 
   ///读取群组
   Team getTeam(ObjectId tid) {
-    final key = tid.toHexString();
-    var item = _teamMap[key];
+    var item = _teamMap[tid];
     if (item == null) {
       //创建一个临时群组实例
       item = Team(bsid: DbQueryField.hexstr2ObjectId(bsid), id: tid);
-      _teamMap[key] = item;
+      _teamMap[tid] = item;
       //获取未缓存的群组信息
       teamFetch(tids: [tid]).then((result) {
         if (result.ok) _aliveClient.triggerEvent(EasyPacket.pushdata(route: 'onTeamFetchedEvent', data: result.data));
@@ -594,16 +591,16 @@ class NetClient {
   }
 
   ///读取好友申请
-  UserShip? getWaitShip(ObjectId uid) => _waitshipMap[uid.toHexString()];
+  UserShip? getWaitShip(ObjectId uid) => _waitshipMap[uid];
 
   ///读取好友关系
-  UserShip? getUserShip(ObjectId uid) => _usershipMap[uid.toHexString()];
+  UserShip? getUserShip(ObjectId uid) => _usershipMap[uid];
 
   ///读取群组关系
-  TeamShip? getTeamShip(ObjectId tid) => _teamshipMap[tid.toHexString()];
+  TeamShip? getTeamShip(ObjectId tid) => _teamshipMap[tid];
 
   ///读取群组成员
-  TeamShip? getTeamUser(ObjectId tid, ObjectId uid) => _teamuserMapMap[tid.toHexString()]?[uid.toHexString()];
+  TeamShip? getTeamUser(ObjectId tid, ObjectId uid) => _teamuserMapMap[tid]?[uid];
 
   ///读取激活会话状态
   NetClientAzState get sessionState {
@@ -788,10 +785,9 @@ class NetClient {
 
   ///读取群组成员状态
   NetClientAzState getTeamuserState(ObjectId tid) {
-    final _teamKey = tid.toHexString();
-    final _teamuserState = _teamuserStateMap[_teamKey];
-    final _teamuserMap = _teamuserMapMap[_teamKey];
-    final _dirtyTeamuserState = _dirtyTeamuserStateMap[_teamKey];
+    final _teamuserState = _teamuserStateMap[tid];
+    final _teamuserMap = _teamuserMapMap[tid];
+    final _dirtyTeamuserState = _dirtyTeamuserStateMap[tid];
     if (_teamuserState == null || _teamuserMap == null || _dirtyTeamuserState == null) {
       return NetClientAzState()..update(azList: [0]); //这种情况说明没有加入这个群组
     }
@@ -857,7 +853,7 @@ class NetClient {
       azList.add(_teamuserMap.length);
       //更新状态
       _teamuserState.update(azMap: azMap, azList: azList);
-      _dirtyTeamuserStateMap[_teamKey] = false;
+      _dirtyTeamuserStateMap[tid] = false;
     }
     return _teamuserState;
   }
@@ -1052,7 +1048,7 @@ class NetClient {
   User _cacheUser(dynamic data) {
     final item = User.fromJson(data);
     //更新用户缓存
-    final key = item.id.toHexString(); //uid is key
+    final key = item.id; //uid is key
     if (_userMap.containsKey(key)) {
       _userMap[key]?.updateFields(data, parser: item);
     } else {
@@ -1074,7 +1070,7 @@ class NetClient {
   Team _cacheTeam(dynamic data) {
     final item = Team.fromJson(data);
     //更新群组缓存
-    final key = item.id.toHexString(); //tid is key
+    final key = item.id; //tid is key
     if (_teamMap.containsKey(key)) {
       _teamMap[key]?.updateFields(data, parser: item);
     } else {
@@ -1089,11 +1085,11 @@ class NetClient {
   }
 
   ///更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
-  UserShip _cacheUserShip(dynamic data, {Set<String>? saveKeys}) {
+  UserShip _cacheUserShip(dynamic data, {Set<ObjectId>? saveKeys}) {
     final item = UserShip.fromJson(data);
     if (item.rid == user.id) {
       //更新好友申请缓存
-      final key = item.uid.toHexString(); //uid is key
+      final key = item.uid; //uid is key
       if (item.state == Constant.shipStateWait) {
         if (_waitshipMap.containsKey(key)) {
           _waitshipMap[key]?.updateFields(data, parser: item);
@@ -1110,7 +1106,7 @@ class NetClient {
       return _waitshipMap[key] ?? item;
     } else if (item.uid == user.id) {
       //更新好友关系缓存
-      final key = item.rid.toHexString(); //rid is key
+      final key = item.rid; //rid is key
       if (item.state == Constant.shipStatePass) {
         if (_usershipMap.containsKey(key)) {
           _usershipMap[key]?.updateFields(data, parser: item);
@@ -1131,10 +1127,10 @@ class NetClient {
   }
 
   ///更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
-  TeamShip _cacheTeamShip(dynamic data, {Set<String>? saveKeys}) {
+  TeamShip _cacheTeamShip(dynamic data, {Set<ObjectId>? saveKeys}) {
     final item = TeamShip.fromJson(data);
     //更新群组关系缓存
-    final key = item.rid.toHexString(); //rid is key
+    final key = item.rid; //rid is key
     if (item.state == Constant.shipStatePass) {
       if (_teamshipMap.containsKey(key)) {
         _teamshipMap[key]?.updateFields(data, parser: item);
@@ -1159,13 +1155,13 @@ class NetClient {
     return _teamshipMap[key] ?? item;
   }
 
-  ///更新[_teamuserMapMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
-  TeamShip _cacheTeamUser(String teamKey, dynamic data, {Set<String>? saveKeys}) {
-    final _teamuserMap = _teamuserMapMap[teamKey];
+  ///更新[_teamuserMapMap]的[teamId]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  TeamShip _cacheTeamUser(ObjectId teamId, dynamic data, {Set<ObjectId>? saveKeys}) {
+    final _teamuserMap = _teamuserMapMap[teamId];
     final item = TeamShip.fromJson(data);
-    if (_teamuserMap != null && item.rid.toHexString() == teamKey) {
+    if (_teamuserMap != null && item.rid == teamId) {
       //更新群组成员缓存
-      final key = item.uid.toHexString(); //uid is key
+      final key = item.uid; //uid is key
       if (item.state == Constant.shipStatePass) {
         if (_teamuserMap.containsKey(key)) {
           _teamuserMap[key]?.updateFields(data, parser: item);
@@ -1177,7 +1173,7 @@ class NetClient {
         _teamuserMap.remove(key);
       }
       //标记要刷新的状态
-      _dirtyTeamuserStateMap[teamKey] = true;
+      _dirtyTeamuserStateMap[teamId] = true;
       return _teamuserMap[key] ?? item;
     } else {
       return item;
@@ -1191,13 +1187,13 @@ class NetClient {
   List<Team> _cacheTeamList(List dataList) => dataList.map((e) => _cacheTeam(e)).toList();
 
   ///批量更新[_waitshipMap] 或 [_usershipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
-  List<UserShip> _cacheUserShipList(List dataList, {Set<String>? saveKeys}) => dataList.map((e) => _cacheUserShip(e, saveKeys: saveKeys)).toList();
+  List<UserShip> _cacheUserShipList(List dataList, {Set<ObjectId>? saveKeys}) => dataList.map((e) => _cacheUserShip(e, saveKeys: saveKeys)).toList();
 
   ///批量更新[_teamshipMap]缓存，如果数据仍然被缓存则将key放入[saveKeys]中
-  List<TeamShip> _cacheTeamShipList(List dataList, {Set<String>? saveKeys}) => dataList.map((e) => _cacheTeamShip(e, saveKeys: saveKeys)).toList();
+  List<TeamShip> _cacheTeamShipList(List dataList, {Set<ObjectId>? saveKeys}) => dataList.map((e) => _cacheTeamShip(e, saveKeys: saveKeys)).toList();
 
-  ///批量更新[_teamuserMapMap]的[teamKey]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
-  List<TeamShip> _cacheTeamUserList(String teamKey, List dataList, {Set<String>? saveKeys}) => dataList.map((e) => _cacheTeamUser(teamKey, e, saveKeys: saveKeys)).toList();
+  ///批量更新[_teamuserMapMap]的[teamId]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
+  List<TeamShip> _cacheTeamUserList(ObjectId teamId, List dataList, {Set<ObjectId>? saveKeys}) => dataList.map((e) => _cacheTeamUser(teamId, e, saveKeys: saveKeys)).toList();
 
   /* **************** 静态方法 **************** */
 

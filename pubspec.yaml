@@ -1,6 +1,6 @@
 name: imsdk_client_core
 description: A starting point for Dart libraries or applications.
-version: 0.0.41
+version: 0.0.42
 homepage: https://github.com/yangfanyu/imsdk_client_core
 
 environment:

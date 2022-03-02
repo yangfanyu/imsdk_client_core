@@ -539,9 +539,9 @@ class NetClient {
     }
   }
 
-  ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeStart]为true表示实时媒体电话接通，[realtimeEnd]为true表示实时媒体电话挂断,[realtimeBody]为实时媒体电话当前的描述信息
-  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeStart = false, bool realtimeEnd = false, String? realtimeBody}) async {
-    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeStart': realtimeStart, 'realtimeEnd': realtimeEnd, 'realtimeBody': realtimeBody});
+  ///更新消息交互数据，[mediaPlayed]为true表示标记媒体附件已播放，[redpackGrab]为true表示本次操作为抢红包，[realtimeStart]为true表示实时媒体电话接通，[realtimeEnd]为true表示实时媒体电话结束,[realtimeQuit]为true表示实时媒体电话未接通
+  Future<EasyPacket<void>> messageUpdate({required ObjectId id, bool mediaPlayed = false, bool redpackGrab = false, bool realtimeStart = false, bool realtimeEnd = false, bool realtimeQuit = false}) async {
+    final response = await _aliveClient.websocketRequest('messageUpdate', data: {'bsid': bsid, 'id': id, 'mediaPlayed': mediaPlayed, 'redpackGrab': redpackGrab, 'realtimeStart': realtimeStart, 'realtimeEnd': realtimeEnd, 'realtimeQuit': realtimeQuit});
     return response;
   }
 

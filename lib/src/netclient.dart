@@ -949,10 +949,11 @@ class NetClient {
   }
 
   ///[packet]是否为对应[session]的消息推送
-  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && parseFromMessageSend(packet).sid == session.sid;
+  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && parseFromMessageSendOrUpdate(packet).sid == session.sid;
 
   ///从[packet]中解析出[Message]实例
-  Message parseFromMessageSend(EasyPacket packet) => packet.data!['_parsedMessage'] ?? Message.fromJson(packet.data!['message']);
+  Message parseFromMessageSendOrUpdate(EasyPacket packet) => packet.data!['_parsedMessage'] ?? Message.fromJson(packet.data!['message']);
+
   /* **************** 缓存方法 **************** */
 
   ///重新创建已登陆wss客户端

@@ -949,10 +949,16 @@ class NetClient {
   }
 
   ///[packet]是否为对应[session]的消息推送
-  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && parseFromMessageSendOrUpdate(packet).sid == session.sid;
+  bool isMessageSendForSession(Session session, EasyPacket packet) => packet.route == 'onMessageSend' && parseMessageFromSendOrUpdate(packet).sid == session.sid;
 
   ///从[packet]中解析出[Message]实例
-  Message parseFromMessageSendOrUpdate(EasyPacket packet) => packet.data!['_parsedMessage'] ?? Message.fromJson(packet.data!['message']);
+  Message parseMessageFromSendOrUpdate(EasyPacket packet) => packet.data!['_parsedMessage'] ?? Message.fromJson(packet.data!['message']);
+
+  ///从[packet]中解析出[UserShip]实例
+  UserShip parseUserShipFromSendOrUpdate(EasyPacket packet) => packet.data!['_parsedShip'] ?? UserShip.fromJson(packet.data!['ship']);
+
+  ///从[packet]中解析出[TeamShip]实例
+  TeamShip parseTeamShipFromSendOrUpdate(EasyPacket packet) => packet.data!['_parsedShip'] ?? TeamShip.fromJson(packet.data!['ship']);
 
   /* **************** 缓存方法 **************** */
 

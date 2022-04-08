@@ -1,6 +1,6 @@
 name: imsdk_client_core
 description: A libraries for imsdk_server.
-version: 0.0.53
+version: 0.0.55
 homepage: https://github.com/yangfanyu/imsdk_client_core
 
 environment:

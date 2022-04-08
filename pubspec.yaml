@@ -1,6 +1,6 @@
 name: imsdk_client_core
 description: A libraries for imsdk_server.
-version: 0.0.52
+version: 0.0.53
 homepage: https://github.com/yangfanyu/imsdk_client_core
 
 environment:
@@ -9,7 +9,7 @@ environment:
 
 dependencies: 
   lpinyin: ^2.0.3
-  shelf_easy: ^0.0.31
+  shelf_easy: ^0.0.38
 
 dev_dependencies:
   lints: ^1.0.0

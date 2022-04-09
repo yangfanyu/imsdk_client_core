@@ -966,6 +966,7 @@ class NetClient {
   void _resetAliveClient(String url, String? pwd) {
     _aliveClient.destroy(); //先销毁旧的
     _aliveClient = EasyClient(config: EasyClientConfig(logger: logger, logLevel: logLevel, url: url, pwd: pwd, binary: binary)); //创建新的
+    _aliveClient.initThread(_isolateHandler); //启用多线程进行数据编解码
     _aliveClient.addListener('onUserUpdate', (packet) => user.updateFields(packet.data!));
     _aliveClient.addListener('onTeamUpdate', (packet) => _cacheTeam(packet.data));
     _aliveClient.addListener('onWaitShipUpdate', (packet) => _cacheUserShip(packet.data));
@@ -1215,6 +1216,10 @@ class NetClient {
     final packet = EasySecurity.decrypt(data, secret);
     if (packet == null || packet.data == null || !packet.data!.containsKey('user')) return null;
     return User.fromJson(packet.data!['user']);
+  }
+
+  static Future<dynamic> _isolateHandler(String taskType, dynamic taskData) async {
+    return null;
   }
 }
 

@@ -31,6 +31,9 @@ class NetClient {
   ///是否用二进制收发数据，需要与服务端保持一致
   final bool binary;
 
+  ///是否启用隔离线程进行数据编解码
+  final bool isolate;
+
   ///登录凭据回调
   final void Function(String nick, String? credentials) onCredentials;
 
@@ -91,7 +94,7 @@ class NetClient {
   ///标记[_teamuserStateMap]是否需要重新构建，key为群组id
   final Map<ObjectId, bool> _dirtyTeamuserStateMap;
 
-  NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, required this.host, required this.bsid, required this.secret, this.binary = true, required this.onCredentials})
+  NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, required this.host, required this.bsid, required this.secret, this.binary = true, this.isolate = false, required this.onCredentials})
       : user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
         _sessionState = NetClientAzState(),
         _waitshipState = NetClientAzState(),
@@ -966,7 +969,7 @@ class NetClient {
   void _resetAliveClient(String url, String? pwd) {
     _aliveClient.destroy(); //先销毁旧的
     _aliveClient = EasyClient(config: EasyClientConfig(logger: logger, logLevel: logLevel, url: url, pwd: pwd, binary: binary)); //创建新的
-    _aliveClient.initThread(_isolateHandler); //启用多线程进行数据编解码
+    if (isolate) _aliveClient.initThread(_isolateHandler); //启用多线程进行数据编解码
     _aliveClient.addListener('onUserUpdate', (packet) => user.updateFields(packet.data!));
     _aliveClient.addListener('onTeamUpdate', (packet) => _cacheTeam(packet.data));
     _aliveClient.addListener('onWaitShipUpdate', (packet) => _cacheUserShip(packet.data));

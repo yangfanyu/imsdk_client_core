@@ -193,6 +193,31 @@ class UserShip extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'uid': uid,
+      'sid': sid,
+      'rid': rid,
+      'fid': fid,
+      'from': from,
+      'state': state,
+      'apply': apply,
+      'alias': alias,
+      'dialog': dialog,
+      'notice': notice,
+      'top': top,
+      'unread': unread,
+      'recent': recent,
+      'update': update,
+      'active': active,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {UserShip? parser}) {
     parser = parser ?? UserShip.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

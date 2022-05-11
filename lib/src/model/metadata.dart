@@ -92,6 +92,21 @@ class Metadata extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'uid': uid,
+      'type': type,
+      'path': path,
+      'size': size,
+      'removed': removed,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Metadata? parser}) {
     parser = parser ?? Metadata.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

@@ -150,6 +150,31 @@ class Location extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+      'accuracy': accuracy,
+      'altitude': altitude,
+      'bearing': bearing,
+      'speed': speed,
+      'country': country,
+      'province': province,
+      'city': city,
+      'district': district,
+      'street': street,
+      'streetNumber': streetNumber,
+      'cityCode': cityCode,
+      'adCode': adCode,
+      'address': address,
+      'description': description,
+      'snapshotUrl': snapshotUrl,
+      'zoomLevel': zoomLevel,
+      'distance': distance,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Location? parser}) {
     parser = parser ?? Location.fromJson(map);
     if (map.containsKey('latitude')) latitude = parser.latitude;

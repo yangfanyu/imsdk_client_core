@@ -92,6 +92,21 @@ class Randcode extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'phone': phone,
+      'code': code,
+      'expired': expired,
+      'timeout': timeout,
+      'testcnt': testcnt,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Randcode? parser}) {
     parser = parser ?? Randcode.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

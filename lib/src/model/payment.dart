@@ -190,6 +190,35 @@ class Payment extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'uid': uid,
+      'type': type,
+      'rmbfen': rmbfen,
+      'goods': goods,
+      'thirdSendData': thirdSendData,
+      'thirdSendResult': thirdSendResult,
+      'thirdNotify': thirdNotify,
+      'appleOrderNo': appleOrderNo,
+      'appleSendData': appleSendData,
+      'appleSendResult': appleSendResult,
+      'appleSendCount': appleSendCount,
+      'redpackMsgId': redpackMsgId,
+      'redpackPayId': redpackPayId,
+      'redpackReturned': redpackReturned,
+      'customValidData': customValidData,
+      'customValidResult': customValidResult,
+      'customValidCount': customValidCount,
+      'finishedTime': finishedTime,
+      'finished': finished,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Payment? parser}) {
     parser = parser ?? Payment.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

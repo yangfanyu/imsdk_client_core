@@ -268,6 +268,46 @@ class User extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'phone': phone,
+      'token': token,
+      'rmbpwd': rmbpwd,
+      'rmbfen': rmbfen,
+      'thirdTp': thirdTp,
+      'thirdNo': thirdNo,
+      'name': name,
+      'card': card,
+      'birth': birth,
+      'sex': sex,
+      'country': country,
+      'province': province,
+      'city': city,
+      'district': district,
+      'location': location,
+      'login': login,
+      'ip': ip,
+      'no': no,
+      'pwd': pwd,
+      'nick': nick,
+      'desc': desc,
+      'icon': icon,
+      'head': head,
+      'byfind': byfind,
+      'bycode': bycode,
+      'bycard': bycard,
+      'byteam': byteam,
+      'notice': notice,
+      'silent': silent,
+      'deny': deny,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {User? parser}) {
     parser = parser ?? User.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

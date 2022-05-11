@@ -255,6 +255,45 @@ class Business extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_time': _time,
+      'no': no,
+      'pwd': pwd,
+      'nick': nick,
+      'desc': desc,
+      'icon': icon,
+      'phone': phone,
+      'email': email,
+      'secret': secret,
+      'customLoginValidUrl': customLoginValidUrl,
+      'customPaymentValidUrl': customPaymentValidUrl,
+      'wechatAppId': wechatAppId,
+      'wechatAppSecret': wechatAppSecret,
+      'wechatMchId': wechatMchId,
+      'wechatMchSecret': wechatMchSecret,
+      'alipayPid': alipayPid,
+      'alipayAppId': alipayAppId,
+      'alipayPrivateKey': alipayPrivateKey,
+      'alipayPublicKey': alipayPublicKey,
+      'alismsAccessKeyId': alismsAccessKeyId,
+      'alismsAccessKeySecret': alismsAccessKeySecret,
+      'alismsEndpoint': alismsEndpoint,
+      'alismsApiVersion': alismsApiVersion,
+      'alismsSignName': alismsSignName,
+      'alismsTemplateCode': alismsTemplateCode,
+      'appleKeyP8': appleKeyP8,
+      'appleKeyP8Public': appleKeyP8Public,
+      'appleAuthClientId': appleAuthClientId,
+      'appleAuthTeamId': appleAuthTeamId,
+      'appleAuthKeyId': appleAuthKeyId,
+      'appleAuthRedirectUri': appleAuthRedirectUri,
+      'appleAppSiteAssociation': appleAppSiteAssociation,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Business? parser}) {
     parser = parser ?? Business.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

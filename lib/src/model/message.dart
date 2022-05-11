@@ -219,6 +219,37 @@ class Message extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'sid': sid,
+      'uid': uid,
+      'from': from,
+      'type': type,
+      'title': title,
+      'body': body,
+      'short': short,
+      'mediaTimeS': mediaTimeS,
+      'mediaTimeE': mediaTimeE,
+      'mediaGoing': mediaGoing,
+      'mediaJoined': mediaJoined,
+      'rmbfenTotal': rmbfenTotal,
+      'rmbfenCount': rmbfenCount,
+      'rmbfenEvery': rmbfenEvery,
+      'rmbfenLuckly': rmbfenLuckly,
+      'shareCardId': shareCardId,
+      'shareIconUrl': shareIconUrl,
+      'shareHeadUrl': shareHeadUrl,
+      'shareLinkUrl': shareLinkUrl,
+      'shareLocation': shareLocation,
+      'revoked': revoked,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Message? parser}) {
     parser = parser ?? Message.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

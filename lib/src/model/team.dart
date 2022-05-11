@@ -169,6 +169,32 @@ class Team extends DbBaseModel {
     };
   }
 
+  @override
+  Map<String, dynamic> toKValues() {
+    return {
+      '_id': _id,
+      '_bsid': _bsid,
+      '_time': _time,
+      '_extra': _extra,
+      'owner': owner,
+      'admin': admin,
+      'member': member,
+      'no': no,
+      'pwd': pwd,
+      'nick': nick,
+      'desc': desc,
+      'icon': icon,
+      'head': head,
+      'byfind': byfind,
+      'bycode': bycode,
+      'bycard': bycard,
+      'byteam': byteam,
+      'notice': notice,
+      'silent': silent,
+      'deny': deny,
+    };
+  }
+
   void updateFields(Map<String, dynamic> map, {Team? parser}) {
     parser = parser ?? Team.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;

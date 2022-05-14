@@ -124,7 +124,7 @@ class NetClient {
   Future<EasyPacket<void>> loginByToken({required ObjectId uid, required String token}) async {
     final response = await _guestClient.httpRequest('$host/loginByToken', data: {'bsid': bsid, 'uid': uid, 'token': token});
     if (response.ok) {
-      user.updateFields(response.data!['user']);
+      user.updateByJson(response.data!['user']);
       _resetAliveClient(response.data!['url'], response.data!['pwd']);
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
     } else if (response.code == 401) {
@@ -137,7 +137,7 @@ class NetClient {
   Future<EasyPacket<void>> loginByNoPwd({required String no, required String pwd}) async {
     final response = await _guestClient.httpRequest('$host/loginByNoPwd', data: {'bsid': bsid, 'no': no, 'pwd': pwd});
     if (response.ok) {
-      user.updateFields(response.data!['user']);
+      user.updateByJson(response.data!['user']);
       _resetAliveClient(response.data!['url'], response.data!['pwd']);
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
     } else if (response.code == 401) {
@@ -153,7 +153,7 @@ class NetClient {
   Future<EasyPacket<void>> loginByPhone({required String phone, required String code, String? no, String? pwd}) async {
     final response = await _guestClient.httpRequest('$host/loginByPhone', data: {'bsid': bsid, 'phone': phone, 'code': code, 'no': no, 'pwd': pwd});
     if (response.ok) {
-      user.updateFields(response.data!['user']);
+      user.updateByJson(response.data!['user']);
       _resetAliveClient(response.data!['url'], response.data!['pwd']);
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
     } else if (response.code == 401) {
@@ -166,7 +166,7 @@ class NetClient {
   Future<EasyPacket<void>> loginByApple({required String appleUid, required String appleUname, required String authorizationCode, String? identityToken}) async {
     final response = await _guestClient.httpRequest('$host/loginByApple', data: {'bsid': bsid, 'appleUid': appleUid, 'appleUname': appleUname, 'authorizationCode': authorizationCode, 'identityToken': identityToken});
     if (response.ok) {
-      user.updateFields(response.data!['user']);
+      user.updateByJson(response.data!['user']);
       _resetAliveClient(response.data!['url'], response.data!['pwd']);
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
     } else if (response.code == 401) {
@@ -179,7 +179,7 @@ class NetClient {
   Future<EasyPacket<void>> loginByWechat({required String wechatCode}) async {
     final response = await _guestClient.httpRequest('$host/loginByWechat', data: {'bsid': bsid, 'wechatCode': wechatCode});
     if (response.ok) {
-      user.updateFields(response.data!['user']);
+      user.updateByJson(response.data!['user']);
       _resetAliveClient(response.data!['url'], response.data!['pwd']);
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
     } else if (response.code == 401) {
@@ -243,7 +243,7 @@ class NetClient {
     final response = await _aliveClient.websocketRequest('userEnter', data: {'bsid': bsid, 'uid': user.id, 'mill': mill, 'sign': sign});
     if (response.ok) {
       //更新用户缓存
-      user.updateFields(response.data!['user']);
+      user.updateByJson(response.data!['user']);
       _aliveClient.bindUser(user.id.toHexString(), token: user.token); //立即绑定口令信息
       onCredentials(ComTools.formatUserNick(user), encryptCredentials(user, secret));
       //更新其他缓存
@@ -973,7 +973,7 @@ class NetClient {
     _aliveClient.destroy(); //先销毁旧的
     _aliveClient = EasyClient(config: EasyClientConfig(logger: logger, logLevel: logLevel, logTag: logTag, url: url, pwd: pwd, binary: binary)); //创建新的
     if (isolate) _aliveClient.initThread(_isolateHandler); //启用多线程进行数据编解码
-    _aliveClient.addListener('onUserUpdate', (packet) => user.updateFields(packet.data!));
+    _aliveClient.addListener('onUserUpdate', (packet) => user.updateByJson(packet.data!));
     _aliveClient.addListener('onTeamUpdate', (packet) => _cacheTeam(packet.data));
     _aliveClient.addListener('onWaitShipUpdate', (packet) => _cacheUserShip(packet.data));
     _aliveClient.addListener('onUserShipUpdate', (packet) => _cacheUserShip(packet.data));
@@ -1016,7 +1016,7 @@ class NetClient {
         final ship = _cacheUserShip(shipData);
         for (var element in ship.msgcache) {
           if (element.id == message.id) {
-            element.updateFields(messageData, parser: message);
+            element.updateByJson(messageData, parser: message);
             _fillMessage(element);
             //保存解析结果
             packet.data!['_parsedUser'] = user;
@@ -1029,7 +1029,7 @@ class NetClient {
         final ship = _cacheTeamShip(shipData);
         for (var element in ship.msgcache) {
           if (element.id == message.id) {
-            element.updateFields(messageData, parser: message);
+            element.updateByJson(messageData, parser: message);
             _fillMessage(element);
             //保存解析结果
             packet.data!['_parsedUser'] = user;
@@ -1064,7 +1064,7 @@ class NetClient {
     //更新用户缓存
     final key = item.id; //uid is key
     if (_userMap.containsKey(key)) {
-      _userMap[key]?.updateFields(data, parser: item);
+      _userMap[key]?.updateByJson(data, parser: item);
     } else {
       _userMap[key] = item;
     }
@@ -1086,7 +1086,7 @@ class NetClient {
     //更新群组缓存
     final key = item.id; //tid is key
     if (_teamMap.containsKey(key)) {
-      _teamMap[key]?.updateFields(data, parser: item);
+      _teamMap[key]?.updateByJson(data, parser: item);
     } else {
       _teamMap[key] = item;
     }
@@ -1106,7 +1106,7 @@ class NetClient {
       final key = item.uid; //uid is key
       if (item.state == Constant.shipStateWait) {
         if (_waitshipMap.containsKey(key)) {
-          _waitshipMap[key]?.updateFields(data, parser: item);
+          _waitshipMap[key]?.updateByJson(data, parser: item);
         } else {
           _waitshipMap[key] = item;
         }
@@ -1123,7 +1123,7 @@ class NetClient {
       final key = item.rid; //rid is key
       if (item.state == Constant.shipStatePass) {
         if (_usershipMap.containsKey(key)) {
-          _usershipMap[key]?.updateFields(data, parser: item);
+          _usershipMap[key]?.updateByJson(data, parser: item);
         } else {
           _usershipMap[key] = item;
         }
@@ -1147,7 +1147,7 @@ class NetClient {
     final key = item.rid; //rid is key
     if (item.state == Constant.shipStatePass) {
       if (_teamshipMap.containsKey(key)) {
-        _teamshipMap[key]?.updateFields(data, parser: item);
+        _teamshipMap[key]?.updateByJson(data, parser: item);
       } else {
         _teamshipMap[key] = item;
       }
@@ -1178,7 +1178,7 @@ class NetClient {
       final key = item.uid; //uid is key
       if (item.state == Constant.shipStatePass) {
         if (_teamuserMap.containsKey(key)) {
-          _teamuserMap[key]?.updateFields(data, parser: item);
+          _teamuserMap[key]?.updateByJson(data, parser: item);
         } else {
           _teamuserMap[key] = item;
         }

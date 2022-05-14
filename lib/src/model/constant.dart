@@ -262,5 +262,9 @@ class Constant extends DbBaseModel {
     return {};
   }
 
-  void updateFields(Map<String, dynamic> map, {Constant? parser}) {}
+  @override
+  void updateByJson(Map<String, dynamic> map, {Constant? parser}) {}
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {}
 }

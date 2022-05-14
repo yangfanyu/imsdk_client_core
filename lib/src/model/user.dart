@@ -308,7 +308,8 @@ class User extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {User? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {User? parser}) {
     parser = parser ?? User.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -344,6 +345,44 @@ class User extends DbBaseModel {
     if (map.containsKey('notice')) notice = parser.notice;
     if (map.containsKey('silent')) silent = parser.silent;
     if (map.containsKey('deny')) deny = parser.deny;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('phone')) phone = map['phone'];
+    if (map.containsKey('token')) token = map['token'];
+    if (map.containsKey('rmbpwd')) rmbpwd = map['rmbpwd'];
+    if (map.containsKey('rmbfen')) rmbfen = map['rmbfen'];
+    if (map.containsKey('thirdTp')) thirdTp = map['thirdTp'];
+    if (map.containsKey('thirdNo')) thirdNo = map['thirdNo'];
+    if (map.containsKey('name')) name = map['name'];
+    if (map.containsKey('card')) card = map['card'];
+    if (map.containsKey('birth')) birth = map['birth'];
+    if (map.containsKey('sex')) sex = map['sex'];
+    if (map.containsKey('country')) country = map['country'];
+    if (map.containsKey('province')) province = map['province'];
+    if (map.containsKey('city')) city = map['city'];
+    if (map.containsKey('district')) district = map['district'];
+    if (map.containsKey('location')) location = map['location'];
+    if (map.containsKey('login')) login = map['login'];
+    if (map.containsKey('ip')) ip = map['ip'];
+    if (map.containsKey('no')) no = map['no'];
+    if (map.containsKey('pwd')) pwd = map['pwd'];
+    if (map.containsKey('nick')) nick = map['nick'];
+    if (map.containsKey('desc')) desc = map['desc'];
+    if (map.containsKey('icon')) icon = map['icon'];
+    if (map.containsKey('head')) head = map['head'];
+    if (map.containsKey('byfind')) byfind = map['byfind'];
+    if (map.containsKey('bycode')) bycode = map['bycode'];
+    if (map.containsKey('bycard')) bycard = map['bycard'];
+    if (map.containsKey('byteam')) byteam = map['byteam'];
+    if (map.containsKey('notice')) notice = map['notice'];
+    if (map.containsKey('silent')) silent = map['silent'];
+    if (map.containsKey('deny')) deny = map['deny'];
   }
 }
 

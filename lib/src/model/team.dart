@@ -195,7 +195,8 @@ class Team extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Team? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Team? parser}) {
     parser = parser ?? Team.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -217,6 +218,30 @@ class Team extends DbBaseModel {
     if (map.containsKey('notice')) notice = parser.notice;
     if (map.containsKey('silent')) silent = parser.silent;
     if (map.containsKey('deny')) deny = parser.deny;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('owner')) owner = map['owner'];
+    if (map.containsKey('admin')) admin = map['admin'];
+    if (map.containsKey('member')) member = map['member'];
+    if (map.containsKey('no')) no = map['no'];
+    if (map.containsKey('pwd')) pwd = map['pwd'];
+    if (map.containsKey('nick')) nick = map['nick'];
+    if (map.containsKey('desc')) desc = map['desc'];
+    if (map.containsKey('icon')) icon = map['icon'];
+    if (map.containsKey('head')) head = map['head'];
+    if (map.containsKey('byfind')) byfind = map['byfind'];
+    if (map.containsKey('bycode')) bycode = map['bycode'];
+    if (map.containsKey('bycard')) bycard = map['bycard'];
+    if (map.containsKey('byteam')) byteam = map['byteam'];
+    if (map.containsKey('notice')) notice = map['notice'];
+    if (map.containsKey('silent')) silent = map['silent'];
+    if (map.containsKey('deny')) deny = map['deny'];
   }
 }
 

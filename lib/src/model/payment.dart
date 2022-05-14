@@ -219,7 +219,8 @@ class Payment extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Payment? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Payment? parser}) {
     parser = parser ?? Payment.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -244,6 +245,33 @@ class Payment extends DbBaseModel {
     if (map.containsKey('customValidCount')) customValidCount = parser.customValidCount;
     if (map.containsKey('finishedTime')) finishedTime = parser.finishedTime;
     if (map.containsKey('finished')) finished = parser.finished;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('uid')) uid = map['uid'];
+    if (map.containsKey('type')) type = map['type'];
+    if (map.containsKey('rmbfen')) rmbfen = map['rmbfen'];
+    if (map.containsKey('goods')) goods = map['goods'];
+    if (map.containsKey('thirdSendData')) thirdSendData = map['thirdSendData'];
+    if (map.containsKey('thirdSendResult')) thirdSendResult = map['thirdSendResult'];
+    if (map.containsKey('thirdNotify')) thirdNotify = map['thirdNotify'];
+    if (map.containsKey('appleOrderNo')) appleOrderNo = map['appleOrderNo'];
+    if (map.containsKey('appleSendData')) appleSendData = map['appleSendData'];
+    if (map.containsKey('appleSendResult')) appleSendResult = map['appleSendResult'];
+    if (map.containsKey('appleSendCount')) appleSendCount = map['appleSendCount'];
+    if (map.containsKey('redpackMsgId')) redpackMsgId = map['redpackMsgId'];
+    if (map.containsKey('redpackPayId')) redpackPayId = map['redpackPayId'];
+    if (map.containsKey('redpackReturned')) redpackReturned = map['redpackReturned'];
+    if (map.containsKey('customValidData')) customValidData = map['customValidData'];
+    if (map.containsKey('customValidResult')) customValidResult = map['customValidResult'];
+    if (map.containsKey('customValidCount')) customValidCount = map['customValidCount'];
+    if (map.containsKey('finishedTime')) finishedTime = map['finishedTime'];
+    if (map.containsKey('finished')) finished = map['finished'];
   }
 }
 

@@ -218,7 +218,8 @@ class TeamShip extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {TeamShip? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {TeamShip? parser}) {
     parser = parser ?? TeamShip.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -239,6 +240,29 @@ class TeamShip extends DbBaseModel {
     if (map.containsKey('recent')) recent = parser.recent;
     if (map.containsKey('update')) update = parser.update;
     if (map.containsKey('active')) active = parser.active;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('uid')) uid = map['uid'];
+    if (map.containsKey('sid')) sid = map['sid'];
+    if (map.containsKey('rid')) rid = map['rid'];
+    if (map.containsKey('fid')) fid = map['fid'];
+    if (map.containsKey('from')) from = map['from'];
+    if (map.containsKey('state')) state = map['state'];
+    if (map.containsKey('apply')) apply = map['apply'];
+    if (map.containsKey('alias')) alias = map['alias'];
+    if (map.containsKey('dialog')) dialog = map['dialog'];
+    if (map.containsKey('notice')) notice = map['notice'];
+    if (map.containsKey('top')) top = map['top'];
+    if (map.containsKey('unread')) unread = map['unread'];
+    if (map.containsKey('recent')) recent = map['recent'];
+    if (map.containsKey('update')) update = map['update'];
+    if (map.containsKey('active')) active = map['active'];
   }
 }
 

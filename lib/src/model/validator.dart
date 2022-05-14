@@ -161,5 +161,9 @@ class Validator extends DbBaseModel {
     return {};
   }
 
-  void updateFields(Map<String, dynamic> map, {Validator? parser}) {}
+  @override
+  void updateByJson(Map<String, dynamic> map, {Validator? parser}) {}
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {}
 }

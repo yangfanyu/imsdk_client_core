@@ -107,7 +107,8 @@ class Metadata extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Metadata? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Metadata? parser}) {
     parser = parser ?? Metadata.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -118,6 +119,19 @@ class Metadata extends DbBaseModel {
     if (map.containsKey('path')) path = parser.path;
     if (map.containsKey('size')) size = parser.size;
     if (map.containsKey('removed')) removed = parser.removed;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('uid')) uid = map['uid'];
+    if (map.containsKey('type')) type = map['type'];
+    if (map.containsKey('path')) path = map['path'];
+    if (map.containsKey('size')) size = map['size'];
+    if (map.containsKey('removed')) removed = map['removed'];
   }
 }
 

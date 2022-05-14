@@ -250,7 +250,8 @@ class Message extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Message? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Message? parser}) {
     parser = parser ?? Message.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -277,6 +278,35 @@ class Message extends DbBaseModel {
     if (map.containsKey('shareLinkUrl')) shareLinkUrl = parser.shareLinkUrl;
     if (map.containsKey('shareLocation')) shareLocation = parser.shareLocation;
     if (map.containsKey('revoked')) revoked = parser.revoked;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('sid')) sid = map['sid'];
+    if (map.containsKey('uid')) uid = map['uid'];
+    if (map.containsKey('from')) from = map['from'];
+    if (map.containsKey('type')) type = map['type'];
+    if (map.containsKey('title')) title = map['title'];
+    if (map.containsKey('body')) body = map['body'];
+    if (map.containsKey('short')) short = map['short'];
+    if (map.containsKey('mediaTimeS')) mediaTimeS = map['mediaTimeS'];
+    if (map.containsKey('mediaTimeE')) mediaTimeE = map['mediaTimeE'];
+    if (map.containsKey('mediaGoing')) mediaGoing = map['mediaGoing'];
+    if (map.containsKey('mediaJoined')) mediaJoined = map['mediaJoined'];
+    if (map.containsKey('rmbfenTotal')) rmbfenTotal = map['rmbfenTotal'];
+    if (map.containsKey('rmbfenCount')) rmbfenCount = map['rmbfenCount'];
+    if (map.containsKey('rmbfenEvery')) rmbfenEvery = map['rmbfenEvery'];
+    if (map.containsKey('rmbfenLuckly')) rmbfenLuckly = map['rmbfenLuckly'];
+    if (map.containsKey('shareCardId')) shareCardId = map['shareCardId'];
+    if (map.containsKey('shareIconUrl')) shareIconUrl = map['shareIconUrl'];
+    if (map.containsKey('shareHeadUrl')) shareHeadUrl = map['shareHeadUrl'];
+    if (map.containsKey('shareLinkUrl')) shareLinkUrl = map['shareLinkUrl'];
+    if (map.containsKey('shareLocation')) shareLocation = map['shareLocation'];
+    if (map.containsKey('revoked')) revoked = map['revoked'];
   }
 }
 

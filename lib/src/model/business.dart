@@ -294,7 +294,8 @@ class Business extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Business? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Business? parser}) {
     parser = parser ?? Business.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_time')) _time = parser._time;
@@ -329,6 +330,43 @@ class Business extends DbBaseModel {
     if (map.containsKey('appleAuthKeyId')) appleAuthKeyId = parser.appleAuthKeyId;
     if (map.containsKey('appleAuthRedirectUri')) appleAuthRedirectUri = parser.appleAuthRedirectUri;
     if (map.containsKey('appleAppSiteAssociation')) appleAppSiteAssociation = parser.appleAppSiteAssociation;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('no')) no = map['no'];
+    if (map.containsKey('pwd')) pwd = map['pwd'];
+    if (map.containsKey('nick')) nick = map['nick'];
+    if (map.containsKey('desc')) desc = map['desc'];
+    if (map.containsKey('icon')) icon = map['icon'];
+    if (map.containsKey('phone')) phone = map['phone'];
+    if (map.containsKey('email')) email = map['email'];
+    if (map.containsKey('secret')) secret = map['secret'];
+    if (map.containsKey('customLoginValidUrl')) customLoginValidUrl = map['customLoginValidUrl'];
+    if (map.containsKey('customPaymentValidUrl')) customPaymentValidUrl = map['customPaymentValidUrl'];
+    if (map.containsKey('wechatAppId')) wechatAppId = map['wechatAppId'];
+    if (map.containsKey('wechatAppSecret')) wechatAppSecret = map['wechatAppSecret'];
+    if (map.containsKey('wechatMchId')) wechatMchId = map['wechatMchId'];
+    if (map.containsKey('wechatMchSecret')) wechatMchSecret = map['wechatMchSecret'];
+    if (map.containsKey('alipayPid')) alipayPid = map['alipayPid'];
+    if (map.containsKey('alipayAppId')) alipayAppId = map['alipayAppId'];
+    if (map.containsKey('alipayPrivateKey')) alipayPrivateKey = map['alipayPrivateKey'];
+    if (map.containsKey('alipayPublicKey')) alipayPublicKey = map['alipayPublicKey'];
+    if (map.containsKey('alismsAccessKeyId')) alismsAccessKeyId = map['alismsAccessKeyId'];
+    if (map.containsKey('alismsAccessKeySecret')) alismsAccessKeySecret = map['alismsAccessKeySecret'];
+    if (map.containsKey('alismsEndpoint')) alismsEndpoint = map['alismsEndpoint'];
+    if (map.containsKey('alismsApiVersion')) alismsApiVersion = map['alismsApiVersion'];
+    if (map.containsKey('alismsSignName')) alismsSignName = map['alismsSignName'];
+    if (map.containsKey('alismsTemplateCode')) alismsTemplateCode = map['alismsTemplateCode'];
+    if (map.containsKey('appleKeyP8')) appleKeyP8 = map['appleKeyP8'];
+    if (map.containsKey('appleKeyP8Public')) appleKeyP8Public = map['appleKeyP8Public'];
+    if (map.containsKey('appleAuthClientId')) appleAuthClientId = map['appleAuthClientId'];
+    if (map.containsKey('appleAuthTeamId')) appleAuthTeamId = map['appleAuthTeamId'];
+    if (map.containsKey('appleAuthKeyId')) appleAuthKeyId = map['appleAuthKeyId'];
+    if (map.containsKey('appleAuthRedirectUri')) appleAuthRedirectUri = map['appleAuthRedirectUri'];
+    if (map.containsKey('appleAppSiteAssociation')) appleAppSiteAssociation = map['appleAppSiteAssociation'];
   }
 }
 

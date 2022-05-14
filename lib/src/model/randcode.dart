@@ -107,7 +107,8 @@ class Randcode extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Randcode? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Randcode? parser}) {
     parser = parser ?? Randcode.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
@@ -118,6 +119,19 @@ class Randcode extends DbBaseModel {
     if (map.containsKey('expired')) expired = parser.expired;
     if (map.containsKey('timeout')) timeout = parser.timeout;
     if (map.containsKey('testcnt')) testcnt = parser.testcnt;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_bsid')) _bsid = map['_bsid'];
+    if (map.containsKey('_time')) _time = map['_time'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('phone')) phone = map['phone'];
+    if (map.containsKey('code')) code = map['code'];
+    if (map.containsKey('expired')) expired = map['expired'];
+    if (map.containsKey('timeout')) timeout = map['timeout'];
+    if (map.containsKey('testcnt')) testcnt = map['testcnt'];
   }
 }
 

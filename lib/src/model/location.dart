@@ -175,7 +175,8 @@ class Location extends DbBaseModel {
     };
   }
 
-  void updateFields(Map<String, dynamic> map, {Location? parser}) {
+  @override
+  void updateByJson(Map<String, dynamic> map, {Location? parser}) {
     parser = parser ?? Location.fromJson(map);
     if (map.containsKey('latitude')) latitude = parser.latitude;
     if (map.containsKey('longitude')) longitude = parser.longitude;
@@ -196,6 +197,29 @@ class Location extends DbBaseModel {
     if (map.containsKey('snapshotUrl')) snapshotUrl = parser.snapshotUrl;
     if (map.containsKey('zoomLevel')) zoomLevel = parser.zoomLevel;
     if (map.containsKey('distance')) distance = parser.distance;
+  }
+
+  @override
+  void updateByKValues(Map<String, dynamic> map) {
+    if (map.containsKey('latitude')) latitude = map['latitude'];
+    if (map.containsKey('longitude')) longitude = map['longitude'];
+    if (map.containsKey('accuracy')) accuracy = map['accuracy'];
+    if (map.containsKey('altitude')) altitude = map['altitude'];
+    if (map.containsKey('bearing')) bearing = map['bearing'];
+    if (map.containsKey('speed')) speed = map['speed'];
+    if (map.containsKey('country')) country = map['country'];
+    if (map.containsKey('province')) province = map['province'];
+    if (map.containsKey('city')) city = map['city'];
+    if (map.containsKey('district')) district = map['district'];
+    if (map.containsKey('street')) street = map['street'];
+    if (map.containsKey('streetNumber')) streetNumber = map['streetNumber'];
+    if (map.containsKey('cityCode')) cityCode = map['cityCode'];
+    if (map.containsKey('adCode')) adCode = map['adCode'];
+    if (map.containsKey('address')) address = map['address'];
+    if (map.containsKey('description')) description = map['description'];
+    if (map.containsKey('snapshotUrl')) snapshotUrl = map['snapshotUrl'];
+    if (map.containsKey('zoomLevel')) zoomLevel = map['zoomLevel'];
+    if (map.containsKey('distance')) distance = map['distance'];
   }
 }
 

@@ -144,6 +144,10 @@ class UserShip extends DbBaseModel {
         update = update ?? DateTime.now().millisecondsSinceEpoch,
         active = active ?? DateTime.now().millisecondsSinceEpoch;
 
+  factory UserShip.fromString(String data) {
+    return UserShip.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory UserShip.fromJson(Map<String, dynamic> map) {
     return UserShip(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -166,6 +170,11 @@ class UserShip extends DbBaseModel {
       update: map['update'],
       active: map['active'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'UserShip(${jsonEncode(toJson())})';
   }
 
   @override

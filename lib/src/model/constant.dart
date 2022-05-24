@@ -248,8 +248,17 @@ class Constant extends DbBaseModel {
 
   Constant();
 
+  factory Constant.fromString(String data) {
+    return Constant.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Constant.fromJson(Map<String, dynamic> map) {
     return Constant();
+  }
+
+  @override
+  String toString() {
+    return 'Constant(${jsonEncode(toJson())})';
   }
 
   @override

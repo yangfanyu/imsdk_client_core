@@ -147,8 +147,17 @@ class Validator extends DbBaseModel {
 
   Validator();
 
+  factory Validator.fromString(String data) {
+    return Validator.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Validator.fromJson(Map<String, dynamic> map) {
     return Validator();
+  }
+
+  @override
+  String toString() {
+    return 'Validator(${jsonEncode(toJson())})';
   }
 
   @override

@@ -144,6 +144,10 @@ class TeamShip extends DbBaseModel {
         update = update ?? DateTime.now().millisecondsSinceEpoch,
         active = active ?? DateTime.now().millisecondsSinceEpoch;
 
+  factory TeamShip.fromString(String data) {
+    return TeamShip.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory TeamShip.fromJson(Map<String, dynamic> map) {
     return TeamShip(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -166,6 +170,11 @@ class TeamShip extends DbBaseModel {
       update: map['update'],
       active: map['active'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'TeamShip(${jsonEncode(toJson())})';
   }
 
   @override

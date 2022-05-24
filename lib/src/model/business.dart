@@ -178,6 +178,10 @@ class Business extends DbBaseModel {
         appleAuthRedirectUri = appleAuthRedirectUri ?? '',
         appleAppSiteAssociation = appleAppSiteAssociation ?? '';
 
+  factory Business.fromString(String data) {
+    return Business.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Business.fromJson(Map<String, dynamic> map) {
     return Business(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -214,6 +218,11 @@ class Business extends DbBaseModel {
       appleAuthRedirectUri: map['appleAuthRedirectUri'],
       appleAppSiteAssociation: map['appleAppSiteAssociation'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Business(${jsonEncode(toJson())})';
   }
 
   @override

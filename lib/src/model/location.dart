@@ -101,6 +101,10 @@ class Location extends DbBaseModel {
         zoomLevel = zoomLevel ?? 16.0,
         distance = distance ?? 0;
 
+  factory Location.fromString(String data) {
+    return Location.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Location.fromJson(Map<String, dynamic> map) {
     return Location(
       latitude: map['latitude'],
@@ -123,6 +127,11 @@ class Location extends DbBaseModel {
       zoomLevel: map['zoomLevel'],
       distance: map['distance'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Location(${jsonEncode(toJson())})';
   }
 
   @override

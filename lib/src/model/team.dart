@@ -118,6 +118,10 @@ class Team extends DbBaseModel {
         silent = silent ?? false,
         deny = deny ?? 0;
 
+  factory Team.fromString(String data) {
+    return Team.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Team.fromJson(Map<String, dynamic> map) {
     return Team(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -141,6 +145,11 @@ class Team extends DbBaseModel {
       silent: map['silent'],
       deny: map['deny'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Team(${jsonEncode(toJson())})';
   }
 
   @override

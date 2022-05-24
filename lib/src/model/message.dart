@@ -158,6 +158,10 @@ class Message extends DbBaseModel {
         shareLinkUrl = shareLinkUrl ?? '',
         revoked = revoked ?? false;
 
+  factory Message.fromString(String data) {
+    return Message.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Message.fromJson(Map<String, dynamic> map) {
     return Message(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -186,6 +190,11 @@ class Message extends DbBaseModel {
       shareLocation: map['shareLocation'] is Map ? Location.fromJson(map['shareLocation']) : map['shareLocation'],
       revoked: map['revoked'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Message(${jsonEncode(toJson())})';
   }
 
   @override

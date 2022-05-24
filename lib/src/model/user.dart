@@ -189,6 +189,10 @@ class User extends DbBaseModel {
         silent = silent ?? false,
         deny = deny ?? 0;
 
+  factory User.fromString(String data) {
+    return User.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory User.fromJson(Map<String, dynamic> map) {
     return User(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -226,6 +230,11 @@ class User extends DbBaseModel {
       silent: map['silent'],
       deny: map['deny'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'User(${jsonEncode(toJson())})';
   }
 
   @override

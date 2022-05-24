@@ -63,6 +63,10 @@ class Metadata extends DbBaseModel {
         size = size ?? 0,
         removed = removed ?? false;
 
+  factory Metadata.fromString(String data) {
+    return Metadata.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Metadata.fromJson(Map<String, dynamic> map) {
     return Metadata(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -75,6 +79,11 @@ class Metadata extends DbBaseModel {
       size: map['size'],
       removed: map['removed'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Metadata(${jsonEncode(toJson())})';
   }
 
   @override

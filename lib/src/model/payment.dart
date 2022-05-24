@@ -133,6 +133,10 @@ class Payment extends DbBaseModel {
         finishedTime = finishedTime ?? 0,
         finished = finished ?? false;
 
+  factory Payment.fromString(String data) {
+    return Payment.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Payment.fromJson(Map<String, dynamic> map) {
     return Payment(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -159,6 +163,11 @@ class Payment extends DbBaseModel {
       finishedTime: map['finishedTime'],
       finished: map['finished'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Payment(${jsonEncode(toJson())})';
   }
 
   @override

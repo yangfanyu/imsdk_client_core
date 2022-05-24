@@ -63,6 +63,10 @@ class Randcode extends DbBaseModel {
         timeout = timeout ?? 0,
         testcnt = testcnt ?? 0;
 
+  factory Randcode.fromString(String data) {
+    return Randcode.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
+  }
+
   factory Randcode.fromJson(Map<String, dynamic> map) {
     return Randcode(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
@@ -75,6 +79,11 @@ class Randcode extends DbBaseModel {
       timeout: map['timeout'],
       testcnt: map['testcnt'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Randcode(${jsonEncode(toJson())})';
   }
 
   @override

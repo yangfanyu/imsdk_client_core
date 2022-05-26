@@ -2,6 +2,7 @@ library imsdk_client_core;
 
 export 'src/model/business.dart';
 export 'src/model/constant.dart';
+export 'src/model/customx.dart';
 export 'src/model/location.dart';
 export 'src/model/message.dart';
 export 'src/model/metadata.dart';
@@ -15,6 +16,7 @@ export 'src/model/validator.dart';
 export 'src/netclient.dart';
 
 export '/src/tool/comtools.dart';
+export '/src/tool/datapage.dart';
 export '/src/tool/session.dart';
 
-export 'package:shelf_easy/shelf_easy.dart' show ObjectId, DbQueryField, MediaType, EasyLogHandler, EasyLogLevel, EasyLogger, EasyPacket;
+export 'package:shelf_easy/shelf_easy.dart' show ObjectId, DbJsonWraper, DbQueryField, MediaType, EasyLogHandler, EasyLogLevel, EasyLogger, EasyPacket;

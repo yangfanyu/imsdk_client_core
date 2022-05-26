@@ -25,6 +25,18 @@ class Validator extends DbBaseModel {
   ///WebRTC心跳超时时间（秒）
   static const int webrtcTimeouts = 60;
 
+  ///自定义类型允许的最小序号
+  static const int customxNoMin = 0;
+
+  ///自定义类型允许的最大序号
+  static const int customxNoMax = 8;
+
+  ///自定义标记允许的最小分数
+  static const int cusmarkScoreMin = 0;
+
+  ///自定义标记允许的最大分数
+  static const int cusmarkScoreMax = 10;
+
   ///ID最小长度
   static const int identLenMin = 8;
 

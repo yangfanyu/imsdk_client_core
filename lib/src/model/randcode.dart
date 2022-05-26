@@ -14,7 +14,7 @@ class Randcode extends DbBaseModel {
   int _time;
 
   ///自定义数据
-  Map<String, String> _extra;
+  DbJsonWraper _extra;
 
   ///手机号码
   String phone;
@@ -41,22 +41,22 @@ class Randcode extends DbBaseModel {
   int get time => _time;
 
   ///自定义数据
-  Map<String, String> get extra => _extra;
+  DbJsonWraper get extra => _extra;
 
   Randcode({
     ObjectId? id,
     ObjectId? bsid,
     int? time,
-    Map<String, String>? extra,
+    DbJsonWraper? extra,
     String? phone,
     String? code,
     bool? expired,
     int? timeout,
     int? testcnt,
   })  : _id = id ?? ObjectId(),
-        _bsid = bsid ?? ObjectId(),
+        _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
-        _extra = extra ?? {},
+        _extra = extra ?? DbJsonWraper(),
         phone = phone ?? '',
         code = code ?? '',
         expired = expired ?? false,
@@ -72,7 +72,7 @@ class Randcode extends DbBaseModel {
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
       bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
       time: map['_time'],
-      extra: (map['_extra'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
+      extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
       phone: map['phone'],
       code: map['code'],
       expired: map['expired'],
@@ -157,7 +157,7 @@ class RandcodeDirty {
   set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
 
   ///自定义数据
-  set extra(Map<String, String> value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
 
   ///手机号码
   set phone(String value) => data['phone'] = DbQueryField.convertToBaseType(value);

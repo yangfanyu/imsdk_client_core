@@ -14,7 +14,7 @@ class Payment extends DbBaseModel {
   int _time;
 
   ///自定义数据
-  Map<String, String> _extra;
+  DbJsonWraper _extra;
 
   ///所属用户id
   ObjectId uid;
@@ -26,7 +26,7 @@ class Payment extends DbBaseModel {
   int rmbfen;
 
   ///商品信息
-  Map<String, String> goods;
+  String goods;
 
   ///第三方充值下单请求的数据
   String thirdSendData;
@@ -83,17 +83,17 @@ class Payment extends DbBaseModel {
   int get time => _time;
 
   ///自定义数据
-  Map<String, String> get extra => _extra;
+  DbJsonWraper get extra => _extra;
 
   Payment({
     ObjectId? id,
     ObjectId? bsid,
     int? time,
-    Map<String, String>? extra,
+    DbJsonWraper? extra,
     ObjectId? uid,
     int? type,
     int? rmbfen,
-    Map<String, String>? goods,
+    String? goods,
     String? thirdSendData,
     String? thirdSendResult,
     String? thirdNotify,
@@ -110,13 +110,13 @@ class Payment extends DbBaseModel {
     int? finishedTime,
     bool? finished,
   })  : _id = id ?? ObjectId(),
-        _bsid = bsid ?? ObjectId(),
+        _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
-        _extra = extra ?? {},
-        uid = uid ?? ObjectId(),
+        _extra = extra ?? DbJsonWraper(),
+        uid = uid ?? ObjectId.fromHexString('000000000000000000000000'),
         type = type ?? 0,
         rmbfen = rmbfen ?? 0,
-        goods = goods ?? {},
+        goods = goods ?? '',
         thirdSendData = thirdSendData ?? '',
         thirdSendResult = thirdSendResult ?? '',
         thirdNotify = thirdNotify ?? '',
@@ -124,8 +124,8 @@ class Payment extends DbBaseModel {
         appleSendData = appleSendData ?? '',
         appleSendResult = appleSendResult ?? '',
         appleSendCount = appleSendCount ?? 0,
-        redpackMsgId = redpackMsgId ?? ObjectId(),
-        redpackPayId = redpackPayId ?? ObjectId(),
+        redpackMsgId = redpackMsgId ?? ObjectId.fromHexString('000000000000000000000000'),
+        redpackPayId = redpackPayId ?? ObjectId.fromHexString('000000000000000000000000'),
         redpackReturned = redpackReturned ?? false,
         customValidData = customValidData ?? '',
         customValidResult = customValidResult ?? '',
@@ -142,11 +142,11 @@ class Payment extends DbBaseModel {
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
       bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
       time: map['_time'],
-      extra: (map['_extra'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
+      extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
       uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
       type: map['type'],
       rmbfen: map['rmbfen'],
-      goods: (map['goods'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
+      goods: map['goods'],
       thirdSendData: map['thirdSendData'],
       thirdSendResult: map['thirdSendResult'],
       thirdNotify: map['thirdNotify'],
@@ -297,7 +297,7 @@ class PaymentDirty {
   set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
 
   ///自定义数据
-  set extra(Map<String, String> value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
 
   ///所属用户id
   set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
@@ -309,7 +309,7 @@ class PaymentDirty {
   set rmbfen(int value) => data['rmbfen'] = DbQueryField.convertToBaseType(value);
 
   ///商品信息
-  set goods(Map<String, String> value) => data['goods'] = DbQueryField.convertToBaseType(value);
+  set goods(String value) => data['goods'] = DbQueryField.convertToBaseType(value);
 
   ///第三方充值下单请求的数据
   set thirdSendData(String value) => data['thirdSendData'] = DbQueryField.convertToBaseType(value);

@@ -15,7 +15,7 @@ class Message extends DbBaseModel {
   int _time;
 
   ///自定义数据
-  Map<String, String> _extra;
+  DbJsonWraper _extra;
 
   ///聊天会话id
   ObjectId sid;
@@ -90,7 +90,7 @@ class Message extends DbBaseModel {
   int get time => _time;
 
   ///自定义数据
-  Map<String, String> get extra => _extra;
+  DbJsonWraper get extra => _extra;
 
   ///
   ///消息发送者展示的名称
@@ -111,7 +111,7 @@ class Message extends DbBaseModel {
     ObjectId? id,
     ObjectId? bsid,
     int? time,
-    Map<String, String>? extra,
+    DbJsonWraper? extra,
     ObjectId? sid,
     ObjectId? uid,
     int? from,
@@ -134,11 +134,11 @@ class Message extends DbBaseModel {
     this.shareLocation,
     bool? revoked,
   })  : _id = id ?? ObjectId(),
-        _bsid = bsid ?? ObjectId(),
+        _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
-        _extra = extra ?? {},
-        sid = sid ?? ObjectId(),
-        uid = uid ?? ObjectId(),
+        _extra = extra ?? DbJsonWraper(),
+        sid = sid ?? ObjectId.fromHexString('000000000000000000000000'),
+        uid = uid ?? ObjectId.fromHexString('000000000000000000000000'),
         from = from ?? 0,
         type = type ?? 0,
         title = title ?? '',
@@ -152,7 +152,7 @@ class Message extends DbBaseModel {
         rmbfenCount = rmbfenCount ?? 0,
         rmbfenEvery = rmbfenEvery ?? [],
         rmbfenLuckly = rmbfenLuckly ?? [],
-        shareCardId = shareCardId ?? ObjectId(),
+        shareCardId = shareCardId ?? ObjectId.fromHexString('000000000000000000000000'),
         shareIconUrl = shareIconUrl ?? '',
         shareHeadUrl = shareHeadUrl ?? [],
         shareLinkUrl = shareLinkUrl ?? '',
@@ -167,7 +167,7 @@ class Message extends DbBaseModel {
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
       bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
       time: map['_time'],
-      extra: (map['_extra'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
+      extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
       sid: map['sid'] is String ? ObjectId.fromHexString(map['sid']) : map['sid'],
       uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
       from: map['from'],
@@ -332,7 +332,7 @@ class MessageDirty {
   set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
 
   ///自定义数据
-  set extra(Map<String, String> value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
 
   ///聊天会话id
   set sid(ObjectId value) => data['sid'] = DbQueryField.convertToBaseType(value);

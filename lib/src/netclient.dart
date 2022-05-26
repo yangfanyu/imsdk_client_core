@@ -1,7 +1,9 @@
+import 'package:imsdk_client_core/src/model/cusmark.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
 import 'model/constant.dart';
+import 'model/customx.dart';
 import 'model/location.dart';
 import 'model/message.dart';
 import 'model/metadata.dart';
@@ -10,6 +12,7 @@ import 'model/teamship.dart';
 import 'model/user.dart';
 import 'model/usership.dart';
 import 'tool/comtools.dart';
+import 'tool/datapage.dart';
 import 'tool/session.dart';
 
 class NetClient {
@@ -557,6 +560,94 @@ class NetClient {
     return response;
   }
 
+  ///创建自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
+  Future<EasyPacket<CustomX>> customXInsert({required int no, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, DbJsonWraper? body}) async {
+    final response = await _aliveClient.websocketRequest('customXInsert', data: {
+      'bsid': bsid,
+      'no': no,
+      'int1': int1,
+      'int2': int2,
+      'int3': int3,
+      'str1': str1,
+      'str2': str2,
+      'str3': str3,
+      'rid1': rid1,
+      'rid2': rid2,
+      'rid3': rid3,
+      'body': body?.toJson(),
+    });
+    if (response.ok) {
+      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///删除自定义数据，[no]为数据集合分类序号
+  Future<EasyPacket<void>> customXDelete({required int no, required ObjectId id}) async {
+    final response = await _aliveClient.websocketRequest('customXDelete', data: {'bsid': bsid, 'no': no, 'id': id});
+    return response;
+  }
+
+  ///更新自定义数据，[no]为数据集合分类序号，返回数据不包含[CustomX.body]字段
+  Future<EasyPacket<CustomX>> customXUpdate({required int no, required ObjectId id, required Map<String, dynamic> fields}) async {
+    final response = await _aliveClient.websocketRequest('customXUpdate', data: {'bsid': bsid, 'no': no, 'id': id, 'fields': fields});
+    if (response.ok) {
+      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///更新自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
+  Future<EasyPacket<CustomX>> customXDetail({required int no, required ObjectId id}) async {
+    final response = await _aliveClient.websocketRequest('customXDetail', data: {'bsid': bsid, 'no': no, 'id': id});
+    if (response.ok) {
+      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///标记自定义数据，[no]为数据集合分类序号，返回数据不包含[CustomX.body]字段
+  Future<EasyPacket<CustomX>> customXMark({required int no, required ObjectId id, double? score}) async {
+    final response = await _aliveClient.websocketRequest('customXMark', data: {'bsid': bsid, 'no': no, 'id': id, 'score': score});
+    if (response.ok) {
+      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据，返回数据不包含[CustomX.body]字段
+  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter}) async {
+    if (reload) dataPage.pgcache.clear(); //清除缓存
+    dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'filter': filter, 'sorter': sorter});
+    if (response.ok) {
+      final pgasync = response.data!['pgasync'] as int;
+      final customxList = response.data!['customxList'] as List;
+      final cusmarkList = response.data!['cusmarkList'] as List;
+      if (pgasync == dataPage.pgasync) {
+        final cusmarkMap = <ObjectId, Cusmark>{};
+        for (var data in cusmarkList) {
+          final cusmark = Cusmark.fromJson(data);
+          cusmarkMap[cusmark.rid] = cusmark;
+        }
+        for (var data in customxList) {
+          final customx = CustomX.fromJson(data);
+          customx.cusmark = cusmarkMap[customx.id];
+          dataPage.append(customx);
+        }
+        return response.cloneExtra(customxList.isEmpty); //是否已加载全部数据
+      } else {
+        _aliveClient.logError(['customXLoad =>', '远程响应号已过期 $pgasync']);
+        return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
+      }
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
   /* **************** 工具方法 **************** */
 
   ///创建会话

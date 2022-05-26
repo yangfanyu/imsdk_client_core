@@ -15,7 +15,7 @@ class UserShip extends DbBaseModel {
   int _time;
 
   ///自定义数据
-  Map<String, String> _extra;
+  DbJsonWraper _extra;
 
   ///用户id
   ObjectId uid;
@@ -72,7 +72,7 @@ class UserShip extends DbBaseModel {
   int get time => _time;
 
   ///自定义数据
-  Map<String, String> get extra => _extra;
+  DbJsonWraper get extra => _extra;
 
   ///
   ///展示的名称
@@ -108,7 +108,7 @@ class UserShip extends DbBaseModel {
     ObjectId? id,
     ObjectId? bsid,
     int? time,
-    Map<String, String>? extra,
+    DbJsonWraper? extra,
     ObjectId? uid,
     ObjectId? sid,
     ObjectId? rid,
@@ -125,13 +125,13 @@ class UserShip extends DbBaseModel {
     int? update,
     int? active,
   })  : _id = id ?? ObjectId(),
-        _bsid = bsid ?? ObjectId(),
+        _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
-        _extra = extra ?? {},
-        uid = uid ?? ObjectId(),
-        sid = sid ?? ObjectId(),
-        rid = rid ?? ObjectId(),
-        fid = fid ?? ObjectId(),
+        _extra = extra ?? DbJsonWraper(),
+        uid = uid ?? ObjectId.fromHexString('000000000000000000000000'),
+        sid = sid ?? ObjectId.fromHexString('000000000000000000000000'),
+        rid = rid ?? ObjectId.fromHexString('000000000000000000000000'),
+        fid = fid ?? ObjectId.fromHexString('000000000000000000000000'),
         from = from ?? 0,
         state = state ?? 0,
         apply = apply ?? '',
@@ -153,7 +153,7 @@ class UserShip extends DbBaseModel {
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
       bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
       time: map['_time'],
-      extra: (map['_extra'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
+      extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
       uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
       sid: map['sid'] is String ? ObjectId.fromHexString(map['sid']) : map['sid'],
       rid: map['rid'] is String ? ObjectId.fromHexString(map['rid']) : map['rid'],
@@ -288,7 +288,7 @@ class UserShipDirty {
   set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
 
   ///自定义数据
-  set extra(Map<String, String> value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
 
   ///用户id
   set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);

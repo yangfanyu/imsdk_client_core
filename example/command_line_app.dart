@@ -197,6 +197,9 @@ class CommandLineApp extends EasyLogger {
       MenuItem('我的信息', () {
         navigationTo(from: homePage, to: infomationPage);
       }),
+      MenuItem('数据模块', () {
+        navigationTo(from: homePage, to: customxPage);
+      }),
     ]);
   }
 
@@ -246,6 +249,7 @@ class CommandLineApp extends EasyLogger {
             for (var message in ship.msgcache) {
               logDebug(['sender(${message.displayNick})', message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
             }
+            if (result.extra == true) logDebug(['加载完毕！']);
             Future.delayed(delayDuration, () => sessionsPage());
           } else {
             logWarn([result.desc]);
@@ -681,6 +685,131 @@ class CommandLineApp extends EasyLogger {
         logDebug(['我的信息: ']);
         logDebug([_netClient.user]);
         Future.delayed(delayDuration, () => infomationPage());
+      }),
+    ]);
+  }
+
+  final datapage = DataPage(0);
+
+  void customxPage() {
+    renderPage('首页->数据模块', [
+      MenuItem('创建自定义数据', () async {
+        logInfo(['创建自定义数据请输入数据内容:']);
+        final content = (await readStdinLine()).trim();
+        final result = await _netClient.customXInsert(
+          no: datapage.no,
+          int1: 111,
+          int2: 222,
+          int3: 333,
+          str1: 'str111',
+          str2: 'str222',
+          str3: 'str333',
+          rid1: DbQueryField.hexstr2ObjectId('111111111111111111111111'),
+          rid2: DbQueryField.hexstr2ObjectId('222222222222222222222222'),
+          rid3: DbQueryField.hexstr2ObjectId('333333333333333333333333'),
+          body: DbJsonWraper.fromJson({'content': content}),
+        );
+        if (result.ok) {
+          logDebug([result.extra, result.extra?.cusmark]);
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('删除自定义数据', () async {
+        logInfo(['删除自定义数据请输入数据id:']);
+        final id = (await readStdinLine()).trim();
+        final result = await _netClient.customXDelete(no: datapage.no, id: DbQueryField.hexstr2ObjectId(id));
+        if (result.ok) {
+          logDebug([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('更新自定义数据', () async {
+        logInfo(['更新自定义数据请输入数据id:']);
+        final id = (await readStdinLine()).trim();
+        logInfo(['更新自定义数据请输入数据内容:']);
+        final content = (await readStdinLine()).trim();
+        final result = await _netClient.customXUpdate(
+          no: datapage.no,
+          id: DbQueryField.hexstr2ObjectId(id),
+          fields: (CustomXDirty()
+                ..int1 = 1
+                ..int2 = 2
+                ..int3 = 3
+                ..str1 = 'str1'
+                ..str2 = 'str2'
+                ..str3 = 'str3'
+                ..rid1 = DbQueryField.hexstr2ObjectId('000000000000000000000001')
+                ..rid2 = DbQueryField.hexstr2ObjectId('000000000000000000000002')
+                ..rid3 = DbQueryField.hexstr2ObjectId('000000000000000000000003')
+                ..hot1 = 1
+                ..hot2 = 2
+                ..hotx = 10
+                ..body = DbJsonWraper(data: {'content': content}))
+              .data,
+        );
+        if (result.ok) {
+          logDebug([result.extra, result.extra?.cusmark]);
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('标记自定义数据', () async {
+        logInfo(['标记自定义数据请输入数据id:']);
+        final id = (await readStdinLine()).trim();
+        logInfo(['标记自定义数据请输入数据分数（可空）:']);
+        final score = (await readStdinLine()).trim();
+        final result = await _netClient.customXMark(
+          no: datapage.no,
+          id: DbQueryField.hexstr2ObjectId(id),
+          score: score.isEmpty ? null : double.parse(score),
+        );
+        if (result.ok) {
+          logDebug([result.extra, result.extra?.cusmark]);
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('加载自定义数据列表', () async {
+        logInfo(['加载自定义数据列表请输入是否重置 (true, false):']);
+        final reload = (await readStdinLine()).trim();
+        final sorter = CustomXDirty()..update = -1;
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
+        final result = await _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
+        if (result.ok) {
+          int no = 0;
+          for (var customx in datapage.pgcache) {
+            logDebug([no++, '=>', customx, customx.cusmark, ComTools.formatDateTime(customx.update, yyMMdd: true, hhmmss: true)]);
+          }
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('加载自定义数据详情', () async {
+        logInfo(['加载自定义数据详情请输入数据id:']);
+        final id = (await readStdinLine()).trim();
+        final result = await _netClient.customXDetail(no: datapage.no, id: DbQueryField.hexstr2ObjectId(id));
+        if (result.ok) {
+          logDebug([result.extra, result.extra?.cusmark]);
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
       }),
     ]);
   }

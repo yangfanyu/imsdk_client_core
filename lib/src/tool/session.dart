@@ -8,6 +8,9 @@ import '../model/user.dart';
 import '../model/usership.dart';
 import 'comtools.dart';
 
+///
+///聊天会话
+///
 class Session {
   ///好友关系
   final UserShip? _usership;
@@ -47,7 +50,7 @@ class Session {
   int get time => _usership?.time ?? _teamship?.time ?? 0;
 
   ///自定义数据
-  Map<String, String> get extra => _usership?.extra ?? _teamship?.extra ?? {};
+  DbJsonWraper get extra => _usership?.extra ?? _teamship?.extra ?? DbJsonWraper();
 
   ///用户id
   ObjectId get uid => _usership?.uid ?? _teamship?.uid ?? DbQueryField.createObjectId();

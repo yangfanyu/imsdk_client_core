@@ -229,6 +229,10 @@ class NetClient {
     //销毁长连接
     _aliveClient.destroy();
     //释放缓存
+    _sessionState.clear();
+    _waitshipState.clear();
+    _usershipState.clear();
+    _teamshipState.clear();
     _teamuserStateMap.clear();
     _userMap.clear();
     _teamMap.clear();
@@ -236,6 +240,10 @@ class NetClient {
     _usershipMap.clear();
     _teamshipMap.clear();
     _teamuserMapMap.clear();
+    _dirtySessionState = true;
+    _dirtyWaitshipState = true;
+    _dirtyUsershipState = true;
+    _dirtyTeamshipState = true;
     _dirtyTeamuserStateMap.clear();
   }
 
@@ -1363,5 +1371,12 @@ class NetClientAzState {
     if (unread != null) {
       _unread = unread;
     }
+  }
+
+  void clear() {
+    azMap.clear();
+    azList.clear();
+    okList.clear();
+    _unread = 0;
   }
 }

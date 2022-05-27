@@ -1,8 +1,8 @@
-import 'package:imsdk_client_core/src/model/cusmark.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
 import 'model/constant.dart';
+import 'model/cusmark.dart';
 import 'model/customx.dart';
 import 'model/location.dart';
 import 'model/message.dart';

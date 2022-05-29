@@ -569,7 +569,7 @@ class NetClient {
   }
 
   ///创建自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXInsert({required int no, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, DbJsonWraper? body}) async {
+  Future<EasyPacket<CustomX>> customXInsert({required int no, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, DbJsonWraper? body, DbJsonWraper? extra}) async {
     final response = await _aliveClient.websocketRequest('customXInsert', data: {
       'bsid': bsid,
       'no': no,
@@ -583,6 +583,7 @@ class NetClient {
       'rid2': rid2,
       'rid3': rid3,
       'body': body?.toJson(),
+      'extra': extra?.toJson(),
     });
     if (response.ok) {
       return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
@@ -890,18 +891,18 @@ class NetClient {
 
   ///读取群组成员状态
   NetClientAzState getTeamuserState(ObjectId tid) {
-    final _teamuserState = _teamuserStateMap[tid];
-    final _teamuserMap = _teamuserMapMap[tid];
-    final _dirtyTeamuserState = _dirtyTeamuserStateMap[tid];
-    if (_teamuserState == null || _teamuserMap == null || _dirtyTeamuserState == null) {
+    final teamuserState = _teamuserStateMap[tid];
+    final teamuserMap = _teamuserMapMap[tid];
+    final dirtyTeamuserState = _dirtyTeamuserStateMap[tid];
+    if (teamuserState == null || teamuserMap == null || dirtyTeamuserState == null) {
       return NetClientAzState()..update(azList: [0]); //这种情况说明没有加入这个群组
     }
-    if (_dirtyTeamuserState) {
+    if (dirtyTeamuserState) {
       //构建列表
       final team = getTeam(tid);
       final admins = <Object>[];
       final azList = <Object>[...NetClientAzState.letters];
-      _teamuserMap.forEach((key, value) {
+      teamuserMap.forEach((key, value) {
         if (ComTools.isTeamSuperAdmin(team, value.uid)) {
           admins.insert(0, value);
         } else if (ComTools.isTeamNormalAdmin(team, value.uid)) {
@@ -955,12 +956,12 @@ class NetClient {
       azMap[NetClientAzState.header] = 0;
       azList.insertAll(0, admins);
       //最后插入数量
-      azList.add(_teamuserMap.length);
+      azList.add(teamuserMap.length);
       //更新状态
-      _teamuserState.update(azMap: azMap, azList: azList);
+      teamuserState.update(azMap: azMap, azList: azList);
       _dirtyTeamuserStateMap[tid] = false;
     }
-    return _teamuserState;
+    return teamuserState;
   }
 
   ///设置用户信息获取完成的监听器---此事件由本地触发
@@ -1270,24 +1271,24 @@ class NetClient {
 
   ///更新[_teamuserMapMap]的[teamId]子项缓存，如果数据仍然被缓存则将key放入[saveKeys]中
   TeamShip _cacheTeamUser(ObjectId teamId, dynamic data, {Set<ObjectId>? saveKeys}) {
-    final _teamuserMap = _teamuserMapMap[teamId];
+    final teamuserMap = _teamuserMapMap[teamId];
     final item = TeamShip.fromJson(data);
-    if (_teamuserMap != null && item.rid == teamId) {
+    if (teamuserMap != null && item.rid == teamId) {
       //更新群组成员缓存
       final key = item.uid; //uid is key
       if (item.state == Constant.shipStatePass) {
-        if (_teamuserMap.containsKey(key)) {
-          _teamuserMap[key]?.updateByJson(data, parser: item);
+        if (teamuserMap.containsKey(key)) {
+          teamuserMap[key]?.updateByJson(data, parser: item);
         } else {
-          _teamuserMap[key] = item;
+          teamuserMap[key] = item;
         }
         saveKeys?.add(key);
       } else {
-        _teamuserMap.remove(key);
+        teamuserMap.remove(key);
       }
       //标记要刷新的状态
       _dirtyTeamuserStateMap[teamId] = true;
-      return _teamuserMap[key] ?? item;
+      return teamuserMap[key] ?? item;
     } else {
       return item;
     }

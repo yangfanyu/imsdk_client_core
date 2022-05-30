@@ -29,13 +29,13 @@ class Validator extends DbBaseModel {
   static const int customxNoMin = 0;
 
   ///自定义类型允许的最大序号
-  static const int customxNoMax = 8;
+  static const int customxNoMax = 20;
 
   ///自定义标记允许的最小分数
   static const int cusmarkScoreMin = 0;
 
   ///自定义标记允许的最大分数
-  static const int cusmarkScoreMax = 10;
+  static const int cusmarkScoreMax = 100;
 
   ///ID最小长度
   static const int identLenMin = 8;

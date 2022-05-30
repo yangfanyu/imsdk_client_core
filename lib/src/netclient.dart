@@ -569,21 +569,24 @@ class NetClient {
   }
 
   ///创建自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXInsert({required int no, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, DbJsonWraper? body, DbJsonWraper? extra}) async {
+  Future<EasyPacket<CustomX>> customXInsert({required int no, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, DbJsonWraper? body, DbJsonWraper? extra, int? rno1, int? rno2, int? rno3}) async {
     final response = await _aliveClient.websocketRequest('customXInsert', data: {
       'bsid': bsid,
       'no': no,
+      'rid1': rid1,
+      'rid2': rid2,
+      'rid3': rid3,
       'int1': int1,
       'int2': int2,
       'int3': int3,
       'str1': str1,
       'str2': str2,
       'str3': str3,
-      'rid1': rid1,
-      'rid2': rid2,
-      'rid3': rid3,
       'body': body?.toJson(),
       'extra': extra?.toJson(),
+      'rno1': rno1,
+      'rno2': rno2,
+      'rno3': rno3,
     });
     if (response.ok) {
       return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
@@ -593,8 +596,8 @@ class NetClient {
   }
 
   ///删除自定义数据，[no]为数据集合分类序号
-  Future<EasyPacket<void>> customXDelete({required int no, required ObjectId id}) async {
-    final response = await _aliveClient.websocketRequest('customXDelete', data: {'bsid': bsid, 'no': no, 'id': id});
+  Future<EasyPacket<void>> customXDelete({required int no, required ObjectId id, int? rno1, int? rno2, int? rno3}) async {
+    final response = await _aliveClient.websocketRequest('customXDelete', data: {'bsid': bsid, 'no': no, 'id': id, 'rno1': rno1, 'rno2': rno2, 'rno3': rno3});
     return response;
   }
 
@@ -609,8 +612,8 @@ class NetClient {
   }
 
   ///更新自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXDetail({required int no, required ObjectId id}) async {
-    final response = await _aliveClient.websocketRequest('customXDetail', data: {'bsid': bsid, 'no': no, 'id': id});
+  Future<EasyPacket<CustomX>> customXDetail({required int no, required ObjectId id, int hot1 = 0, int hot2 = 0, hotx = 0}) async {
+    final response = await _aliveClient.websocketRequest('customXDetail', data: {'bsid': bsid, 'no': no, 'id': id, 'hot1': hot1, 'hot2': hot2, 'hotx': hotx});
     if (response.ok) {
       return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
     } else {

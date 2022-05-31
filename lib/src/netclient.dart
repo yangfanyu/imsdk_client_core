@@ -601,7 +601,7 @@ class NetClient {
     return response;
   }
 
-  ///更新自定义数据，[no]为数据集合分类序号，返回数据不包含[CustomX.body]字段
+  ///更新自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
   Future<EasyPacket<CustomX>> customXUpdate({required int no, required ObjectId id, required Map<String, dynamic> fields}) async {
     final response = await _aliveClient.websocketRequest('customXUpdate', data: {'bsid': bsid, 'no': no, 'id': id, 'fields': fields});
     if (response.ok) {
@@ -621,7 +621,7 @@ class NetClient {
     }
   }
 
-  ///标记自定义数据，[no]为数据集合分类序号，返回数据不包含[CustomX.body]字段
+  ///标记自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
   Future<EasyPacket<CustomX>> customXMark({required int no, required ObjectId id, double? score}) async {
     final response = await _aliveClient.websocketRequest('customXMark', data: {'bsid': bsid, 'no': no, 'id': id, 'score': score});
     if (response.ok) {
@@ -631,11 +631,11 @@ class NetClient {
     }
   }
 
-  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据，返回数据不包含[CustomX.body]字段
-  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter}) async {
+  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据。[body]为false时，返回数据不包含[CustomX.body]字段
+  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter, bool body = false}) async {
     if (reload) dataPage.pgcache.clear(); //清除缓存
     dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'filter': filter, 'sorter': sorter});
+    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'filter': filter, 'sorter': sorter, 'body': body});
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
       final customxList = response.data!['customxList'] as List;

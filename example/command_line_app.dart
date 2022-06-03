@@ -707,7 +707,7 @@ class CommandLineApp extends EasyLogger {
           rid1: DbQueryField.hexstr2ObjectId('111111111111111111111111'),
           rid2: DbQueryField.hexstr2ObjectId('222222222222222222222222'),
           rid3: DbQueryField.hexstr2ObjectId('333333333333333333333333'),
-          body: DbJsonWraper.fromJson({'content': content}),
+          body1: DbJsonWraper.fromJson({'content': content}),
         );
         if (result.ok) {
           logDebug([result.extra, result.extra?.cusmark]);
@@ -750,7 +750,7 @@ class CommandLineApp extends EasyLogger {
                 ..hot1 = 1
                 ..hot2 = 2
                 ..hotx = 10
-                ..body = DbJsonWraper(data: {'content': content}))
+                ..body1 = DbJsonWraper(data: {'content': content}))
               .data,
         );
         if (result.ok) {

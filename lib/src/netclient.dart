@@ -569,7 +569,7 @@ class NetClient {
   }
 
   ///创建自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXInsert({required int no, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, DbJsonWraper? body, DbJsonWraper? extra, int? rno1, int? rno2, int? rno3}) async {
+  Future<EasyPacket<CustomX>> customXInsert({required int no, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, DbJsonWraper? body1, DbJsonWraper? body2, DbJsonWraper? extra, int? state, int? rno1, int? rno2, int? rno3}) async {
     final response = await _aliveClient.websocketRequest('customXInsert', data: {
       'bsid': bsid,
       'no': no,
@@ -582,8 +582,10 @@ class NetClient {
       'str1': str1,
       'str2': str2,
       'str3': str3,
-      'body': body?.toJson(),
+      'body1': body1?.toJson(),
+      'body2': body2?.toJson(),
       'extra': extra?.toJson(),
+      'state': state,
       'rno1': rno1,
       'rno2': rno2,
       'rno3': rno3,
@@ -595,7 +597,7 @@ class NetClient {
     }
   }
 
-  ///删除自定义数据，[no]为数据集合分类序号
+  ///删除自定义数据，[no]为数据集合分类序号，该操作是永久删除数据
   Future<EasyPacket<void>> customXDelete({required int no, required ObjectId id, int? rno1, int? rno2, int? rno3}) async {
     final response = await _aliveClient.websocketRequest('customXDelete', data: {'bsid': bsid, 'no': no, 'id': id, 'rno1': rno1, 'rno2': rno2, 'rno3': rno3});
     return response;
@@ -631,11 +633,11 @@ class NetClient {
     }
   }
 
-  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据。[body]为false时，返回数据不包含[CustomX.body]字段
-  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter, bool body = false}) async {
+  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据。[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段
+  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter, bool body1 = false, bool body2 = false}) async {
     if (reload) dataPage.pgcache.clear(); //清除缓存
     dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'filter': filter, 'sorter': sorter, 'body': body});
+    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'filter': filter, 'sorter': sorter, 'body1': body1, 'body2': body2});
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
       final customxList = response.data!['customxList'] as List;

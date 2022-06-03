@@ -47,11 +47,17 @@ class CustomX extends DbBaseModel {
   ///字符串索引3
   String str3;
 
-  ///数据内容
-  DbJsonWraper body;
+  ///数据内容1
+  DbJsonWraper body1;
+
+  ///数据内容2
+  DbJsonWraper body2;
 
   ///最近更新时间
   int update;
+
+  ///数据状态（包括该字段与以下字段的更新不会导致update字段更新）
+  int state;
 
   ///平局得分（每个用户打分一次）
   double score;
@@ -109,8 +115,10 @@ class CustomX extends DbBaseModel {
     String? str1,
     String? str2,
     String? str3,
-    DbJsonWraper? body,
+    DbJsonWraper? body1,
+    DbJsonWraper? body2,
     int? update,
+    int? state,
     double? score,
     int? mark,
     int? hot1,
@@ -133,8 +141,10 @@ class CustomX extends DbBaseModel {
         str1 = str1 ?? '',
         str2 = str2 ?? '',
         str3 = str3 ?? '',
-        body = body ?? DbJsonWraper(),
+        body1 = body1 ?? DbJsonWraper(),
+        body2 = body2 ?? DbJsonWraper(),
         update = update ?? DateTime.now().millisecondsSinceEpoch,
+        state = state ?? 0,
         score = score ?? 0,
         mark = mark ?? 0,
         hot1 = hot1 ?? 0,
@@ -164,8 +174,10 @@ class CustomX extends DbBaseModel {
       str1: map['str1'],
       str2: map['str2'],
       str3: map['str3'],
-      body: map['body'] is Map ? DbJsonWraper.fromJson(map['body']) : map['body'],
+      body1: map['body1'] is Map ? DbJsonWraper.fromJson(map['body1']) : map['body1'],
+      body2: map['body2'] is Map ? DbJsonWraper.fromJson(map['body2']) : map['body2'],
       update: map['update'],
+      state: map['state'],
       score: map['score'],
       mark: map['mark'],
       hot1: map['hot1'],
@@ -199,8 +211,10 @@ class CustomX extends DbBaseModel {
       'str1': DbQueryField.convertToBaseType(str1),
       'str2': DbQueryField.convertToBaseType(str2),
       'str3': DbQueryField.convertToBaseType(str3),
-      'body': DbQueryField.convertToBaseType(body),
+      'body1': DbQueryField.convertToBaseType(body1),
+      'body2': DbQueryField.convertToBaseType(body2),
       'update': DbQueryField.convertToBaseType(update),
+      'state': DbQueryField.convertToBaseType(state),
       'score': DbQueryField.convertToBaseType(score),
       'mark': DbQueryField.convertToBaseType(mark),
       'hot1': DbQueryField.convertToBaseType(hot1),
@@ -229,8 +243,10 @@ class CustomX extends DbBaseModel {
       'str1': str1,
       'str2': str2,
       'str3': str3,
-      'body': body,
+      'body1': body1,
+      'body2': body2,
       'update': update,
+      'state': state,
       'score': score,
       'mark': mark,
       'hot1': hot1,
@@ -259,8 +275,10 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('str1')) str1 = parser.str1;
     if (map.containsKey('str2')) str2 = parser.str2;
     if (map.containsKey('str3')) str3 = parser.str3;
-    if (map.containsKey('body')) body = parser.body;
+    if (map.containsKey('body1')) body1 = parser.body1;
+    if (map.containsKey('body2')) body2 = parser.body2;
     if (map.containsKey('update')) update = parser.update;
+    if (map.containsKey('state')) state = parser.state;
     if (map.containsKey('score')) score = parser.score;
     if (map.containsKey('mark')) mark = parser.mark;
     if (map.containsKey('hot1')) hot1 = parser.hot1;
@@ -287,8 +305,10 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('str1')) str1 = map['str1'];
     if (map.containsKey('str2')) str2 = map['str2'];
     if (map.containsKey('str3')) str3 = map['str3'];
-    if (map.containsKey('body')) body = map['body'];
+    if (map.containsKey('body1')) body1 = map['body1'];
+    if (map.containsKey('body2')) body2 = map['body2'];
     if (map.containsKey('update')) update = map['update'];
+    if (map.containsKey('state')) state = map['state'];
     if (map.containsKey('score')) score = map['score'];
     if (map.containsKey('mark')) mark = map['mark'];
     if (map.containsKey('hot1')) hot1 = map['hot1'];
@@ -345,11 +365,17 @@ class CustomXDirty {
   ///字符串索引3
   set str3(String value) => data['str3'] = DbQueryField.convertToBaseType(value);
 
-  ///数据内容
-  set body(DbJsonWraper value) => data['body'] = DbQueryField.convertToBaseType(value);
+  ///数据内容1
+  set body1(DbJsonWraper value) => data['body1'] = DbQueryField.convertToBaseType(value);
+
+  ///数据内容2
+  set body2(DbJsonWraper value) => data['body2'] = DbQueryField.convertToBaseType(value);
 
   ///最近更新时间
   set update(int value) => data['update'] = DbQueryField.convertToBaseType(value);
+
+  ///数据状态（包括该字段与以下字段的更新不会导致update字段更新）
+  set state(int value) => data['state'] = DbQueryField.convertToBaseType(value);
 
   ///平局得分（每个用户打分一次）
   set score(double value) => data['score'] = DbQueryField.convertToBaseType(value);

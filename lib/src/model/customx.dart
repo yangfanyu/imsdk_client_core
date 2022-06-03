@@ -53,11 +53,20 @@ class CustomX extends DbBaseModel {
   ///数据内容2
   DbJsonWraper body2;
 
+  ///数据内容3
+  DbJsonWraper body3;
+
+  ///数据状态1
+  int state1;
+
+  ///数据状态2
+  int state2;
+
+  ///数据状态3
+  int state3;
+
   ///最近更新时间
   int update;
-
-  ///数据状态（包括该字段与以下字段的更新不会导致update字段更新）
-  int state;
 
   ///平局得分（每个用户打分一次）
   double score;
@@ -117,8 +126,11 @@ class CustomX extends DbBaseModel {
     String? str3,
     DbJsonWraper? body1,
     DbJsonWraper? body2,
+    DbJsonWraper? body3,
+    int? state1,
+    int? state2,
+    int? state3,
     int? update,
-    int? state,
     double? score,
     int? mark,
     int? hot1,
@@ -143,8 +155,11 @@ class CustomX extends DbBaseModel {
         str3 = str3 ?? '',
         body1 = body1 ?? DbJsonWraper(),
         body2 = body2 ?? DbJsonWraper(),
+        body3 = body3 ?? DbJsonWraper(),
+        state1 = state1 ?? 0,
+        state2 = state2 ?? 0,
+        state3 = state3 ?? 0,
         update = update ?? DateTime.now().millisecondsSinceEpoch,
-        state = state ?? 0,
         score = score ?? 0,
         mark = mark ?? 0,
         hot1 = hot1 ?? 0,
@@ -176,8 +191,11 @@ class CustomX extends DbBaseModel {
       str3: map['str3'],
       body1: map['body1'] is Map ? DbJsonWraper.fromJson(map['body1']) : map['body1'],
       body2: map['body2'] is Map ? DbJsonWraper.fromJson(map['body2']) : map['body2'],
+      body3: map['body3'] is Map ? DbJsonWraper.fromJson(map['body3']) : map['body3'],
+      state1: map['state1'],
+      state2: map['state2'],
+      state3: map['state3'],
       update: map['update'],
-      state: map['state'],
       score: map['score'],
       mark: map['mark'],
       hot1: map['hot1'],
@@ -213,8 +231,11 @@ class CustomX extends DbBaseModel {
       'str3': DbQueryField.convertToBaseType(str3),
       'body1': DbQueryField.convertToBaseType(body1),
       'body2': DbQueryField.convertToBaseType(body2),
+      'body3': DbQueryField.convertToBaseType(body3),
+      'state1': DbQueryField.convertToBaseType(state1),
+      'state2': DbQueryField.convertToBaseType(state2),
+      'state3': DbQueryField.convertToBaseType(state3),
       'update': DbQueryField.convertToBaseType(update),
-      'state': DbQueryField.convertToBaseType(state),
       'score': DbQueryField.convertToBaseType(score),
       'mark': DbQueryField.convertToBaseType(mark),
       'hot1': DbQueryField.convertToBaseType(hot1),
@@ -245,8 +266,11 @@ class CustomX extends DbBaseModel {
       'str3': str3,
       'body1': body1,
       'body2': body2,
+      'body3': body3,
+      'state1': state1,
+      'state2': state2,
+      'state3': state3,
       'update': update,
-      'state': state,
       'score': score,
       'mark': mark,
       'hot1': hot1,
@@ -277,8 +301,11 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('str3')) str3 = parser.str3;
     if (map.containsKey('body1')) body1 = parser.body1;
     if (map.containsKey('body2')) body2 = parser.body2;
+    if (map.containsKey('body3')) body3 = parser.body3;
+    if (map.containsKey('state1')) state1 = parser.state1;
+    if (map.containsKey('state2')) state2 = parser.state2;
+    if (map.containsKey('state3')) state3 = parser.state3;
     if (map.containsKey('update')) update = parser.update;
-    if (map.containsKey('state')) state = parser.state;
     if (map.containsKey('score')) score = parser.score;
     if (map.containsKey('mark')) mark = parser.mark;
     if (map.containsKey('hot1')) hot1 = parser.hot1;
@@ -307,8 +334,11 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('str3')) str3 = map['str3'];
     if (map.containsKey('body1')) body1 = map['body1'];
     if (map.containsKey('body2')) body2 = map['body2'];
+    if (map.containsKey('body3')) body3 = map['body3'];
+    if (map.containsKey('state1')) state1 = map['state1'];
+    if (map.containsKey('state2')) state2 = map['state2'];
+    if (map.containsKey('state3')) state3 = map['state3'];
     if (map.containsKey('update')) update = map['update'];
-    if (map.containsKey('state')) state = map['state'];
     if (map.containsKey('score')) score = map['score'];
     if (map.containsKey('mark')) mark = map['mark'];
     if (map.containsKey('hot1')) hot1 = map['hot1'];
@@ -371,11 +401,20 @@ class CustomXDirty {
   ///数据内容2
   set body2(DbJsonWraper value) => data['body2'] = DbQueryField.convertToBaseType(value);
 
+  ///数据内容3
+  set body3(DbJsonWraper value) => data['body3'] = DbQueryField.convertToBaseType(value);
+
+  ///数据状态1
+  set state1(int value) => data['state1'] = DbQueryField.convertToBaseType(value);
+
+  ///数据状态2
+  set state2(int value) => data['state2'] = DbQueryField.convertToBaseType(value);
+
+  ///数据状态3
+  set state3(int value) => data['state3'] = DbQueryField.convertToBaseType(value);
+
   ///最近更新时间
   set update(int value) => data['update'] = DbQueryField.convertToBaseType(value);
-
-  ///数据状态（包括该字段与以下字段的更新不会导致update字段更新）
-  set state(int value) => data['state'] = DbQueryField.convertToBaseType(value);
 
   ///平局得分（每个用户打分一次）
   set score(double value) => data['score'] = DbQueryField.convertToBaseType(value);

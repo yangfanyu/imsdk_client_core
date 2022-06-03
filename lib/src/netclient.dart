@@ -517,7 +517,7 @@ class NetClient {
     return response;
   }
 
-  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据
+  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据
   Future<EasyPacket<bool>> messageLoad({required Session session, required bool reload}) async {
     if (reload) session.msgcache.clear(); //清除缓存
     final last = session.msgcache.isEmpty ? 3742732800000 : session.msgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
@@ -569,10 +569,32 @@ class NetClient {
   }
 
   ///创建自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXInsert({required int no, ObjectId? rid1, ObjectId? rid2, ObjectId? rid3, int? int1, int? int2, int? int3, String? str1, String? str2, String? str3, DbJsonWraper? body1, DbJsonWraper? body2, DbJsonWraper? extra, int? state, int? rno1, int? rno2, int? rno3}) async {
+  Future<EasyPacket<CustomX>> customXInsert({
+    required int no,
+    DbJsonWraper? extra,
+    ObjectId? rid1,
+    ObjectId? rid2,
+    ObjectId? rid3,
+    int? int1,
+    int? int2,
+    int? int3,
+    String? str1,
+    String? str2,
+    String? str3,
+    DbJsonWraper? body1,
+    DbJsonWraper? body2,
+    DbJsonWraper? body3,
+    int? state1,
+    int? state2,
+    int? state3,
+    int? rno1,
+    int? rno2,
+    int? rno3,
+  }) async {
     final response = await _aliveClient.websocketRequest('customXInsert', data: {
       'bsid': bsid,
       'no': no,
+      'extra': extra?.toJson(),
       'rid1': rid1,
       'rid2': rid2,
       'rid3': rid3,
@@ -584,8 +606,10 @@ class NetClient {
       'str3': str3,
       'body1': body1?.toJson(),
       'body2': body2?.toJson(),
-      'extra': extra?.toJson(),
-      'state': state,
+      'body3': body3?.toJson(),
+      'state1': state1,
+      'state2': state2,
+      'state3': state3,
       'rno1': rno1,
       'rno2': rno2,
       'rno3': rno3,
@@ -604,8 +628,10 @@ class NetClient {
   }
 
   ///更新自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXUpdate({required int no, required ObjectId id, required Map<String, dynamic> fields}) async {
-    final response = await _aliveClient.websocketRequest('customXUpdate', data: {'bsid': bsid, 'no': no, 'id': id, 'fields': fields});
+  ///
+  ///[update]为true时，会将[CustomX.update]字段更新为当前时间
+  Future<EasyPacket<CustomX>> customXUpdate({required int no, required ObjectId id, required Map<String, dynamic> fields, bool update = true}) async {
+    final response = await _aliveClient.websocketRequest('customXUpdate', data: {'bsid': bsid, 'no': no, 'id': id, 'fields': fields, 'update': update});
     if (response.ok) {
       return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
     } else {
@@ -633,11 +659,23 @@ class NetClient {
     }
   }
 
-  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，[EasyPacket.extra]字段为true时表示已加载全部数据。[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段
-  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter, bool body1 = false, bool body2 = false}) async {
+  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter, bool body1 = false, bool body2 = false, bool body3 = false}) async {
     if (reload) dataPage.pgcache.clear(); //清除缓存
     dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'filter': filter, 'sorter': sorter, 'body1': body1, 'body2': body2});
+    final response = await _aliveClient.websocketRequest('customXLoad', data: {
+      'bsid': bsid,
+      'no': dataPage.no,
+      'skip': dataPage.pgcache.length,
+      'pgasync': dataPage.pgasync,
+      'filter': filter,
+      'sorter': sorter,
+      'body1': body1,
+      'body2': body2,
+      'body3': body3,
+    });
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
       final customxList = response.data!['customxList'] as List;

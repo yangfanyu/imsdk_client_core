@@ -1,4 +1,4 @@
-## 1.1.8
+## 1.1.9
 
 - Implement and test core functions.
 

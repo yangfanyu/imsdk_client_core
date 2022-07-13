@@ -35,6 +35,9 @@ class User extends DbBaseModel {
   ///第三方账号标志
   String thirdNo;
 
+  ///自定义的第三方账号类型
+  int customType;
+
   ///真实姓名
   String name;
 
@@ -56,7 +59,7 @@ class User extends DbBaseModel {
   ///市
   String city;
 
-  ///县(区)
+  ///县（区）
   String district;
 
   ///最近定位信息
@@ -104,7 +107,7 @@ class User extends DbBaseModel {
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
   bool silent;
 
-  ///被封禁时间截止时间
+  ///被封禁状态（>=0：被封禁时间截止时间；<0：永久封禁或永久注销）
   int deny;
 
   ///唯一id
@@ -130,6 +133,7 @@ class User extends DbBaseModel {
     int? rmbfen,
     int? thirdTp,
     String? thirdNo,
+    int? customType,
     String? name,
     String? card,
     String? birth,
@@ -164,6 +168,7 @@ class User extends DbBaseModel {
         rmbfen = rmbfen ?? 0,
         thirdTp = thirdTp ?? 0,
         thirdNo = thirdNo ?? '',
+        customType = customType ?? 0,
         name = name ?? '',
         card = card ?? '',
         birth = birth ?? '',
@@ -205,6 +210,7 @@ class User extends DbBaseModel {
       rmbfen: map['rmbfen'],
       thirdTp: map['thirdTp'],
       thirdNo: map['thirdNo'],
+      customType: map['customType'],
       name: map['name'],
       card: map['card'],
       birth: map['birth'],
@@ -250,6 +256,7 @@ class User extends DbBaseModel {
       'rmbfen': DbQueryField.convertToBaseType(rmbfen),
       'thirdTp': DbQueryField.convertToBaseType(thirdTp),
       'thirdNo': DbQueryField.convertToBaseType(thirdNo),
+      'customType': DbQueryField.convertToBaseType(customType),
       'name': DbQueryField.convertToBaseType(name),
       'card': DbQueryField.convertToBaseType(card),
       'birth': DbQueryField.convertToBaseType(birth),
@@ -290,6 +297,7 @@ class User extends DbBaseModel {
       'rmbfen': rmbfen,
       'thirdTp': thirdTp,
       'thirdNo': thirdNo,
+      'customType': customType,
       'name': name,
       'card': card,
       'birth': birth,
@@ -330,6 +338,7 @@ class User extends DbBaseModel {
     if (map.containsKey('rmbfen')) rmbfen = parser.rmbfen;
     if (map.containsKey('thirdTp')) thirdTp = parser.thirdTp;
     if (map.containsKey('thirdNo')) thirdNo = parser.thirdNo;
+    if (map.containsKey('customType')) customType = parser.customType;
     if (map.containsKey('name')) name = parser.name;
     if (map.containsKey('card')) card = parser.card;
     if (map.containsKey('birth')) birth = parser.birth;
@@ -368,6 +377,7 @@ class User extends DbBaseModel {
     if (map.containsKey('rmbfen')) rmbfen = map['rmbfen'];
     if (map.containsKey('thirdTp')) thirdTp = map['thirdTp'];
     if (map.containsKey('thirdNo')) thirdNo = map['thirdNo'];
+    if (map.containsKey('customType')) customType = map['customType'];
     if (map.containsKey('name')) name = map['name'];
     if (map.containsKey('card')) card = map['card'];
     if (map.containsKey('birth')) birth = map['birth'];
@@ -428,6 +438,9 @@ class UserDirty {
   ///第三方账号标志
   set thirdNo(String value) => data['thirdNo'] = DbQueryField.convertToBaseType(value);
 
+  ///自定义的第三方账号类型
+  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
+
   ///真实姓名
   set name(String value) => data['name'] = DbQueryField.convertToBaseType(value);
 
@@ -449,7 +462,7 @@ class UserDirty {
   ///市
   set city(String value) => data['city'] = DbQueryField.convertToBaseType(value);
 
-  ///县(区)
+  ///县（区）
   set district(String value) => data['district'] = DbQueryField.convertToBaseType(value);
 
   ///最近定位信息
@@ -497,6 +510,6 @@ class UserDirty {
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
   set silent(bool value) => data['silent'] = DbQueryField.convertToBaseType(value);
 
-  ///被封禁时间截止时间
+  ///被封禁状态（>=0：被封禁时间截止时间；<0：永久封禁或永久注销）
   set deny(int value) => data['deny'] = DbQueryField.convertToBaseType(value);
 }

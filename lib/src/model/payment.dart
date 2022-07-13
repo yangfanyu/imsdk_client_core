@@ -58,6 +58,9 @@ class Payment extends DbBaseModel {
   ///发送红包订单是否已完成退回检测
   bool redpackReturned;
 
+  ///自定义的订单类型
+  int customType;
+
   ///自定义订单验证数据
   String customValidData;
 
@@ -104,6 +107,7 @@ class Payment extends DbBaseModel {
     ObjectId? redpackMsgId,
     ObjectId? redpackPayId,
     bool? redpackReturned,
+    int? customType,
     String? customValidData,
     String? customValidResult,
     int? customValidCount,
@@ -127,6 +131,7 @@ class Payment extends DbBaseModel {
         redpackMsgId = redpackMsgId ?? ObjectId.fromHexString('000000000000000000000000'),
         redpackPayId = redpackPayId ?? ObjectId.fromHexString('000000000000000000000000'),
         redpackReturned = redpackReturned ?? false,
+        customType = customType ?? 0,
         customValidData = customValidData ?? '',
         customValidResult = customValidResult ?? '',
         customValidCount = customValidCount ?? 0,
@@ -157,6 +162,7 @@ class Payment extends DbBaseModel {
       redpackMsgId: map['redpackMsgId'] is String ? ObjectId.fromHexString(map['redpackMsgId']) : map['redpackMsgId'],
       redpackPayId: map['redpackPayId'] is String ? ObjectId.fromHexString(map['redpackPayId']) : map['redpackPayId'],
       redpackReturned: map['redpackReturned'],
+      customType: map['customType'],
       customValidData: map['customValidData'],
       customValidResult: map['customValidResult'],
       customValidCount: map['customValidCount'],
@@ -191,6 +197,7 @@ class Payment extends DbBaseModel {
       'redpackMsgId': DbQueryField.convertToBaseType(redpackMsgId),
       'redpackPayId': DbQueryField.convertToBaseType(redpackPayId),
       'redpackReturned': DbQueryField.convertToBaseType(redpackReturned),
+      'customType': DbQueryField.convertToBaseType(customType),
       'customValidData': DbQueryField.convertToBaseType(customValidData),
       'customValidResult': DbQueryField.convertToBaseType(customValidResult),
       'customValidCount': DbQueryField.convertToBaseType(customValidCount),
@@ -220,6 +227,7 @@ class Payment extends DbBaseModel {
       'redpackMsgId': redpackMsgId,
       'redpackPayId': redpackPayId,
       'redpackReturned': redpackReturned,
+      'customType': customType,
       'customValidData': customValidData,
       'customValidResult': customValidResult,
       'customValidCount': customValidCount,
@@ -249,6 +257,7 @@ class Payment extends DbBaseModel {
     if (map.containsKey('redpackMsgId')) redpackMsgId = parser.redpackMsgId;
     if (map.containsKey('redpackPayId')) redpackPayId = parser.redpackPayId;
     if (map.containsKey('redpackReturned')) redpackReturned = parser.redpackReturned;
+    if (map.containsKey('customType')) customType = parser.customType;
     if (map.containsKey('customValidData')) customValidData = parser.customValidData;
     if (map.containsKey('customValidResult')) customValidResult = parser.customValidResult;
     if (map.containsKey('customValidCount')) customValidCount = parser.customValidCount;
@@ -276,6 +285,7 @@ class Payment extends DbBaseModel {
     if (map.containsKey('redpackMsgId')) redpackMsgId = map['redpackMsgId'];
     if (map.containsKey('redpackPayId')) redpackPayId = map['redpackPayId'];
     if (map.containsKey('redpackReturned')) redpackReturned = map['redpackReturned'];
+    if (map.containsKey('customType')) customType = map['customType'];
     if (map.containsKey('customValidData')) customValidData = map['customValidData'];
     if (map.containsKey('customValidResult')) customValidResult = map['customValidResult'];
     if (map.containsKey('customValidCount')) customValidCount = map['customValidCount'];
@@ -340,6 +350,9 @@ class PaymentDirty {
 
   ///发送红包订单是否已完成退回检测
   set redpackReturned(bool value) => data['redpackReturned'] = DbQueryField.convertToBaseType(value);
+
+  ///自定义的订单类型
+  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
 
   ///自定义订单验证数据
   set customValidData(String value) => data['customValidData'] = DbQueryField.convertToBaseType(value);

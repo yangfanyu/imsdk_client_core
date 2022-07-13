@@ -2,11 +2,14 @@ import '../model/customx.dart';
 import '../model/validator.dart';
 
 ///
-///数据分页
+///自定义数据分页
 ///
 class DataPage {
   ///集合分类序号
   final int no;
+
+  ///数据总数量
+  int total = 0;
 
   ///分页加载序号
   int pgasync = 0;

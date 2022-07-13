@@ -45,6 +45,9 @@ class CommandLineApp extends EasyLogger {
 
   ///登录页
   void loginPage() {
+    _netClient.appConfigure().then(((value) {
+      logDebug([_netClient.adminIds, _netClient.configs]);
+    }));
     renderPage(
       '登录',
       [
@@ -172,7 +175,9 @@ class CommandLineApp extends EasyLogger {
     _netClient.connect(onopen: () {
       _netClient.userEnter().then((value) {
         if (value.ok) {
-          // navigationTo(from: loginPage, to: homePage);
+          _netClient.doLogLogin(); //登录日志
+          _netClient.doLogError(); //异常日志
+          _netClient.doLogReport(type: Constant.reportTypeHost); //反馈日志
           _pageRouteStack.clear(); //清空路由栈
           homePage();
         }
@@ -199,6 +204,9 @@ class CommandLineApp extends EasyLogger {
       }),
       MenuItem('数据模块', () {
         navigationTo(from: homePage, to: customxPage);
+      }),
+      MenuItem('管理模块', () {
+        navigationTo(from: homePage, to: adminPage);
       }),
     ]);
   }
@@ -710,7 +718,7 @@ class CommandLineApp extends EasyLogger {
           body1: DbJsonWraper.fromJson({'content': content}),
         );
         if (result.ok) {
-          logDebug([result.extra, result.extra?.cusmark]);
+          logDebug([result.extra, result.extra?.cusmark, result.extra?.cusstar]);
           Future.delayed(delayDuration, () => customxPage());
         } else {
           logWarn([result.desc]);
@@ -744,17 +752,11 @@ class CommandLineApp extends EasyLogger {
                 ..str1 = 'str1'
                 ..str2 = 'str2'
                 ..str3 = 'str3'
-                ..rid1 = DbQueryField.hexstr2ObjectId('000000000000000000000001')
-                ..rid2 = DbQueryField.hexstr2ObjectId('000000000000000000000002')
-                ..rid3 = DbQueryField.hexstr2ObjectId('000000000000000000000003')
-                ..hot1 = 1
-                ..hot2 = 2
-                ..hotx = 10
                 ..body1 = DbJsonWraper(data: {'content': content}))
               .data,
         );
         if (result.ok) {
-          logDebug([result.extra, result.extra?.cusmark]);
+          logDebug([result.extra, result.extra?.cusmark, result.extra?.cusstar]);
           Future.delayed(delayDuration, () => customxPage());
         } else {
           logWarn([result.desc]);
@@ -766,13 +768,21 @@ class CommandLineApp extends EasyLogger {
         final id = (await readStdinLine()).trim();
         logInfo(['标记自定义数据请输入数据分数（可空）:']);
         final score = (await readStdinLine()).trim();
-        final result = await _netClient.customXMark(
-          no: datapage.no,
-          id: DbQueryField.hexstr2ObjectId(id),
-          score: score.isEmpty ? null : double.parse(score),
-        );
+        final result = await _netClient.customXMark(no: datapage.no, id: DbQueryField.hexstr2ObjectId(id), score: score.isEmpty ? null : double.parse(score));
         if (result.ok) {
-          logDebug([result.extra, result.extra?.cusmark]);
+          logDebug([result.extra, result.extra?.cusmark, result.extra?.cusstar]);
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('收藏自定义数据', () async {
+        logInfo(['收藏自定义数据请输入数据id:']);
+        final id = (await readStdinLine()).trim();
+        final result = await _netClient.customXStar(no: datapage.no, id: DbQueryField.hexstr2ObjectId(id));
+        if (result.ok) {
+          logDebug([result.extra, result.extra?.cusmark, result.extra?.cusstar]);
           Future.delayed(delayDuration, () => customxPage());
         } else {
           logWarn([result.desc]);
@@ -783,15 +793,53 @@ class CommandLineApp extends EasyLogger {
         logInfo(['加载自定义数据列表请输入是否重置 (true, false):']);
         final reload = (await readStdinLine()).trim();
         final sorter = CustomXDirty()..update = -1;
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
-        final result = await _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', filter: {}, sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        final result = await _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
         if (result.ok) {
           int no = 0;
           for (var customx in datapage.pgcache) {
-            logDebug([no++, '=>', customx, customx.cusmark, ComTools.formatDateTime(customx.update, yyMMdd: true, hhmmss: true)]);
+            logDebug([datapage.total, no++, '=>', customx, customx.cusmark, customx.cusstar, ComTools.formatDateTime(customx.update, yyMMdd: true, hhmmss: true)]);
+          }
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('加载自定义标记列表', () async {
+        logInfo(['加载自定义标记列表请输入是否重置 (true, false):']);
+        final reload = (await readStdinLine()).trim();
+        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
+        final result = await _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
+        if (result.ok) {
+          int no = 0;
+          for (var customx in datapage.pgcache) {
+            logDebug([datapage.total, no++, '=>', customx, customx.cusmark, customx.cusstar, ComTools.formatDateTime(customx.update, yyMMdd: true, hhmmss: true)]);
+          }
+          Future.delayed(delayDuration, () => customxPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => customxPage());
+        }
+      }),
+      MenuItem('加载自定义收藏列表', () async {
+        logInfo(['加载自定义收藏列表请输入是否重置 (true, false):']);
+        final reload = (await readStdinLine()).trim();
+        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
+        final result = await _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
+        if (result.ok) {
+          int no = 0;
+          for (var customx in datapage.pgcache) {
+            logDebug([datapage.total, no++, '=>', customx, customx.cusmark, customx.cusstar, ComTools.formatDateTime(customx.update, yyMMdd: true, hhmmss: true)]);
           }
           Future.delayed(delayDuration, () => customxPage());
         } else {
@@ -802,9 +850,9 @@ class CommandLineApp extends EasyLogger {
       MenuItem('加载自定义数据详情', () async {
         logInfo(['加载自定义数据详情请输入数据id:']);
         final id = (await readStdinLine()).trim();
-        final result = await _netClient.customXDetail(no: datapage.no, id: DbQueryField.hexstr2ObjectId(id));
+        final result = await _netClient.customXDetail(no: datapage.no, id: DbQueryField.hexstr2ObjectId(id), body1: true);
         if (result.ok) {
-          logDebug([result.extra, result.extra?.cusmark]);
+          logDebug([result.extra, result.extra?.cusmark, result.extra?.cusstar]);
           Future.delayed(delayDuration, () => customxPage());
         } else {
           logWarn([result.desc]);
@@ -813,6 +861,174 @@ class CommandLineApp extends EasyLogger {
       }),
     ]);
   }
+
+  void adminPage() {
+    renderPage('首页->管理模块', [
+      MenuItem('加载用户列表', () async {
+        logInfo(['加载用户列表请输入用户状态(deny):']);
+        final deny = (await readStdinLine()).trim();
+        logInfo(['加载用户列表可选输入关键词(no、nick、phone):']);
+        final keyowrds = (await readStdinLine()).trim();
+        final result = await _netClient.adminUserList(page: 0, deny: int.parse(deny), keywords: keyowrds);
+        if (result.ok) {
+          logDebug([result.extra!.page, result.extra!.total]);
+          int no = 0;
+          for (var user in result.extra!.pgcache) {
+            logDebug([no++, '=>', user, user.deny]);
+          }
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('加载群组列表', () async {
+        logInfo(['加载群组列表请输入群组状态(deny):']);
+        final deny = (await readStdinLine()).trim();
+        logInfo(['加载群组列表可选输入关键词(no、nick):']);
+        final keyowrds = (await readStdinLine()).trim();
+        final result = await _netClient.adminTeamList(page: 0, deny: int.parse(deny), keywords: keyowrds);
+        if (result.ok) {
+          logDebug([result.extra!.page, result.extra!.total]);
+          int no = 0;
+          for (var user in result.extra!.pgcache) {
+            logDebug([no++, '=>', user, user.deny]);
+          }
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('加载登录列表', () async {
+        final date = DateTime.now();
+        final start = ComTools.getDayStartMillisByDateOffset(date);
+        final end = ComTools.getDayEndMillisByDateOffset(date);
+        final result = await _netClient.adminLoginList(page: 0, start: start, end: end);
+        if (result.ok) {
+          logDebug([result.extra!.page, result.extra!.total]);
+          int no = 0;
+          for (var item in result.extra!.pgcache) {
+            logDebug([no++, '=>', item]);
+          }
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('加载异常列表', () async {
+        logInfo(['加载异常列表请输入处理状态(true,false):']);
+        final finished = (await readStdinLine()).trim();
+        final result = await _netClient.adminErrorList(page: 0, finished: finished == 'true');
+        if (result.ok) {
+          logDebug([result.extra!.page, result.extra!.total]);
+          int no = 0;
+          for (var item in result.extra!.pgcache) {
+            logDebug([no++, '=>', item]);
+          }
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('加载反馈列表', () async {
+        logInfo([
+          '加载反馈列表请输入反馈类型${[Constant.reportTypeUser, Constant.reportTypeTeam, Constant.reportTypeHost, Constant.reportTypeAdvise]}:'
+        ]);
+        final type = (await readStdinLine()).trim();
+        logInfo([
+          '加载反馈列表请输入处理状态${[Constant.reportStateWait, Constant.reportStateDeny, Constant.reportStatePass]}:'
+        ]);
+        final state = (await readStdinLine()).trim();
+        final result = await _netClient.adminReportList(page: 0, type: int.parse(type), state: int.parse(state));
+        if (result.ok) {
+          logDebug([result.extra!.page, result.extra!.total]);
+          int no = 0;
+          for (var item in result.extra!.pgcache) {
+            logDebug([no++, '=>', item]);
+          }
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('设置用户限制', () async {
+        logInfo(['设置用户限制请输入用户id:']);
+        final uid = (await readStdinLine()).trim();
+        logInfo(['加载用户限制请输入用户限制(deny):']);
+        final deny = (await readStdinLine()).trim();
+        final result = await _netClient.adminUserDeny(uid: DbQueryField.hexstr2ObjectId(uid), deny: int.parse(deny));
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('设置群组限制', () async {
+        logInfo(['设置群组限制请输入群组id:']);
+        final tid = (await readStdinLine()).trim();
+        logInfo(['加载群组限制请输入群组限制(deny):']);
+        final deny = (await readStdinLine()).trim();
+        final result = await _netClient.adminTeamDeny(tid: DbQueryField.hexstr2ObjectId(tid), deny: int.parse(deny));
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('设置异常状态', () async {
+        logInfo(['设置异常状态请输入异常id:']);
+        final id = (await readStdinLine()).trim();
+        logInfo(['设置异常状态请输入异常状态(true,false):']);
+        final finished = (await readStdinLine()).trim();
+        final result = await _netClient.adminErrorState(id: DbQueryField.hexstr2ObjectId(id), finished: finished == 'true');
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('设置反馈状态', () async {
+        logInfo(['设置反馈状态请输入反馈id:']);
+        final id = (await readStdinLine()).trim();
+        logInfo([
+          '设置反馈状态请输入处理状态${[Constant.reportStateWait, Constant.reportStateDeny, Constant.reportStatePass]}:'
+        ]);
+        final state = (await readStdinLine()).trim();
+        final result = await _netClient.adminReportState(id: DbQueryField.hexstr2ObjectId(id), state: int.parse(state));
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('修改商户昵称', () async {
+        logInfo(['修改商户昵称请输入新昵称:']);
+        final nick = (await readStdinLine()).trim();
+        final dirty = BusinessDirty()..nick = nick;
+        final result = await _netClient.adminBusinessUpdate(fields: dirty.data);
+        if (result.ok) {
+          logDebug([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+    ]);
+  }
+
   /* **************** 工具函数 **************** */
 
   ///渲染页面
@@ -844,6 +1060,7 @@ class CommandLineApp extends EasyLogger {
       }
     } else if (key == 'q') {
       logDebug(['程序已完成']);
+      _netClient.release();
       Future.delayed(delayDuration, () => exit(0));
     } else {
       if (!cmdMap.containsKey(key)) {

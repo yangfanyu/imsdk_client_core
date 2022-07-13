@@ -3,14 +3,19 @@ import 'package:shelf_easy/shelf_easy.dart';
 
 import 'model/constant.dart';
 import 'model/cusmark.dart';
+import 'model/cusstar.dart';
 import 'model/customx.dart';
 import 'model/location.dart';
+import 'model/logerror.dart';
+import 'model/loglogin.dart';
+import 'model/logreport.dart';
 import 'model/message.dart';
 import 'model/metadata.dart';
 import 'model/team.dart';
 import 'model/teamship.dart';
 import 'model/user.dart';
 import 'model/usership.dart';
+import 'tool/compage.dart';
 import 'tool/comtools.dart';
 import 'tool/datapage.dart';
 import 'tool/session.dart';
@@ -42,6 +47,12 @@ class NetClient {
 
   ///登录凭据回调
   final void Function(String nick, String? credentials) onCredentials;
+
+  ///定制配置信息
+  final DbJsonWraper configs;
+
+  ///管理员的标志
+  final List<ObjectId> adminIds;
 
   ///当前用户信息
   final User user;
@@ -101,7 +112,9 @@ class NetClient {
   final Map<ObjectId, bool> _dirtyTeamuserStateMap;
 
   NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, this.logTag, required this.host, required this.bsid, required this.secret, this.binary = true, this.isolate = false, required this.onCredentials})
-      : user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
+      : configs = DbJsonWraper(),
+        adminIds = [],
+        user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
         _sessionState = NetClientAzState(),
         _waitshipState = NetClientAzState(),
         _usershipState = NetClientAzState(),
@@ -122,6 +135,20 @@ class NetClient {
         _dirtyTeamuserStateMap = {};
 
   /* **************** http请求 **************** */
+
+  ///获取应用程序配置信息
+  Future<EasyPacket<void>> appConfigure() async {
+    final response = await _guestClient.httpRequest('$host/appConfigure', data: {'bsid': bsid});
+    if (response.ok) {
+      final adminIdList = response.data!['adminIds'] as List;
+      adminIds.clear();
+      for (var element in adminIdList) {
+        adminIds.add(DbQueryField.hexstr2ObjectId(element));
+      }
+      configs.updateByJson(response.data!['configs']);
+    }
+    return response;
+  }
 
   ///使用[User.id]和[User.token]进行登录
   Future<EasyPacket<void>> loginByToken({required ObjectId uid, required String token}) async {
@@ -208,7 +235,7 @@ class NetClient {
     }
   }
 
-  /* **************** websocket请求 **************** */
+  /* **************** websocket请求-用户 **************** */
 
   ///登录后连接到服务器，请确保在登录之后再调用这个方法
   void connect({void Function()? onopen, void Function(int code, String reason)? onclose, void Function(String error)? onerror, void Function(int count)? onretry, void Function(int second, int delay)? onheart}) {
@@ -517,7 +544,26 @@ class NetClient {
     return response;
   }
 
-  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据
+  ///发送消息-自定义消息，[customType]为自定义类型，[customExtra]为自定义类型
+  Future<EasyPacket<void>> messageSendCustom({required ObjectId sid, required int from, String? title, String? body, ObjectId? shareCardId, String? shareIconUrl, List<String>? shareHeadUrl, String? shareLinkUrl, required int customType, Map<String, dynamic>? customExtra}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {
+      'bsid': bsid,
+      'sid': sid,
+      'from': from,
+      'type': Constant.msgTypeCustom,
+      'title': title,
+      'body': body,
+      'shareCardId': shareCardId,
+      'shareIconUrl': shareIconUrl,
+      'shareHeadUrl': shareHeadUrl,
+      'shareLinkUrl': shareLinkUrl,
+      'customType': customType,
+      'customExtra': customExtra,
+    });
+    return response;
+  }
+
+  ///加载会话消息列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据
   Future<EasyPacket<bool>> messageLoad({required Session session, required bool reload}) async {
     if (reload) session.msgcache.clear(); //清除缓存
     final last = session.msgcache.isEmpty ? 3742732800000 : session.msgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
@@ -615,7 +661,11 @@ class NetClient {
       'rno3': rno3,
     });
     if (response.ok) {
-      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
+      return response.cloneExtra(
+        CustomX.fromJson(response.data!['customx'])
+          ..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark'])
+          ..cusstar = response.data!['cusstar'] == null ? null : Cusstar.fromJson(response.data!['cusstar']),
+      );
     } else {
       return response.cloneExtra(null);
     }
@@ -627,71 +677,102 @@ class NetClient {
     return response;
   }
 
-  ///更新自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  ///
-  ///[update]为true时，会将[CustomX.update]字段更新为当前时间
-  Future<EasyPacket<CustomX>> customXUpdate({required int no, required ObjectId id, required Map<String, dynamic> fields, bool update = true}) async {
-    final response = await _aliveClient.websocketRequest('customXUpdate', data: {'bsid': bsid, 'no': no, 'id': id, 'fields': fields, 'update': update});
-    if (response.ok) {
-      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
-    } else {
-      return response.cloneExtra(null);
-    }
-  }
-
-  ///更新自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXDetail({required int no, required ObjectId id, int hot1 = 0, int hot2 = 0, hotx = 0}) async {
-    final response = await _aliveClient.websocketRequest('customXDetail', data: {'bsid': bsid, 'no': no, 'id': id, 'hot1': hot1, 'hot2': hot2, 'hotx': hotx});
-    if (response.ok) {
-      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
-    } else {
-      return response.cloneExtra(null);
-    }
-  }
-
-  ///标记自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
-  Future<EasyPacket<CustomX>> customXMark({required int no, required ObjectId id, double? score}) async {
-    final response = await _aliveClient.websocketRequest('customXMark', data: {'bsid': bsid, 'no': no, 'id': id, 'score': score});
-    if (response.ok) {
-      return response.cloneExtra(CustomX.fromJson(response.data!['customx'])..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark']));
-    } else {
-      return response.cloneExtra(null);
-    }
-  }
-
-  ///加载消息-好友消息，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
+  ///更新自定义数据，[no]为数据集合分类序号，[update]为true时，会将[CustomX.update]字段更新为当前时间
   ///
   ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
-  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, required Map<String, dynamic> filter, required Map<String, dynamic> sorter, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+  Future<EasyPacket<CustomX>> customXUpdate({required int no, required ObjectId id, required Map<String, dynamic> fields, bool update = true, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    final response = await _aliveClient.websocketRequest('customXUpdate', data: {'bsid': bsid, 'no': no, 'id': id, 'fields': fields, 'update': update, 'body1': body1, 'body2': body2, 'body3': body3});
+    if (response.ok) {
+      return response.cloneExtra(
+        CustomX.fromJson(response.data!['customx'])
+          ..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark'])
+          ..cusstar = response.data!['cusstar'] == null ? null : Cusstar.fromJson(response.data!['cusstar']),
+      );
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///读取自定义数据，[no]为数据集合分类序号，[hot1]不为0时[CustomX.hot1]自增减1，[hot2]不为0时[CustomX.hot2]自增减1，[hotx]不为0时[CustomX.hotx]自增减[hotx]
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<CustomX>> customXDetail({required int no, required ObjectId id, int hot1 = 0, int hot2 = 0, hotx = 0, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    final response = await _aliveClient.websocketRequest('customXDetail', data: {'bsid': bsid, 'no': no, 'id': id, 'hot1': hot1, 'hot2': hot2, 'hotx': hotx, 'body1': body1, 'body2': body2, 'body3': body3});
+    if (response.ok) {
+      return response.cloneExtra(
+        CustomX.fromJson(response.data!['customx'])
+          ..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark'])
+          ..cusstar = response.data!['cusstar'] == null ? null : Cusstar.fromJson(response.data!['cusstar']),
+      );
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///标记自定义数据，[no]为数据集合分类序号，[score]为null时存在对应标记则删除否则添加，[score]不为null时会将[Cusmark.score]字段设置为[score]
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<CustomX>> customXMark({required int no, required ObjectId id, double? score, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    final response = await _aliveClient.websocketRequest('customXMark', data: {'bsid': bsid, 'no': no, 'id': id, 'score': score, 'body1': body1, 'body2': body2, 'body3': body3});
+    if (response.ok) {
+      return response.cloneExtra(
+        CustomX.fromJson(response.data!['customx'])
+          ..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark'])
+          ..cusstar = response.data!['cusstar'] == null ? null : Cusstar.fromJson(response.data!['cusstar']),
+      );
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///收藏自定义数据，[no]为数据集合分类序号，数据存在则删除否则添加
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<CustomX>> customXStar({required int no, required ObjectId id, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    final response = await _aliveClient.websocketRequest('customXStar', data: {'bsid': bsid, 'no': no, 'id': id, 'body1': body1, 'body2': body2, 'body3': body3});
+    if (response.ok) {
+      return response.cloneExtra(
+        CustomX.fromJson(response.data!['customx'])
+          ..cusmark = response.data!['cusmark'] == null ? null : Cusmark.fromJson(response.data!['cusmark'])
+          ..cusstar = response.data!['cusstar'] == null ? null : Cusstar.fromJson(response.data!['cusstar']),
+      );
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///加载自定义数据列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, Map<String, dynamic> eqFilter = const {}, Map<String, dynamic> neFilter = const {}, Map<String, dynamic> matchFilter = const {}, Map<String, dynamic> sorter = const {}, bool body1 = false, bool body2 = false, bool body3 = false}) async {
     if (reload) dataPage.pgcache.clear(); //清除缓存
     dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('customXLoad', data: {
-      'bsid': bsid,
-      'no': dataPage.no,
-      'skip': dataPage.pgcache.length,
-      'pgasync': dataPage.pgasync,
-      'filter': filter,
-      'sorter': sorter,
-      'body1': body1,
-      'body2': body2,
-      'body3': body3,
-    });
+    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'eqFilter': eqFilter, 'neFilter': neFilter, 'matchFilter': matchFilter, 'sorter': sorter, 'body1': body1, 'body2': body2, 'body3': body3});
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
+      final totalcnt = response.data!['totalcnt'] as int;
       final customxList = response.data!['customxList'] as List;
       final cusmarkList = response.data!['cusmarkList'] as List;
+      final cusstarList = response.data!['cusstarList'] as List;
       if (pgasync == dataPage.pgasync) {
         final cusmarkMap = <ObjectId, Cusmark>{};
         for (var data in cusmarkList) {
           final cusmark = Cusmark.fromJson(data);
           cusmarkMap[cusmark.rid] = cusmark;
         }
+        final cusstarMap = <ObjectId, Cusstar>{};
+        for (var data in cusstarList) {
+          final cusstar = Cusstar.fromJson(data);
+          cusstarMap[cusstar.rid] = cusstar;
+        }
         for (var data in customxList) {
           final customx = CustomX.fromJson(data);
           customx.cusmark = cusmarkMap[customx.id];
+          customx.cusstar = cusstarMap[customx.id];
           dataPage.append(customx);
         }
-        return response.cloneExtra(customxList.isEmpty); //是否已加载全部数据
+        dataPage.total = totalcnt;
+        return response.cloneExtra(customxList.isEmpty || dataPage.total == dataPage.pgcache.length); //是否已加载全部数据
       } else {
         _aliveClient.logError(['customXLoad =>', '远程响应号已过期 $pgasync']);
         return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
@@ -700,6 +781,219 @@ class NetClient {
       return response.cloneExtra(null);
     }
   }
+
+  ///加载自定义标记列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<bool>> cusmarkLoad({required DataPage dataPage, required bool reload, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    if (reload) dataPage.pgcache.clear(); //清除缓存
+    dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('cusmarkLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'body1': body1, 'body2': body2, 'body3': body3});
+    if (response.ok) {
+      final pgasync = response.data!['pgasync'] as int;
+      final totalcnt = response.data!['totalcnt'] as int;
+      final customxList = response.data!['customxList'] as List;
+      final cusmarkList = response.data!['cusmarkList'] as List;
+      final cusstarList = response.data!['cusstarList'] as List;
+      if (pgasync == dataPage.pgasync) {
+        final cusmarkMap = <ObjectId, Cusmark>{};
+        for (var data in cusmarkList) {
+          final cusmark = Cusmark.fromJson(data);
+          cusmarkMap[cusmark.rid] = cusmark;
+        }
+        final cusstarMap = <ObjectId, Cusstar>{};
+        for (var data in cusstarList) {
+          final cusstar = Cusstar.fromJson(data);
+          cusstarMap[cusstar.rid] = cusstar;
+        }
+        for (var data in customxList) {
+          final customx = CustomX.fromJson(data);
+          customx.cusmark = cusmarkMap[customx.id];
+          customx.cusstar = cusstarMap[customx.id];
+          dataPage.append(customx);
+        }
+        dataPage.total = totalcnt;
+        return response.cloneExtra(customxList.isEmpty || dataPage.total == dataPage.pgcache.length); //是否已加载全部数据
+      } else {
+        _aliveClient.logError(['cusmarkLoad =>', '远程响应号已过期 $pgasync']);
+        return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
+      }
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///加载自定义收藏列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
+  ///
+  ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
+  Future<EasyPacket<bool>> cusstarLoad({required DataPage dataPage, required bool reload, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    if (reload) dataPage.pgcache.clear(); //清除缓存
+    dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('cusstarLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'body1': body1, 'body2': body2, 'body3': body3});
+    if (response.ok) {
+      final pgasync = response.data!['pgasync'] as int;
+      final totalcnt = response.data!['totalcnt'] as int;
+      final customxList = response.data!['customxList'] as List;
+      final cusmarkList = response.data!['cusmarkList'] as List;
+      final cusstarList = response.data!['cusstarList'] as List;
+      if (pgasync == dataPage.pgasync) {
+        final cusmarkMap = <ObjectId, Cusmark>{};
+        for (var data in cusmarkList) {
+          final cusmark = Cusmark.fromJson(data);
+          cusmarkMap[cusmark.rid] = cusmark;
+        }
+        final cusstarMap = <ObjectId, Cusstar>{};
+        for (var data in cusstarList) {
+          final cusstar = Cusstar.fromJson(data);
+          cusstarMap[cusstar.rid] = cusstar;
+        }
+        for (var data in customxList) {
+          final customx = CustomX.fromJson(data);
+          customx.cusmark = cusmarkMap[customx.id];
+          customx.cusstar = cusstarMap[customx.id];
+          dataPage.append(customx);
+        }
+        dataPage.total = totalcnt;
+        return response.cloneExtra(customxList.isEmpty || dataPage.total == dataPage.pgcache.length); //是否已加载全部数据
+      } else {
+        _aliveClient.logError(['cusstarLoad =>', '远程响应号已过期 $pgasync']);
+        return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
+      }
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///记录登录日志
+  Future<EasyPacket<void>> doLogLogin({int clientVersion = 0, String deviceType = 'terminal', String deviceVersion = '0.0', Map<String, dynamic> deviceDetail = const {}}) async {
+    final response = await _aliveClient.websocketRequest('doLogLogin', data: {'bsid': bsid, 'clientVersion': clientVersion, 'deviceType': deviceType, 'deviceVersion': deviceVersion, 'deviceDetail': deviceDetail});
+    return response;
+  }
+
+  ///记录异常日志
+  Future<EasyPacket<void>> doLogError({int clientVersion = 0, String deviceType = 'terminal', String deviceVersion = '0.0', Map<String, dynamic> deviceDetail = const {}, Map<String, dynamic> errorDetail = const {}, int errorTime = 0}) async {
+    final response = await _aliveClient.websocketRequest('doLogError', data: {'bsid': bsid, 'clientVersion': clientVersion, 'deviceType': deviceType, 'deviceVersion': deviceVersion, 'deviceDetail': deviceDetail, 'errorDetail': {}, 'errorTime': errorTime});
+    return response;
+  }
+
+  ///记录反馈日志
+  Future<EasyPacket<void>> doLogReport({ObjectId? rid, required int type, String image = '', String host = '', String href = '', String desc = '', int? customType}) async {
+    final response = await _aliveClient.websocketRequest('doLogReport', data: {'bsid': bsid, 'rid': rid, 'type': type, 'image': image, 'host': host, 'href': href, 'desc': desc, 'customType': customType});
+    return response;
+  }
+
+  /* **************** websocket请求-管理 **************** */
+
+  ///管理员获取用户列表
+  Future<EasyPacket<ComPage<User>>> adminUserList({required int page, int deny = 0, String keywords = ''}) async {
+    final response = await _aliveClient.websocketRequest('adminUserList', data: {'bsid': bsid, 'page': page, 'deny': deny, 'keywords': keywords});
+    if (response.ok) {
+      final userList = response.data!['userList'] as List;
+      final userCount = response.data!['userCount'] as int;
+      final result = ComPage<User>(page: page, total: userCount);
+      for (var element in userList) {
+        result.pgcache.add(User.fromJson(element));
+      }
+      return response.cloneExtra(result);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///管理员设置用户状态
+  Future<EasyPacket<void>> adminUserDeny({required ObjectId uid, required int deny}) async {
+    final response = await _aliveClient.websocketRequest('adminUserDeny', data: {'bsid': bsid, 'uid': uid, 'deny': deny});
+    return response;
+  }
+
+  ///管理员获取群组列表
+  Future<EasyPacket<ComPage<Team>>> adminTeamList({required int page, int deny = 0, String keywords = ''}) async {
+    final response = await _aliveClient.websocketRequest('adminTeamList', data: {'bsid': bsid, 'page': page, 'deny': deny, 'keywords': keywords});
+    if (response.ok) {
+      final teamList = response.data!['teamList'] as List;
+      final teamCount = response.data!['teamCount'] as int;
+      final result = ComPage<Team>(page: page, total: teamCount);
+      for (var element in teamList) {
+        result.pgcache.add(Team.fromJson(element));
+      }
+      return response.cloneExtra(result);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///管理员设置群组状态
+  Future<EasyPacket<void>> adminTeamDeny({required ObjectId tid, required int deny}) async {
+    final response = await _aliveClient.websocketRequest('adminTeamDeny', data: {'bsid': bsid, 'tid': tid, 'deny': deny});
+    return response;
+  }
+
+  ///管理员获取登录列表
+  Future<EasyPacket<ComPage<LogLogin>>> adminLoginList({required int page, required int start, required int end}) async {
+    final response = await _aliveClient.websocketRequest('adminLoginList', data: {'bsid': bsid, 'page': page, 'start': start, 'end': end});
+    if (response.ok) {
+      final loginList = response.data!['loginList'] as List;
+      final loginCount = response.data!['loginCount'] as int;
+      final result = ComPage<LogLogin>(page: page, total: loginCount);
+      for (var element in loginList) {
+        result.pgcache.add(LogLogin.fromJson(element));
+      }
+      return response.cloneExtra(result);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///管理员获取异常列表
+  Future<EasyPacket<ComPage<LogError>>> adminErrorList({required int page, required bool finished}) async {
+    final response = await _aliveClient.websocketRequest('adminErrorList', data: {'bsid': bsid, 'page': page, 'finished': finished});
+    if (response.ok) {
+      final errorList = response.data!['errorList'] as List;
+      final errorCount = response.data!['errorCount'] as int;
+      final result = ComPage<LogError>(page: page, total: errorCount);
+      for (var element in errorList) {
+        result.pgcache.add(LogError.fromJson(element));
+      }
+      return response.cloneExtra(result);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///管理员设置异常状态
+  Future<EasyPacket<void>> adminErrorState({required ObjectId id, required bool finished}) async {
+    final response = await _aliveClient.websocketRequest('adminErrorState', data: {'bsid': bsid, 'id': id, 'finished': finished});
+    return response;
+  }
+
+  ///管理员获取投诉列表
+  Future<EasyPacket<ComPage<LogReport>>> adminReportList({required int page, required int type, required int state, int? customType}) async {
+    final response = await _aliveClient.websocketRequest('adminReportList', data: {'bsid': bsid, 'page': page, 'type': type, 'state': state, 'customType': customType});
+    if (response.ok) {
+      final reportList = response.data!['reportList'] as List;
+      final reportCount = response.data!['reportCount'] as int;
+      final result = ComPage<LogReport>(page: page, total: reportCount);
+      for (var element in reportList) {
+        result.pgcache.add(LogReport.fromJson(element));
+      }
+      return response.cloneExtra(result);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///管理员设置反馈状态
+  Future<EasyPacket<void>> adminReportState({required ObjectId id, required int state}) async {
+    final response = await _aliveClient.websocketRequest('adminReportState', data: {'bsid': bsid, 'id': id, 'state': state});
+    return response;
+  }
+
+  ///管理员更新商户信息
+  Future<EasyPacket<void>> adminBusinessUpdate({required Map<String, dynamic> fields}) async {
+    final response = await _aliveClient.websocketRequest('adminBusinessUpdate', data: {'bsid': bsid, 'fields': fields});
+    return response;
+  }
+
   /* **************** 工具方法 **************** */
 
   ///创建会话

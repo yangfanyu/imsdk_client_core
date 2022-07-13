@@ -21,7 +21,7 @@ class ComTools {
   static String formatDenyDateTime(int deny) {
     final date = DateTime.fromMillisecondsSinceEpoch(deny);
     final yyyyMMdd = '${date.year}年${date.month.toString().padLeft(2, '0')}月${date.day.toString().padLeft(2, '0')}日';
-    final hhmmss = '${date.hour.toString().padLeft(2, '0')}时${date.minute.toString().padLeft(2, '0')}}分:${date.second.toString().padLeft(2, '0')}秒';
+    final hhmmss = '${date.hour.toString().padLeft(2, '0')}时${date.minute.toString().padLeft(2, '0')}分:${date.second.toString().padLeft(2, '0')}秒';
     return '$yyyyMMdd $hhmmss';
   }
 
@@ -126,11 +126,21 @@ class ComTools {
 
   ///是否为来源于系统级的用户关系
   static bool isUserShipFromSystem(UserShip ship) {
-    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromServiceHelper;
+    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromServiceHelper;
   }
 
   ///是否为来源于系统级的群组关系
   static bool isTeamShipFromSystem(TeamShip ship) {
-    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromFileHelper || ship.from == Constant.shipFromServiceHelper;
+    return ship.from == Constant.shipFromSystemHelper || ship.from == Constant.shipFromServiceHelper;
+  }
+
+  ///获取以[dateTime]为参考日期，偏移[offsetDay]天的毫秒开始时间戳
+  static int getDayStartMillisByDateOffset(DateTime dateTime, {int offsetDay = 0}) {
+    return DateTime(dateTime.year, dateTime.month, dateTime.day - offsetDay).millisecondsSinceEpoch;
+  }
+
+  ///获取以[dateTime]为参考日期，偏移[offsetDay]天的毫秒结束时间戳
+  static int getDayEndMillisByDateOffset(DateTime dateTime, {int offsetDay = 0}) {
+    return DateTime(dateTime.year, dateTime.month, dateTime.day - offsetDay, 59, 59, 59, 999).millisecondsSinceEpoch;
   }
 }

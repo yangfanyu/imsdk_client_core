@@ -77,6 +77,9 @@ class Message extends DbBaseModel {
   ///位置分享消息的数据
   Location? shareLocation;
 
+  ///自定义的消息类型
+  int customType;
+
   ///本条是否已撤销
   bool revoked;
 
@@ -132,6 +135,7 @@ class Message extends DbBaseModel {
     List<String>? shareHeadUrl,
     String? shareLinkUrl,
     this.shareLocation,
+    int? customType,
     bool? revoked,
   })  : _id = id ?? ObjectId(),
         _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
@@ -156,6 +160,7 @@ class Message extends DbBaseModel {
         shareIconUrl = shareIconUrl ?? '',
         shareHeadUrl = shareHeadUrl ?? [],
         shareLinkUrl = shareLinkUrl ?? '',
+        customType = customType ?? 0,
         revoked = revoked ?? false;
 
   factory Message.fromString(String data) {
@@ -188,6 +193,7 @@ class Message extends DbBaseModel {
       shareHeadUrl: (map['shareHeadUrl'] as List?)?.map((v) => v as String).toList(),
       shareLinkUrl: map['shareLinkUrl'],
       shareLocation: map['shareLocation'] is Map ? Location.fromJson(map['shareLocation']) : map['shareLocation'],
+      customType: map['customType'],
       revoked: map['revoked'],
     );
   }
@@ -224,6 +230,7 @@ class Message extends DbBaseModel {
       'shareHeadUrl': DbQueryField.convertToBaseType(shareHeadUrl),
       'shareLinkUrl': DbQueryField.convertToBaseType(shareLinkUrl),
       'shareLocation': DbQueryField.convertToBaseType(shareLocation),
+      'customType': DbQueryField.convertToBaseType(customType),
       'revoked': DbQueryField.convertToBaseType(revoked),
     };
   }
@@ -255,6 +262,7 @@ class Message extends DbBaseModel {
       'shareHeadUrl': shareHeadUrl,
       'shareLinkUrl': shareLinkUrl,
       'shareLocation': shareLocation,
+      'customType': customType,
       'revoked': revoked,
     };
   }
@@ -286,6 +294,7 @@ class Message extends DbBaseModel {
     if (map.containsKey('shareHeadUrl')) shareHeadUrl = parser.shareHeadUrl;
     if (map.containsKey('shareLinkUrl')) shareLinkUrl = parser.shareLinkUrl;
     if (map.containsKey('shareLocation')) shareLocation = parser.shareLocation;
+    if (map.containsKey('customType')) customType = parser.customType;
     if (map.containsKey('revoked')) revoked = parser.revoked;
   }
 
@@ -315,6 +324,7 @@ class Message extends DbBaseModel {
     if (map.containsKey('shareHeadUrl')) shareHeadUrl = map['shareHeadUrl'];
     if (map.containsKey('shareLinkUrl')) shareLinkUrl = map['shareLinkUrl'];
     if (map.containsKey('shareLocation')) shareLocation = map['shareLocation'];
+    if (map.containsKey('customType')) customType = map['customType'];
     if (map.containsKey('revoked')) revoked = map['revoked'];
   }
 }
@@ -393,6 +403,9 @@ class MessageDirty {
 
   ///位置分享消息的数据
   set shareLocation(Location value) => data['shareLocation'] = DbQueryField.convertToBaseType(value);
+
+  ///自定义的消息类型
+  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
 
   ///本条是否已撤销
   set revoked(bool value) => data['revoked'] = DbQueryField.convertToBaseType(value);

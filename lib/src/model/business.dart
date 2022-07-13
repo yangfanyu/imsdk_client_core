@@ -7,6 +7,9 @@ class Business extends DbBaseModel {
   ///唯一id
   ObjectId _id;
 
+  ///自定义数据
+  DbJsonWraper _extra;
+
   ///创建时间
   int _time;
 
@@ -34,84 +37,98 @@ class Business extends DbBaseModel {
   ///SDK加解密密钥
   String secret;
 
-  ///定制登录验证url
+  ///管理员id列表
+  List<ObjectId> adminIds;
+
+  ///客服号id列表
+  List<ObjectId> staffIds;
+
+  ///通知群id列表
+  List<ObjectId> groupIds;
+
+  ///定制登录验证URL
   String customLoginValidUrl;
 
-  ///定制订单验证url
+  ///定制订单验证URL
   String customPaymentValidUrl;
 
-  ///微信配置
+  ///微信应用Id
   String wechatAppId;
 
-  ///微信配置
+  ///微信应用Secret
   String wechatAppSecret;
 
-  ///微信配置
+  ///微信商户Id
   String wechatMchId;
 
-  ///微信配置
+  ///微信商户Secret
   String wechatMchSecret;
 
-  ///支付宝配置
+  ///支付宝商户Id
   String alipayPid;
 
-  ///支付宝配置
+  ///支付宝应用Id
   String alipayAppId;
 
-  ///支付宝配置
+  ///支付宝商户私钥
   String alipayPrivateKey;
 
-  ///支付宝配置
+  ///支付宝平台公钥
   String alipayPublicKey;
 
-  ///阿里短信配置
+  ///阿里短信AccessKeyId
   String alismsAccessKeyId;
 
-  ///阿里短信配置
+  ///阿里短信AccessKeySecret
   String alismsAccessKeySecret;
 
-  ///阿里短信配置
+  ///阿里短信Endpoint
   String alismsEndpoint;
 
-  ///阿里短信配置
+  ///阿里短信ApiVersion
   String alismsApiVersion;
 
-  ///阿里短信配置
+  ///阿里短信SignName
   String alismsSignName;
 
-  ///阿里短信配置
+  ///阿里短信TemplateCode
   String alismsTemplateCode;
 
-  ///苹果配置
+  ///苹果KeyP8
   String appleKeyP8;
 
-  ///苹果配置
+  ///苹果KeyP8Public
   ///生成方法: openssl ec -in appleKey.p8 -pubout -out appleKey_public.p8 
   String appleKeyP8Public;
 
-  ///苹果配置
+  ///苹果AuthClientId
   String appleAuthClientId;
 
-  ///苹果配置
+  ///苹果AuthTeamId
   String appleAuthTeamId;
 
-  ///苹果配置
+  ///苹果AuthKeyId
   String appleAuthKeyId;
 
-  ///苹果配置
+  ///苹果AuthRedirectUri
+  ///定向url，网页登录需要，只是客服端登录可以不写
   String appleAuthRedirectUri;
 
-  ///苹果配置
+  ///苹果AppSiteAssociation
   String appleAppSiteAssociation;
 
   ///唯一id
   ObjectId get id => _id;
+
+  ///自定义数据
+  DbJsonWraper get extra => _extra;
 
   ///创建时间
   int get time => _time;
 
   Business({
     ObjectId? id,
+    DbJsonWraper? extra,
     int? time,
     String? no,
     String? pwd,
@@ -121,6 +138,9 @@ class Business extends DbBaseModel {
     String? phone,
     String? email,
     String? secret,
+    List<ObjectId>? adminIds,
+    List<ObjectId>? staffIds,
+    List<ObjectId>? groupIds,
     String? customLoginValidUrl,
     String? customPaymentValidUrl,
     String? wechatAppId,
@@ -145,6 +165,7 @@ class Business extends DbBaseModel {
     String? appleAuthRedirectUri,
     String? appleAppSiteAssociation,
   })  : _id = id ?? ObjectId(),
+        _extra = extra ?? DbJsonWraper(),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
         no = no ?? '',
         pwd = pwd ?? '',
@@ -154,6 +175,9 @@ class Business extends DbBaseModel {
         phone = phone ?? '',
         email = email ?? '',
         secret = secret ?? '',
+        adminIds = adminIds ?? [],
+        staffIds = staffIds ?? [],
+        groupIds = groupIds ?? [],
         customLoginValidUrl = customLoginValidUrl ?? '',
         customPaymentValidUrl = customPaymentValidUrl ?? '',
         wechatAppId = wechatAppId ?? '',
@@ -185,6 +209,7 @@ class Business extends DbBaseModel {
   factory Business.fromJson(Map<String, dynamic> map) {
     return Business(
       id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
+      extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
       time: map['_time'],
       no: map['no'],
       pwd: map['pwd'],
@@ -194,6 +219,9 @@ class Business extends DbBaseModel {
       phone: map['phone'],
       email: map['email'],
       secret: map['secret'],
+      adminIds: (map['adminIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
+      staffIds: (map['staffIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
+      groupIds: (map['groupIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
       customLoginValidUrl: map['customLoginValidUrl'],
       customPaymentValidUrl: map['customPaymentValidUrl'],
       wechatAppId: map['wechatAppId'],
@@ -229,6 +257,7 @@ class Business extends DbBaseModel {
   Map<String, dynamic> toJson() {
     return {
       '_id': DbQueryField.convertToBaseType(_id),
+      '_extra': DbQueryField.convertToBaseType(_extra),
       '_time': DbQueryField.convertToBaseType(_time),
       'no': DbQueryField.convertToBaseType(no),
       'pwd': DbQueryField.convertToBaseType(pwd),
@@ -238,6 +267,9 @@ class Business extends DbBaseModel {
       'phone': DbQueryField.convertToBaseType(phone),
       'email': DbQueryField.convertToBaseType(email),
       'secret': DbQueryField.convertToBaseType(secret),
+      'adminIds': DbQueryField.convertToBaseType(adminIds),
+      'staffIds': DbQueryField.convertToBaseType(staffIds),
+      'groupIds': DbQueryField.convertToBaseType(groupIds),
       'customLoginValidUrl': DbQueryField.convertToBaseType(customLoginValidUrl),
       'customPaymentValidUrl': DbQueryField.convertToBaseType(customPaymentValidUrl),
       'wechatAppId': DbQueryField.convertToBaseType(wechatAppId),
@@ -268,6 +300,7 @@ class Business extends DbBaseModel {
   Map<String, dynamic> toKValues() {
     return {
       '_id': _id,
+      '_extra': _extra,
       '_time': _time,
       'no': no,
       'pwd': pwd,
@@ -277,6 +310,9 @@ class Business extends DbBaseModel {
       'phone': phone,
       'email': email,
       'secret': secret,
+      'adminIds': adminIds,
+      'staffIds': staffIds,
+      'groupIds': groupIds,
       'customLoginValidUrl': customLoginValidUrl,
       'customPaymentValidUrl': customPaymentValidUrl,
       'wechatAppId': wechatAppId,
@@ -307,6 +343,7 @@ class Business extends DbBaseModel {
   void updateByJson(Map<String, dynamic> map, {Business? parser}) {
     parser = parser ?? Business.fromJson(map);
     if (map.containsKey('_id')) _id = parser._id;
+    if (map.containsKey('_extra')) _extra = parser._extra;
     if (map.containsKey('_time')) _time = parser._time;
     if (map.containsKey('no')) no = parser.no;
     if (map.containsKey('pwd')) pwd = parser.pwd;
@@ -316,6 +353,9 @@ class Business extends DbBaseModel {
     if (map.containsKey('phone')) phone = parser.phone;
     if (map.containsKey('email')) email = parser.email;
     if (map.containsKey('secret')) secret = parser.secret;
+    if (map.containsKey('adminIds')) adminIds = parser.adminIds;
+    if (map.containsKey('staffIds')) staffIds = parser.staffIds;
+    if (map.containsKey('groupIds')) groupIds = parser.groupIds;
     if (map.containsKey('customLoginValidUrl')) customLoginValidUrl = parser.customLoginValidUrl;
     if (map.containsKey('customPaymentValidUrl')) customPaymentValidUrl = parser.customPaymentValidUrl;
     if (map.containsKey('wechatAppId')) wechatAppId = parser.wechatAppId;
@@ -344,6 +384,7 @@ class Business extends DbBaseModel {
   @override
   void updateByKValues(Map<String, dynamic> map) {
     if (map.containsKey('_id')) _id = map['_id'];
+    if (map.containsKey('_extra')) _extra = map['_extra'];
     if (map.containsKey('_time')) _time = map['_time'];
     if (map.containsKey('no')) no = map['no'];
     if (map.containsKey('pwd')) pwd = map['pwd'];
@@ -353,6 +394,9 @@ class Business extends DbBaseModel {
     if (map.containsKey('phone')) phone = map['phone'];
     if (map.containsKey('email')) email = map['email'];
     if (map.containsKey('secret')) secret = map['secret'];
+    if (map.containsKey('adminIds')) adminIds = map['adminIds'];
+    if (map.containsKey('staffIds')) staffIds = map['staffIds'];
+    if (map.containsKey('groupIds')) groupIds = map['groupIds'];
     if (map.containsKey('customLoginValidUrl')) customLoginValidUrl = map['customLoginValidUrl'];
     if (map.containsKey('customPaymentValidUrl')) customPaymentValidUrl = map['customPaymentValidUrl'];
     if (map.containsKey('wechatAppId')) wechatAppId = map['wechatAppId'];
@@ -385,6 +429,9 @@ class BusinessDirty {
   ///唯一id
   set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
 
+  ///自定义数据
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+
   ///创建时间
   set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
 
@@ -412,73 +459,83 @@ class BusinessDirty {
   ///SDK加解密密钥
   set secret(String value) => data['secret'] = DbQueryField.convertToBaseType(value);
 
-  ///定制登录验证url
+  ///管理员id列表
+  set adminIds(List<ObjectId> value) => data['adminIds'] = DbQueryField.convertToBaseType(value);
+
+  ///客服号id列表
+  set staffIds(List<ObjectId> value) => data['staffIds'] = DbQueryField.convertToBaseType(value);
+
+  ///通知群id列表
+  set groupIds(List<ObjectId> value) => data['groupIds'] = DbQueryField.convertToBaseType(value);
+
+  ///定制登录验证URL
   set customLoginValidUrl(String value) => data['customLoginValidUrl'] = DbQueryField.convertToBaseType(value);
 
-  ///定制订单验证url
+  ///定制订单验证URL
   set customPaymentValidUrl(String value) => data['customPaymentValidUrl'] = DbQueryField.convertToBaseType(value);
 
-  ///微信配置
+  ///微信应用Id
   set wechatAppId(String value) => data['wechatAppId'] = DbQueryField.convertToBaseType(value);
 
-  ///微信配置
+  ///微信应用Secret
   set wechatAppSecret(String value) => data['wechatAppSecret'] = DbQueryField.convertToBaseType(value);
 
-  ///微信配置
+  ///微信商户Id
   set wechatMchId(String value) => data['wechatMchId'] = DbQueryField.convertToBaseType(value);
 
-  ///微信配置
+  ///微信商户Secret
   set wechatMchSecret(String value) => data['wechatMchSecret'] = DbQueryField.convertToBaseType(value);
 
-  ///支付宝配置
+  ///支付宝商户Id
   set alipayPid(String value) => data['alipayPid'] = DbQueryField.convertToBaseType(value);
 
-  ///支付宝配置
+  ///支付宝应用Id
   set alipayAppId(String value) => data['alipayAppId'] = DbQueryField.convertToBaseType(value);
 
-  ///支付宝配置
+  ///支付宝商户私钥
   set alipayPrivateKey(String value) => data['alipayPrivateKey'] = DbQueryField.convertToBaseType(value);
 
-  ///支付宝配置
+  ///支付宝平台公钥
   set alipayPublicKey(String value) => data['alipayPublicKey'] = DbQueryField.convertToBaseType(value);
 
-  ///阿里短信配置
+  ///阿里短信AccessKeyId
   set alismsAccessKeyId(String value) => data['alismsAccessKeyId'] = DbQueryField.convertToBaseType(value);
 
-  ///阿里短信配置
+  ///阿里短信AccessKeySecret
   set alismsAccessKeySecret(String value) => data['alismsAccessKeySecret'] = DbQueryField.convertToBaseType(value);
 
-  ///阿里短信配置
+  ///阿里短信Endpoint
   set alismsEndpoint(String value) => data['alismsEndpoint'] = DbQueryField.convertToBaseType(value);
 
-  ///阿里短信配置
+  ///阿里短信ApiVersion
   set alismsApiVersion(String value) => data['alismsApiVersion'] = DbQueryField.convertToBaseType(value);
 
-  ///阿里短信配置
+  ///阿里短信SignName
   set alismsSignName(String value) => data['alismsSignName'] = DbQueryField.convertToBaseType(value);
 
-  ///阿里短信配置
+  ///阿里短信TemplateCode
   set alismsTemplateCode(String value) => data['alismsTemplateCode'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果KeyP8
   set appleKeyP8(String value) => data['appleKeyP8'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果KeyP8Public
   ///生成方法: openssl ec -in appleKey.p8 -pubout -out appleKey_public.p8 
   set appleKeyP8Public(String value) => data['appleKeyP8Public'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果AuthClientId
   set appleAuthClientId(String value) => data['appleAuthClientId'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果AuthTeamId
   set appleAuthTeamId(String value) => data['appleAuthTeamId'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果AuthKeyId
   set appleAuthKeyId(String value) => data['appleAuthKeyId'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果AuthRedirectUri
+  ///定向url，网页登录需要，只是客服端登录可以不写
   set appleAuthRedirectUri(String value) => data['appleAuthRedirectUri'] = DbQueryField.convertToBaseType(value);
 
-  ///苹果配置
+  ///苹果AppSiteAssociation
   set appleAppSiteAssociation(String value) => data['appleAppSiteAssociation'] = DbQueryField.convertToBaseType(value);
 }

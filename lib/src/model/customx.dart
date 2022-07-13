@@ -1,5 +1,6 @@
 import 'package:shelf_easy/shelf_easy.dart';
 import 'cusmark.dart';
+import 'cusstar.dart';
 
 ///
 ///自定义数据
@@ -74,6 +75,9 @@ class CustomX extends DbBaseModel {
   ///总标记数（每个用户标记一次）
   int mark;
 
+  ///总收藏数（每个用户收藏一次）
+  int star;
+
   ///整数增减量1（增减单位为1）
   int hot1;
 
@@ -105,9 +109,14 @@ class CustomX extends DbBaseModel {
   DbJsonWraper get extra => _extra;
 
   ///
-  ///消息发送者展示的头像
+  ///关联的自定义标记对象
   ///
   Cusmark? cusmark;
+
+  ///
+  ///关联的自定义收藏对象
+  ///
+  Cusstar? cusstar;
 
   CustomX({
     ObjectId? id,
@@ -133,6 +142,7 @@ class CustomX extends DbBaseModel {
     int? update,
     double? score,
     int? mark,
+    int? star,
     int? hot1,
     int? hot2,
     int? hotx,
@@ -162,6 +172,7 @@ class CustomX extends DbBaseModel {
         update = update ?? DateTime.now().millisecondsSinceEpoch,
         score = score ?? 0,
         mark = mark ?? 0,
+        star = star ?? 0,
         hot1 = hot1 ?? 0,
         hot2 = hot2 ?? 0,
         hotx = hotx ?? 0,
@@ -198,6 +209,7 @@ class CustomX extends DbBaseModel {
       update: map['update'],
       score: map['score'],
       mark: map['mark'],
+      star: map['star'],
       hot1: map['hot1'],
       hot2: map['hot2'],
       hotx: map['hotx'],
@@ -238,6 +250,7 @@ class CustomX extends DbBaseModel {
       'update': DbQueryField.convertToBaseType(update),
       'score': DbQueryField.convertToBaseType(score),
       'mark': DbQueryField.convertToBaseType(mark),
+      'star': DbQueryField.convertToBaseType(star),
       'hot1': DbQueryField.convertToBaseType(hot1),
       'hot2': DbQueryField.convertToBaseType(hot2),
       'hotx': DbQueryField.convertToBaseType(hotx),
@@ -273,6 +286,7 @@ class CustomX extends DbBaseModel {
       'update': update,
       'score': score,
       'mark': mark,
+      'star': star,
       'hot1': hot1,
       'hot2': hot2,
       'hotx': hotx,
@@ -308,6 +322,7 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('update')) update = parser.update;
     if (map.containsKey('score')) score = parser.score;
     if (map.containsKey('mark')) mark = parser.mark;
+    if (map.containsKey('star')) star = parser.star;
     if (map.containsKey('hot1')) hot1 = parser.hot1;
     if (map.containsKey('hot2')) hot2 = parser.hot2;
     if (map.containsKey('hotx')) hotx = parser.hotx;
@@ -341,6 +356,7 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('update')) update = map['update'];
     if (map.containsKey('score')) score = map['score'];
     if (map.containsKey('mark')) mark = map['mark'];
+    if (map.containsKey('star')) star = map['star'];
     if (map.containsKey('hot1')) hot1 = map['hot1'];
     if (map.containsKey('hot2')) hot2 = map['hot2'];
     if (map.containsKey('hotx')) hotx = map['hotx'];
@@ -421,6 +437,9 @@ class CustomXDirty {
 
   ///总标记数（每个用户标记一次）
   set mark(int value) => data['mark'] = DbQueryField.convertToBaseType(value);
+
+  ///总收藏数（每个用户收藏一次）
+  set star(int value) => data['star'] = DbQueryField.convertToBaseType(value);
 
   ///整数增减量1（增减单位为1）
   set hot1(int value) => data['hot1'] = DbQueryField.convertToBaseType(value);

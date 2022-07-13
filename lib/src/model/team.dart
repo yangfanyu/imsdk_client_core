@@ -61,7 +61,7 @@ class Team extends DbBaseModel {
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
   bool silent;
 
-  ///被封禁时间截止时间
+  ///被封禁状态（>=0：被封禁时间截止时间；<0：永久封禁或永久注销）
   int deny;
 
   ///唯一id
@@ -314,6 +314,6 @@ class TeamDirty {
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
   set silent(bool value) => data['silent'] = DbQueryField.convertToBaseType(value);
 
-  ///被封禁时间截止时间
+  ///被封禁状态（>=0：被封禁时间截止时间；<0：永久封禁或永久注销）
   set deny(int value) => data['deny'] = DbQueryField.convertToBaseType(value);
 }

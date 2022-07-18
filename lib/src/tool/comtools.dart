@@ -136,11 +136,11 @@ class ComTools {
 
   ///获取以[dateTime]为参考日期，偏移[offsetDay]天的毫秒开始时间戳
   static int getDayStartMillisByDateOffset(DateTime dateTime, {int offsetDay = 0}) {
-    return DateTime(dateTime.year, dateTime.month, dateTime.day - offsetDay).millisecondsSinceEpoch;
+    return DateTime(dateTime.year, dateTime.month, dateTime.day + offsetDay).millisecondsSinceEpoch;
   }
 
   ///获取以[dateTime]为参考日期，偏移[offsetDay]天的毫秒结束时间戳
   static int getDayEndMillisByDateOffset(DateTime dateTime, {int offsetDay = 0}) {
-    return DateTime(dateTime.year, dateTime.month, dateTime.day - offsetDay, 59, 59, 59, 999).millisecondsSinceEpoch;
+    return DateTime(dateTime.year, dateTime.month, dateTime.day + offsetDay, 23, 59, 59, 999).millisecondsSinceEpoch;
   }
 }

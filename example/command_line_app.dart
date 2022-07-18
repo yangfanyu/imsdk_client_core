@@ -46,7 +46,7 @@ class CommandLineApp extends EasyLogger {
   ///登录页
   void loginPage() {
     _netClient.appConfigure().then(((value) {
-      logDebug([_netClient.adminIds, _netClient.configs]);
+      logDebug([_netClient.adminIds, _netClient.version, _netClient.configs]);
     }));
     renderPage(
       '登录',

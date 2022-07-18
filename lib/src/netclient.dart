@@ -54,6 +54,9 @@ class NetClient {
   ///管理员的标志
   final List<ObjectId> adminIds;
 
+  ///最新的客户端版本号
+  int version;
+
   ///当前用户信息
   final User user;
 
@@ -114,6 +117,7 @@ class NetClient {
   NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, this.logTag, required this.host, required this.bsid, required this.secret, this.binary = true, this.isolate = false, required this.onCredentials})
       : configs = DbJsonWraper(),
         adminIds = [],
+        version = 0,
         user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
         _sessionState = NetClientAzState(),
         _waitshipState = NetClientAzState(),
@@ -140,6 +144,7 @@ class NetClient {
   Future<EasyPacket<void>> appConfigure() async {
     final response = await _guestClient.httpRequest('$host/appConfigure', data: {'bsid': bsid});
     if (response.ok) {
+      version = response.data!['version'] as int;
       final adminIdList = response.data!['adminIds'] as List;
       adminIds.clear();
       for (var element in adminIdList) {

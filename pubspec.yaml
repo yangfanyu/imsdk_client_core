@@ -1,6 +1,6 @@
 name: imsdk_client_core
 description: The client core library of Zhiyou real-time communication cloud service.
-version: 1.1.9
+version: 1.2.0
 homepage: https://github.com/yangfanyu/imsdk_client_core
 
 environment:

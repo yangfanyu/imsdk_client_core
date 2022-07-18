@@ -37,6 +37,9 @@ class Business extends DbBaseModel {
   ///SDK加解密密钥
   String secret;
 
+  ///最新版本号码
+  int version;
+
   ///管理员id列表
   List<ObjectId> adminIds;
 
@@ -138,6 +141,7 @@ class Business extends DbBaseModel {
     String? phone,
     String? email,
     String? secret,
+    int? version,
     List<ObjectId>? adminIds,
     List<ObjectId>? staffIds,
     List<ObjectId>? groupIds,
@@ -175,6 +179,7 @@ class Business extends DbBaseModel {
         phone = phone ?? '',
         email = email ?? '',
         secret = secret ?? '',
+        version = version ?? 0,
         adminIds = adminIds ?? [],
         staffIds = staffIds ?? [],
         groupIds = groupIds ?? [],
@@ -219,6 +224,7 @@ class Business extends DbBaseModel {
       phone: map['phone'],
       email: map['email'],
       secret: map['secret'],
+      version: map['version'],
       adminIds: (map['adminIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
       staffIds: (map['staffIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
       groupIds: (map['groupIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
@@ -267,6 +273,7 @@ class Business extends DbBaseModel {
       'phone': DbQueryField.convertToBaseType(phone),
       'email': DbQueryField.convertToBaseType(email),
       'secret': DbQueryField.convertToBaseType(secret),
+      'version': DbQueryField.convertToBaseType(version),
       'adminIds': DbQueryField.convertToBaseType(adminIds),
       'staffIds': DbQueryField.convertToBaseType(staffIds),
       'groupIds': DbQueryField.convertToBaseType(groupIds),
@@ -310,6 +317,7 @@ class Business extends DbBaseModel {
       'phone': phone,
       'email': email,
       'secret': secret,
+      'version': version,
       'adminIds': adminIds,
       'staffIds': staffIds,
       'groupIds': groupIds,
@@ -353,6 +361,7 @@ class Business extends DbBaseModel {
     if (map.containsKey('phone')) phone = parser.phone;
     if (map.containsKey('email')) email = parser.email;
     if (map.containsKey('secret')) secret = parser.secret;
+    if (map.containsKey('version')) version = parser.version;
     if (map.containsKey('adminIds')) adminIds = parser.adminIds;
     if (map.containsKey('staffIds')) staffIds = parser.staffIds;
     if (map.containsKey('groupIds')) groupIds = parser.groupIds;
@@ -394,6 +403,7 @@ class Business extends DbBaseModel {
     if (map.containsKey('phone')) phone = map['phone'];
     if (map.containsKey('email')) email = map['email'];
     if (map.containsKey('secret')) secret = map['secret'];
+    if (map.containsKey('version')) version = map['version'];
     if (map.containsKey('adminIds')) adminIds = map['adminIds'];
     if (map.containsKey('staffIds')) staffIds = map['staffIds'];
     if (map.containsKey('groupIds')) groupIds = map['groupIds'];
@@ -458,6 +468,9 @@ class BusinessDirty {
 
   ///SDK加解密密钥
   set secret(String value) => data['secret'] = DbQueryField.convertToBaseType(value);
+
+  ///最新版本号码
+  set version(int value) => data['version'] = DbQueryField.convertToBaseType(value);
 
   ///管理员id列表
   set adminIds(List<ObjectId> value) => data['adminIds'] = DbQueryField.convertToBaseType(value);

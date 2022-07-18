@@ -1,4 +1,4 @@
-## 1.2.0
+## 1.2.1
 
 - Add admin system api.
 - 

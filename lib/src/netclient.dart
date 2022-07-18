@@ -316,6 +316,15 @@ class NetClient {
     return response;
   }
 
+  ///永久注销账号
+  Future<EasyPacket<void>> userDestroy() async {
+    final response = await _aliveClient.websocketRequest('userDestroy', data: {'bsid': bsid});
+    if (response.ok) {
+      _aliveClient.unbindUser();
+    }
+    return response;
+  }
+
   ///批量获取用户
   Future<EasyPacket<List<User>>> userFetch({required List<ObjectId> uids}) async {
     final response = await _aliveClient.websocketRequest('userFetch', data: {'bsid': bsid, 'uids': uids});

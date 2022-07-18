@@ -20,6 +20,7 @@ export 'src/model/usership.dart';
 export 'src/model/validator.dart';
 export 'src/netclient.dart';
 
+export '/src/tool/compage.dart';
 export '/src/tool/comtools.dart';
 export '/src/tool/datapage.dart';
 export '/src/tool/session.dart';

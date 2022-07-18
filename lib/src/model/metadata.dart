@@ -69,15 +69,15 @@ class Metadata extends DbBaseModel {
 
   factory Metadata.fromJson(Map<String, dynamic> map) {
     return Metadata(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      type: map['type'],
-      path: map['path'],
-      size: map['size'],
-      removed: map['removed'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      type: DbQueryField.tryParseInt(map['type']),
+      path: DbQueryField.tryParseString(map['path']),
+      size: DbQueryField.tryParseInt(map['size']),
+      removed: DbQueryField.tryParseBool(map['removed']),
     );
   }
 
@@ -89,15 +89,15 @@ class Metadata extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'type': DbQueryField.convertToBaseType(type),
-      'path': DbQueryField.convertToBaseType(path),
-      'size': DbQueryField.convertToBaseType(size),
-      'removed': DbQueryField.convertToBaseType(removed),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'type': DbQueryField.toBaseType(type),
+      'path': DbQueryField.toBaseType(path),
+      'size': DbQueryField.toBaseType(size),
+      'removed': DbQueryField.toBaseType(removed),
     };
   }
 
@@ -148,29 +148,29 @@ class MetadataDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///上传者的用户id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///文件类型
-  set type(int value) => data['type'] = DbQueryField.convertToBaseType(value);
+  set type(int value) => data['type'] = DbQueryField.toBaseType(value);
 
   ///文件保存的路径
-  set path(String value) => data['path'] = DbQueryField.convertToBaseType(value);
+  set path(String value) => data['path'] = DbQueryField.toBaseType(value);
 
   ///文件的字节大小
-  set size(int value) => data['size'] = DbQueryField.convertToBaseType(value);
+  set size(int value) => data['size'] = DbQueryField.toBaseType(value);
 
   ///文件是否已经删除
-  set removed(bool value) => data['removed'] = DbQueryField.convertToBaseType(value);
+  set removed(bool value) => data['removed'] = DbQueryField.toBaseType(value);
 }

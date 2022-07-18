@@ -186,36 +186,36 @@ class CustomX extends DbBaseModel {
 
   factory CustomX.fromJson(Map<String, dynamic> map) {
     return CustomX(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      rid1: map['rid1'] is String ? ObjectId.fromHexString(map['rid1']) : map['rid1'],
-      rid2: map['rid2'] is String ? ObjectId.fromHexString(map['rid2']) : map['rid2'],
-      rid3: map['rid3'] is String ? ObjectId.fromHexString(map['rid3']) : map['rid3'],
-      int1: map['int1'],
-      int2: map['int2'],
-      int3: map['int3'],
-      str1: map['str1'],
-      str2: map['str2'],
-      str3: map['str3'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      rid1: DbQueryField.tryParseObjectId(map['rid1']),
+      rid2: DbQueryField.tryParseObjectId(map['rid2']),
+      rid3: DbQueryField.tryParseObjectId(map['rid3']),
+      int1: DbQueryField.tryParseInt(map['int1']),
+      int2: DbQueryField.tryParseInt(map['int2']),
+      int3: DbQueryField.tryParseInt(map['int3']),
+      str1: DbQueryField.tryParseString(map['str1']),
+      str2: DbQueryField.tryParseString(map['str2']),
+      str3: DbQueryField.tryParseString(map['str3']),
       body1: map['body1'] is Map ? DbJsonWraper.fromJson(map['body1']) : map['body1'],
       body2: map['body2'] is Map ? DbJsonWraper.fromJson(map['body2']) : map['body2'],
       body3: map['body3'] is Map ? DbJsonWraper.fromJson(map['body3']) : map['body3'],
-      state1: map['state1'],
-      state2: map['state2'],
-      state3: map['state3'],
-      update: map['update'],
-      score: map['score'],
-      mark: map['mark'],
-      star: map['star'],
-      hot1: map['hot1'],
-      hot2: map['hot2'],
-      hotx: map['hotx'],
-      cnt1: map['cnt1'],
-      cnt2: map['cnt2'],
-      cnt3: map['cnt3'],
+      state1: DbQueryField.tryParseInt(map['state1']),
+      state2: DbQueryField.tryParseInt(map['state2']),
+      state3: DbQueryField.tryParseInt(map['state3']),
+      update: DbQueryField.tryParseInt(map['update']),
+      score: DbQueryField.tryParseDouble(map['score']),
+      mark: DbQueryField.tryParseInt(map['mark']),
+      star: DbQueryField.tryParseInt(map['star']),
+      hot1: DbQueryField.tryParseInt(map['hot1']),
+      hot2: DbQueryField.tryParseInt(map['hot2']),
+      hotx: DbQueryField.tryParseInt(map['hotx']),
+      cnt1: DbQueryField.tryParseInt(map['cnt1']),
+      cnt2: DbQueryField.tryParseInt(map['cnt2']),
+      cnt3: DbQueryField.tryParseInt(map['cnt3']),
     );
   }
 
@@ -227,36 +227,36 @@ class CustomX extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'rid1': DbQueryField.convertToBaseType(rid1),
-      'rid2': DbQueryField.convertToBaseType(rid2),
-      'rid3': DbQueryField.convertToBaseType(rid3),
-      'int1': DbQueryField.convertToBaseType(int1),
-      'int2': DbQueryField.convertToBaseType(int2),
-      'int3': DbQueryField.convertToBaseType(int3),
-      'str1': DbQueryField.convertToBaseType(str1),
-      'str2': DbQueryField.convertToBaseType(str2),
-      'str3': DbQueryField.convertToBaseType(str3),
-      'body1': DbQueryField.convertToBaseType(body1),
-      'body2': DbQueryField.convertToBaseType(body2),
-      'body3': DbQueryField.convertToBaseType(body3),
-      'state1': DbQueryField.convertToBaseType(state1),
-      'state2': DbQueryField.convertToBaseType(state2),
-      'state3': DbQueryField.convertToBaseType(state3),
-      'update': DbQueryField.convertToBaseType(update),
-      'score': DbQueryField.convertToBaseType(score),
-      'mark': DbQueryField.convertToBaseType(mark),
-      'star': DbQueryField.convertToBaseType(star),
-      'hot1': DbQueryField.convertToBaseType(hot1),
-      'hot2': DbQueryField.convertToBaseType(hot2),
-      'hotx': DbQueryField.convertToBaseType(hotx),
-      'cnt1': DbQueryField.convertToBaseType(cnt1),
-      'cnt2': DbQueryField.convertToBaseType(cnt2),
-      'cnt3': DbQueryField.convertToBaseType(cnt3),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'rid1': DbQueryField.toBaseType(rid1),
+      'rid2': DbQueryField.toBaseType(rid2),
+      'rid3': DbQueryField.toBaseType(rid3),
+      'int1': DbQueryField.toBaseType(int1),
+      'int2': DbQueryField.toBaseType(int2),
+      'int3': DbQueryField.toBaseType(int3),
+      'str1': DbQueryField.toBaseType(str1),
+      'str2': DbQueryField.toBaseType(str2),
+      'str3': DbQueryField.toBaseType(str3),
+      'body1': DbQueryField.toBaseType(body1),
+      'body2': DbQueryField.toBaseType(body2),
+      'body3': DbQueryField.toBaseType(body3),
+      'state1': DbQueryField.toBaseType(state1),
+      'state2': DbQueryField.toBaseType(state2),
+      'state3': DbQueryField.toBaseType(state3),
+      'update': DbQueryField.toBaseType(update),
+      'score': DbQueryField.toBaseType(score),
+      'mark': DbQueryField.toBaseType(mark),
+      'star': DbQueryField.toBaseType(star),
+      'hot1': DbQueryField.toBaseType(hot1),
+      'hot2': DbQueryField.toBaseType(hot2),
+      'hotx': DbQueryField.toBaseType(hotx),
+      'cnt1': DbQueryField.toBaseType(cnt1),
+      'cnt2': DbQueryField.toBaseType(cnt2),
+      'cnt3': DbQueryField.toBaseType(cnt3),
     };
   }
 
@@ -370,92 +370,92 @@ class CustomXDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///创建者标志
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///关联标志索引1
-  set rid1(ObjectId value) => data['rid1'] = DbQueryField.convertToBaseType(value);
+  set rid1(ObjectId value) => data['rid1'] = DbQueryField.toBaseType(value);
 
   ///关联标志索引2
-  set rid2(ObjectId value) => data['rid2'] = DbQueryField.convertToBaseType(value);
+  set rid2(ObjectId value) => data['rid2'] = DbQueryField.toBaseType(value);
 
   ///关联标志索引3
-  set rid3(ObjectId value) => data['rid3'] = DbQueryField.convertToBaseType(value);
+  set rid3(ObjectId value) => data['rid3'] = DbQueryField.toBaseType(value);
 
   ///整数索引1
-  set int1(int value) => data['int1'] = DbQueryField.convertToBaseType(value);
+  set int1(int value) => data['int1'] = DbQueryField.toBaseType(value);
 
   ///整数索引2
-  set int2(int value) => data['int2'] = DbQueryField.convertToBaseType(value);
+  set int2(int value) => data['int2'] = DbQueryField.toBaseType(value);
 
   ///整数索引3
-  set int3(int value) => data['int3'] = DbQueryField.convertToBaseType(value);
+  set int3(int value) => data['int3'] = DbQueryField.toBaseType(value);
 
   ///字符串索引1
-  set str1(String value) => data['str1'] = DbQueryField.convertToBaseType(value);
+  set str1(String value) => data['str1'] = DbQueryField.toBaseType(value);
 
   ///字符串索引2
-  set str2(String value) => data['str2'] = DbQueryField.convertToBaseType(value);
+  set str2(String value) => data['str2'] = DbQueryField.toBaseType(value);
 
   ///字符串索引3
-  set str3(String value) => data['str3'] = DbQueryField.convertToBaseType(value);
+  set str3(String value) => data['str3'] = DbQueryField.toBaseType(value);
 
   ///数据内容1
-  set body1(DbJsonWraper value) => data['body1'] = DbQueryField.convertToBaseType(value);
+  set body1(DbJsonWraper value) => data['body1'] = DbQueryField.toBaseType(value);
 
   ///数据内容2
-  set body2(DbJsonWraper value) => data['body2'] = DbQueryField.convertToBaseType(value);
+  set body2(DbJsonWraper value) => data['body2'] = DbQueryField.toBaseType(value);
 
   ///数据内容3
-  set body3(DbJsonWraper value) => data['body3'] = DbQueryField.convertToBaseType(value);
+  set body3(DbJsonWraper value) => data['body3'] = DbQueryField.toBaseType(value);
 
   ///数据状态1
-  set state1(int value) => data['state1'] = DbQueryField.convertToBaseType(value);
+  set state1(int value) => data['state1'] = DbQueryField.toBaseType(value);
 
   ///数据状态2
-  set state2(int value) => data['state2'] = DbQueryField.convertToBaseType(value);
+  set state2(int value) => data['state2'] = DbQueryField.toBaseType(value);
 
   ///数据状态3
-  set state3(int value) => data['state3'] = DbQueryField.convertToBaseType(value);
+  set state3(int value) => data['state3'] = DbQueryField.toBaseType(value);
 
   ///最近更新时间
-  set update(int value) => data['update'] = DbQueryField.convertToBaseType(value);
+  set update(int value) => data['update'] = DbQueryField.toBaseType(value);
 
   ///平局得分（每个用户打分一次）
-  set score(double value) => data['score'] = DbQueryField.convertToBaseType(value);
+  set score(double value) => data['score'] = DbQueryField.toBaseType(value);
 
   ///总标记数（每个用户标记一次）
-  set mark(int value) => data['mark'] = DbQueryField.convertToBaseType(value);
+  set mark(int value) => data['mark'] = DbQueryField.toBaseType(value);
 
   ///总收藏数（每个用户收藏一次）
-  set star(int value) => data['star'] = DbQueryField.convertToBaseType(value);
+  set star(int value) => data['star'] = DbQueryField.toBaseType(value);
 
   ///整数增减量1（增减单位为1）
-  set hot1(int value) => data['hot1'] = DbQueryField.convertToBaseType(value);
+  set hot1(int value) => data['hot1'] = DbQueryField.toBaseType(value);
 
   ///整数增减量2（增减单位为1）
-  set hot2(int value) => data['hot2'] = DbQueryField.convertToBaseType(value);
+  set hot2(int value) => data['hot2'] = DbQueryField.toBaseType(value);
 
   ///整数增减量x（增减单位为x）
-  set hotx(int value) => data['hotx'] = DbQueryField.convertToBaseType(value);
+  set hotx(int value) => data['hotx'] = DbQueryField.toBaseType(value);
 
   ///子customx.rid1为本customx.id的子customx数量
-  set cnt1(int value) => data['cnt1'] = DbQueryField.convertToBaseType(value);
+  set cnt1(int value) => data['cnt1'] = DbQueryField.toBaseType(value);
 
   ///子customx.rid2为本customx.id的子customx数量
-  set cnt2(int value) => data['cnt2'] = DbQueryField.convertToBaseType(value);
+  set cnt2(int value) => data['cnt2'] = DbQueryField.toBaseType(value);
 
   ///子customx.rid3为本customx.id的子customx数量
-  set cnt3(int value) => data['cnt3'] = DbQueryField.convertToBaseType(value);
+  set cnt3(int value) => data['cnt3'] = DbQueryField.toBaseType(value);
 }

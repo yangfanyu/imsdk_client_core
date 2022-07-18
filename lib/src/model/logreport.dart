@@ -89,19 +89,19 @@ class LogReport extends DbBaseModel {
 
   factory LogReport.fromJson(Map<String, dynamic> map) {
     return LogReport(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      rid: map['rid'] is String ? ObjectId.fromHexString(map['rid']) : map['rid'],
-      type: map['type'],
-      image: map['image'],
-      host: map['host'],
-      href: map['href'],
-      desc: map['desc'],
-      state: map['state'],
-      customType: map['customType'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      rid: DbQueryField.tryParseObjectId(map['rid']),
+      type: DbQueryField.tryParseInt(map['type']),
+      image: DbQueryField.tryParseString(map['image']),
+      host: DbQueryField.tryParseString(map['host']),
+      href: DbQueryField.tryParseString(map['href']),
+      desc: DbQueryField.tryParseString(map['desc']),
+      state: DbQueryField.tryParseInt(map['state']),
+      customType: DbQueryField.tryParseInt(map['customType']),
     );
   }
 
@@ -113,19 +113,19 @@ class LogReport extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'rid': DbQueryField.convertToBaseType(rid),
-      'type': DbQueryField.convertToBaseType(type),
-      'image': DbQueryField.convertToBaseType(image),
-      'host': DbQueryField.convertToBaseType(host),
-      'href': DbQueryField.convertToBaseType(href),
-      'desc': DbQueryField.convertToBaseType(desc),
-      'state': DbQueryField.convertToBaseType(state),
-      'customType': DbQueryField.convertToBaseType(customType),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'rid': DbQueryField.toBaseType(rid),
+      'type': DbQueryField.toBaseType(type),
+      'image': DbQueryField.toBaseType(image),
+      'host': DbQueryField.toBaseType(host),
+      'href': DbQueryField.toBaseType(href),
+      'desc': DbQueryField.toBaseType(desc),
+      'state': DbQueryField.toBaseType(state),
+      'customType': DbQueryField.toBaseType(customType),
     };
   }
 
@@ -188,41 +188,41 @@ class LogReportDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///所属用户id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///投诉目标id
-  set rid(ObjectId value) => data['rid'] = DbQueryField.convertToBaseType(value);
+  set rid(ObjectId value) => data['rid'] = DbQueryField.toBaseType(value);
 
   ///投诉目标类型
-  set type(int value) => data['type'] = DbQueryField.convertToBaseType(value);
+  set type(int value) => data['type'] = DbQueryField.toBaseType(value);
 
   ///投诉目标截图
-  set image(String value) => data['image'] = DbQueryField.convertToBaseType(value);
+  set image(String value) => data['image'] = DbQueryField.toBaseType(value);
 
   ///投诉目标域名
-  set host(String value) => data['host'] = DbQueryField.convertToBaseType(value);
+  set host(String value) => data['host'] = DbQueryField.toBaseType(value);
 
   ///投诉目标网址
-  set href(String value) => data['href'] = DbQueryField.convertToBaseType(value);
+  set href(String value) => data['href'] = DbQueryField.toBaseType(value);
 
   ///投诉原因
-  set desc(String value) => data['desc'] = DbQueryField.convertToBaseType(value);
+  set desc(String value) => data['desc'] = DbQueryField.toBaseType(value);
 
   ///投诉状态
-  set state(int value) => data['state'] = DbQueryField.convertToBaseType(value);
+  set state(int value) => data['state'] = DbQueryField.toBaseType(value);
 
   ///自定义的投诉目标类型
-  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
+  set customType(int value) => data['customType'] = DbQueryField.toBaseType(value);
 }

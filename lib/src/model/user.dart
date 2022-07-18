@@ -200,41 +200,41 @@ class User extends DbBaseModel {
 
   factory User.fromJson(Map<String, dynamic> map) {
     return User(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      phone: map['phone'],
-      token: map['token'],
-      rmbpwd: map['rmbpwd'],
-      rmbfen: map['rmbfen'],
-      thirdTp: map['thirdTp'],
-      thirdNo: map['thirdNo'],
-      customType: map['customType'],
-      name: map['name'],
-      card: map['card'],
-      birth: map['birth'],
-      sex: map['sex'],
-      country: map['country'],
-      province: map['province'],
-      city: map['city'],
-      district: map['district'],
+      phone: DbQueryField.tryParseString(map['phone']),
+      token: DbQueryField.tryParseString(map['token']),
+      rmbpwd: DbQueryField.tryParseString(map['rmbpwd']),
+      rmbfen: DbQueryField.tryParseInt(map['rmbfen']),
+      thirdTp: DbQueryField.tryParseInt(map['thirdTp']),
+      thirdNo: DbQueryField.tryParseString(map['thirdNo']),
+      customType: DbQueryField.tryParseInt(map['customType']),
+      name: DbQueryField.tryParseString(map['name']),
+      card: DbQueryField.tryParseString(map['card']),
+      birth: DbQueryField.tryParseString(map['birth']),
+      sex: DbQueryField.tryParseInt(map['sex']),
+      country: DbQueryField.tryParseString(map['country']),
+      province: DbQueryField.tryParseString(map['province']),
+      city: DbQueryField.tryParseString(map['city']),
+      district: DbQueryField.tryParseString(map['district']),
       location: map['location'] is Map ? Location.fromJson(map['location']) : map['location'],
-      login: map['login'],
-      ip: map['ip'],
-      no: map['no'],
-      pwd: map['pwd'],
-      nick: map['nick'],
-      desc: map['desc'],
-      icon: map['icon'],
-      head: (map['head'] as List?)?.map((v) => v as String).toList(),
-      byfind: map['byfind'],
-      bycode: map['bycode'],
-      bycard: map['bycard'],
-      byteam: map['byteam'],
-      notice: map['notice'],
-      silent: map['silent'],
-      deny: map['deny'],
+      login: DbQueryField.tryParseInt(map['login']),
+      ip: DbQueryField.tryParseString(map['ip']),
+      no: DbQueryField.tryParseString(map['no']),
+      pwd: DbQueryField.tryParseString(map['pwd']),
+      nick: DbQueryField.tryParseString(map['nick']),
+      desc: DbQueryField.tryParseString(map['desc']),
+      icon: DbQueryField.tryParseString(map['icon']),
+      head: (map['head'] as List?)?.map((v) => DbQueryField.parseString(v)).toList(),
+      byfind: DbQueryField.tryParseBool(map['byfind']),
+      bycode: DbQueryField.tryParseBool(map['bycode']),
+      bycard: DbQueryField.tryParseBool(map['bycard']),
+      byteam: DbQueryField.tryParseBool(map['byteam']),
+      notice: DbQueryField.tryParseBool(map['notice']),
+      silent: DbQueryField.tryParseBool(map['silent']),
+      deny: DbQueryField.tryParseInt(map['deny']),
     );
   }
 
@@ -246,41 +246,41 @@ class User extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'phone': DbQueryField.convertToBaseType(phone),
-      'token': DbQueryField.convertToBaseType(token),
-      'rmbpwd': DbQueryField.convertToBaseType(rmbpwd),
-      'rmbfen': DbQueryField.convertToBaseType(rmbfen),
-      'thirdTp': DbQueryField.convertToBaseType(thirdTp),
-      'thirdNo': DbQueryField.convertToBaseType(thirdNo),
-      'customType': DbQueryField.convertToBaseType(customType),
-      'name': DbQueryField.convertToBaseType(name),
-      'card': DbQueryField.convertToBaseType(card),
-      'birth': DbQueryField.convertToBaseType(birth),
-      'sex': DbQueryField.convertToBaseType(sex),
-      'country': DbQueryField.convertToBaseType(country),
-      'province': DbQueryField.convertToBaseType(province),
-      'city': DbQueryField.convertToBaseType(city),
-      'district': DbQueryField.convertToBaseType(district),
-      'location': DbQueryField.convertToBaseType(location),
-      'login': DbQueryField.convertToBaseType(login),
-      'ip': DbQueryField.convertToBaseType(ip),
-      'no': DbQueryField.convertToBaseType(no),
-      'pwd': DbQueryField.convertToBaseType(pwd),
-      'nick': DbQueryField.convertToBaseType(nick),
-      'desc': DbQueryField.convertToBaseType(desc),
-      'icon': DbQueryField.convertToBaseType(icon),
-      'head': DbQueryField.convertToBaseType(head),
-      'byfind': DbQueryField.convertToBaseType(byfind),
-      'bycode': DbQueryField.convertToBaseType(bycode),
-      'bycard': DbQueryField.convertToBaseType(bycard),
-      'byteam': DbQueryField.convertToBaseType(byteam),
-      'notice': DbQueryField.convertToBaseType(notice),
-      'silent': DbQueryField.convertToBaseType(silent),
-      'deny': DbQueryField.convertToBaseType(deny),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'phone': DbQueryField.toBaseType(phone),
+      'token': DbQueryField.toBaseType(token),
+      'rmbpwd': DbQueryField.toBaseType(rmbpwd),
+      'rmbfen': DbQueryField.toBaseType(rmbfen),
+      'thirdTp': DbQueryField.toBaseType(thirdTp),
+      'thirdNo': DbQueryField.toBaseType(thirdNo),
+      'customType': DbQueryField.toBaseType(customType),
+      'name': DbQueryField.toBaseType(name),
+      'card': DbQueryField.toBaseType(card),
+      'birth': DbQueryField.toBaseType(birth),
+      'sex': DbQueryField.toBaseType(sex),
+      'country': DbQueryField.toBaseType(country),
+      'province': DbQueryField.toBaseType(province),
+      'city': DbQueryField.toBaseType(city),
+      'district': DbQueryField.toBaseType(district),
+      'location': DbQueryField.toBaseType(location),
+      'login': DbQueryField.toBaseType(login),
+      'ip': DbQueryField.toBaseType(ip),
+      'no': DbQueryField.toBaseType(no),
+      'pwd': DbQueryField.toBaseType(pwd),
+      'nick': DbQueryField.toBaseType(nick),
+      'desc': DbQueryField.toBaseType(desc),
+      'icon': DbQueryField.toBaseType(icon),
+      'head': DbQueryField.toBaseType(head),
+      'byfind': DbQueryField.toBaseType(byfind),
+      'bycode': DbQueryField.toBaseType(bycode),
+      'bycard': DbQueryField.toBaseType(bycard),
+      'byteam': DbQueryField.toBaseType(byteam),
+      'notice': DbQueryField.toBaseType(notice),
+      'silent': DbQueryField.toBaseType(silent),
+      'deny': DbQueryField.toBaseType(deny),
     };
   }
 
@@ -409,107 +409,107 @@ class UserDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///手机号码
-  set phone(String value) => data['phone'] = DbQueryField.convertToBaseType(value);
+  set phone(String value) => data['phone'] = DbQueryField.toBaseType(value);
 
   ///加密口令
-  set token(String value) => data['token'] = DbQueryField.convertToBaseType(value);
+  set token(String value) => data['token'] = DbQueryField.toBaseType(value);
 
   ///RMB支付密码
-  set rmbpwd(String value) => data['rmbpwd'] = DbQueryField.convertToBaseType(value);
+  set rmbpwd(String value) => data['rmbpwd'] = DbQueryField.toBaseType(value);
 
   ///RMB拥有数量（分）
-  set rmbfen(int value) => data['rmbfen'] = DbQueryField.convertToBaseType(value);
+  set rmbfen(int value) => data['rmbfen'] = DbQueryField.toBaseType(value);
 
   ///第三方账号类型
-  set thirdTp(int value) => data['thirdTp'] = DbQueryField.convertToBaseType(value);
+  set thirdTp(int value) => data['thirdTp'] = DbQueryField.toBaseType(value);
 
   ///第三方账号标志
-  set thirdNo(String value) => data['thirdNo'] = DbQueryField.convertToBaseType(value);
+  set thirdNo(String value) => data['thirdNo'] = DbQueryField.toBaseType(value);
 
   ///自定义的第三方账号类型
-  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
+  set customType(int value) => data['customType'] = DbQueryField.toBaseType(value);
 
   ///真实姓名
-  set name(String value) => data['name'] = DbQueryField.convertToBaseType(value);
+  set name(String value) => data['name'] = DbQueryField.toBaseType(value);
 
   ///身份证号
-  set card(String value) => data['card'] = DbQueryField.convertToBaseType(value);
+  set card(String value) => data['card'] = DbQueryField.toBaseType(value);
 
   ///生日
-  set birth(String value) => data['birth'] = DbQueryField.convertToBaseType(value);
+  set birth(String value) => data['birth'] = DbQueryField.toBaseType(value);
 
   ///性别
-  set sex(int value) => data['sex'] = DbQueryField.convertToBaseType(value);
+  set sex(int value) => data['sex'] = DbQueryField.toBaseType(value);
 
   ///国家
-  set country(String value) => data['country'] = DbQueryField.convertToBaseType(value);
+  set country(String value) => data['country'] = DbQueryField.toBaseType(value);
 
   ///省份
-  set province(String value) => data['province'] = DbQueryField.convertToBaseType(value);
+  set province(String value) => data['province'] = DbQueryField.toBaseType(value);
 
   ///市
-  set city(String value) => data['city'] = DbQueryField.convertToBaseType(value);
+  set city(String value) => data['city'] = DbQueryField.toBaseType(value);
 
   ///县（区）
-  set district(String value) => data['district'] = DbQueryField.convertToBaseType(value);
+  set district(String value) => data['district'] = DbQueryField.toBaseType(value);
 
   ///最近定位信息
-  set location(Location value) => data['location'] = DbQueryField.convertToBaseType(value);
+  set location(Location value) => data['location'] = DbQueryField.toBaseType(value);
 
   ///最近登录时间
-  set login(int value) => data['login'] = DbQueryField.convertToBaseType(value);
+  set login(int value) => data['login'] = DbQueryField.toBaseType(value);
 
   ///最近登录ip地址
-  set ip(String value) => data['ip'] = DbQueryField.convertToBaseType(value);
+  set ip(String value) => data['ip'] = DbQueryField.toBaseType(value);
 
   ///账号
-  set no(String value) => data['no'] = DbQueryField.convertToBaseType(value);
+  set no(String value) => data['no'] = DbQueryField.toBaseType(value);
 
   ///密码
-  set pwd(String value) => data['pwd'] = DbQueryField.convertToBaseType(value);
+  set pwd(String value) => data['pwd'] = DbQueryField.toBaseType(value);
 
   ///昵称
-  set nick(String value) => data['nick'] = DbQueryField.convertToBaseType(value);
+  set nick(String value) => data['nick'] = DbQueryField.toBaseType(value);
 
   ///描述
-  set desc(String value) => data['desc'] = DbQueryField.convertToBaseType(value);
+  set desc(String value) => data['desc'] = DbQueryField.toBaseType(value);
 
   ///图标
-  set icon(String value) => data['icon'] = DbQueryField.convertToBaseType(value);
+  set icon(String value) => data['icon'] = DbQueryField.toBaseType(value);
 
   ///头像
-  set head(List<String> value) => data['head'] = DbQueryField.convertToBaseType(value);
+  set head(List<String> value) => data['head'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过搜索信息来 添加好友 或 加入群组
-  set byfind(bool value) => data['byfind'] = DbQueryField.convertToBaseType(value);
+  set byfind(bool value) => data['byfind'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过扫描二维码 添加好友 或 加入群组
-  set bycode(bool value) => data['bycode'] = DbQueryField.convertToBaseType(value);
+  set bycode(bool value) => data['bycode'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过分享的名片 添加好友 或 加入群组
-  set bycard(bool value) => data['bycard'] = DbQueryField.convertToBaseType(value);
+  set bycard(bool value) => data['bycard'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过群组内关系 添加好友 或 互加好友
-  set byteam(bool value) => data['byteam'] = DbQueryField.convertToBaseType(value);
+  set byteam(bool value) => data['byteam'] = DbQueryField.toBaseType(value);
 
   ///是否开启 收到消息有后台通知 或 群组资料修改后发送通知
-  set notice(bool value) => data['notice'] = DbQueryField.convertToBaseType(value);
+  set notice(bool value) => data['notice'] = DbQueryField.toBaseType(value);
 
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
-  set silent(bool value) => data['silent'] = DbQueryField.convertToBaseType(value);
+  set silent(bool value) => data['silent'] = DbQueryField.toBaseType(value);
 
   ///被封禁状态（>=0：被封禁时间截止时间；<0：永久封禁或永久注销）
-  set deny(int value) => data['deny'] = DbQueryField.convertToBaseType(value);
+  set deny(int value) => data['deny'] = DbQueryField.toBaseType(value);
 }

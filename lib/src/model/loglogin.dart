@@ -90,19 +90,19 @@ class LogLogin extends DbBaseModel {
 
   factory LogLogin.fromJson(Map<String, dynamic> map) {
     return LogLogin(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      clientVersion: map['clientVersion'],
-      deviceType: map['deviceType'],
-      deviceVersion: map['deviceVersion'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      clientVersion: DbQueryField.tryParseInt(map['clientVersion']),
+      deviceType: DbQueryField.tryParseString(map['deviceType']),
+      deviceVersion: DbQueryField.tryParseString(map['deviceVersion']),
       deviceDetail: map['deviceDetail'] is Map ? DbJsonWraper.fromJson(map['deviceDetail']) : map['deviceDetail'],
-      loginCount: map['loginCount'],
+      loginCount: DbQueryField.tryParseInt(map['loginCount']),
       location: map['location'] is Map ? Location.fromJson(map['location']) : map['location'],
-      login: map['login'],
-      ip: map['ip'],
+      login: DbQueryField.tryParseInt(map['login']),
+      ip: DbQueryField.tryParseString(map['ip']),
     );
   }
 
@@ -114,19 +114,19 @@ class LogLogin extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'clientVersion': DbQueryField.convertToBaseType(clientVersion),
-      'deviceType': DbQueryField.convertToBaseType(deviceType),
-      'deviceVersion': DbQueryField.convertToBaseType(deviceVersion),
-      'deviceDetail': DbQueryField.convertToBaseType(deviceDetail),
-      'loginCount': DbQueryField.convertToBaseType(loginCount),
-      'location': DbQueryField.convertToBaseType(location),
-      'login': DbQueryField.convertToBaseType(login),
-      'ip': DbQueryField.convertToBaseType(ip),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'clientVersion': DbQueryField.toBaseType(clientVersion),
+      'deviceType': DbQueryField.toBaseType(deviceType),
+      'deviceVersion': DbQueryField.toBaseType(deviceVersion),
+      'deviceDetail': DbQueryField.toBaseType(deviceDetail),
+      'loginCount': DbQueryField.toBaseType(loginCount),
+      'location': DbQueryField.toBaseType(location),
+      'login': DbQueryField.toBaseType(login),
+      'ip': DbQueryField.toBaseType(ip),
     };
   }
 
@@ -189,41 +189,41 @@ class LogLoginDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///所属用户id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///客户端版本号
-  set clientVersion(int value) => data['clientVersion'] = DbQueryField.convertToBaseType(value);
+  set clientVersion(int value) => data['clientVersion'] = DbQueryField.toBaseType(value);
 
   ///设备系统类型
-  set deviceType(String value) => data['deviceType'] = DbQueryField.convertToBaseType(value);
+  set deviceType(String value) => data['deviceType'] = DbQueryField.toBaseType(value);
 
   ///设备系统版本
-  set deviceVersion(String value) => data['deviceVersion'] = DbQueryField.convertToBaseType(value);
+  set deviceVersion(String value) => data['deviceVersion'] = DbQueryField.toBaseType(value);
 
   ///设备详细信息
-  set deviceDetail(DbJsonWraper value) => data['deviceDetail'] = DbQueryField.convertToBaseType(value);
+  set deviceDetail(DbJsonWraper value) => data['deviceDetail'] = DbQueryField.toBaseType(value);
 
   ///今日登录次数
-  set loginCount(int value) => data['loginCount'] = DbQueryField.convertToBaseType(value);
+  set loginCount(int value) => data['loginCount'] = DbQueryField.toBaseType(value);
 
   ///最近定位信息
-  set location(Location value) => data['location'] = DbQueryField.convertToBaseType(value);
+  set location(Location value) => data['location'] = DbQueryField.toBaseType(value);
 
   ///最近登录时间
-  set login(int value) => data['login'] = DbQueryField.convertToBaseType(value);
+  set login(int value) => data['login'] = DbQueryField.toBaseType(value);
 
   ///最近登录ip地址
-  set ip(String value) => data['ip'] = DbQueryField.convertToBaseType(value);
+  set ip(String value) => data['ip'] = DbQueryField.toBaseType(value);
 }

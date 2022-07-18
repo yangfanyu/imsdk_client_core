@@ -107,25 +107,25 @@ class Location extends DbBaseModel {
 
   factory Location.fromJson(Map<String, dynamic> map) {
     return Location(
-      latitude: map['latitude'],
-      longitude: map['longitude'],
-      accuracy: map['accuracy'],
-      altitude: map['altitude'],
-      bearing: map['bearing'],
-      speed: map['speed'],
-      country: map['country'],
-      province: map['province'],
-      city: map['city'],
-      district: map['district'],
-      street: map['street'],
-      streetNumber: map['streetNumber'],
-      cityCode: map['cityCode'],
-      adCode: map['adCode'],
-      address: map['address'],
-      description: map['description'],
-      snapshotUrl: map['snapshotUrl'],
-      zoomLevel: map['zoomLevel'],
-      distance: map['distance'],
+      latitude: DbQueryField.tryParseDouble(map['latitude']),
+      longitude: DbQueryField.tryParseDouble(map['longitude']),
+      accuracy: DbQueryField.tryParseDouble(map['accuracy']),
+      altitude: DbQueryField.tryParseDouble(map['altitude']),
+      bearing: DbQueryField.tryParseDouble(map['bearing']),
+      speed: DbQueryField.tryParseDouble(map['speed']),
+      country: DbQueryField.tryParseString(map['country']),
+      province: DbQueryField.tryParseString(map['province']),
+      city: DbQueryField.tryParseString(map['city']),
+      district: DbQueryField.tryParseString(map['district']),
+      street: DbQueryField.tryParseString(map['street']),
+      streetNumber: DbQueryField.tryParseString(map['streetNumber']),
+      cityCode: DbQueryField.tryParseString(map['cityCode']),
+      adCode: DbQueryField.tryParseString(map['adCode']),
+      address: DbQueryField.tryParseString(map['address']),
+      description: DbQueryField.tryParseString(map['description']),
+      snapshotUrl: DbQueryField.tryParseString(map['snapshotUrl']),
+      zoomLevel: DbQueryField.tryParseDouble(map['zoomLevel']),
+      distance: DbQueryField.tryParseDouble(map['distance']),
     );
   }
 
@@ -137,25 +137,25 @@ class Location extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'latitude': DbQueryField.convertToBaseType(latitude),
-      'longitude': DbQueryField.convertToBaseType(longitude),
-      'accuracy': DbQueryField.convertToBaseType(accuracy),
-      'altitude': DbQueryField.convertToBaseType(altitude),
-      'bearing': DbQueryField.convertToBaseType(bearing),
-      'speed': DbQueryField.convertToBaseType(speed),
-      'country': DbQueryField.convertToBaseType(country),
-      'province': DbQueryField.convertToBaseType(province),
-      'city': DbQueryField.convertToBaseType(city),
-      'district': DbQueryField.convertToBaseType(district),
-      'street': DbQueryField.convertToBaseType(street),
-      'streetNumber': DbQueryField.convertToBaseType(streetNumber),
-      'cityCode': DbQueryField.convertToBaseType(cityCode),
-      'adCode': DbQueryField.convertToBaseType(adCode),
-      'address': DbQueryField.convertToBaseType(address),
-      'description': DbQueryField.convertToBaseType(description),
-      'snapshotUrl': DbQueryField.convertToBaseType(snapshotUrl),
-      'zoomLevel': DbQueryField.convertToBaseType(zoomLevel),
-      'distance': DbQueryField.convertToBaseType(distance),
+      'latitude': DbQueryField.toBaseType(latitude),
+      'longitude': DbQueryField.toBaseType(longitude),
+      'accuracy': DbQueryField.toBaseType(accuracy),
+      'altitude': DbQueryField.toBaseType(altitude),
+      'bearing': DbQueryField.toBaseType(bearing),
+      'speed': DbQueryField.toBaseType(speed),
+      'country': DbQueryField.toBaseType(country),
+      'province': DbQueryField.toBaseType(province),
+      'city': DbQueryField.toBaseType(city),
+      'district': DbQueryField.toBaseType(district),
+      'street': DbQueryField.toBaseType(street),
+      'streetNumber': DbQueryField.toBaseType(streetNumber),
+      'cityCode': DbQueryField.toBaseType(cityCode),
+      'adCode': DbQueryField.toBaseType(adCode),
+      'address': DbQueryField.toBaseType(address),
+      'description': DbQueryField.toBaseType(description),
+      'snapshotUrl': DbQueryField.toBaseType(snapshotUrl),
+      'zoomLevel': DbQueryField.toBaseType(zoomLevel),
+      'distance': DbQueryField.toBaseType(distance),
     };
   }
 
@@ -236,59 +236,59 @@ class LocationDirty {
   final Map<String, dynamic> data = {};
 
   ///纬度
-  set latitude(double value) => data['latitude'] = DbQueryField.convertToBaseType(value);
+  set latitude(double value) => data['latitude'] = DbQueryField.toBaseType(value);
 
   ///经度
-  set longitude(double value) => data['longitude'] = DbQueryField.convertToBaseType(value);
+  set longitude(double value) => data['longitude'] = DbQueryField.toBaseType(value);
 
   ///精确度
-  set accuracy(double value) => data['accuracy'] = DbQueryField.convertToBaseType(value);
+  set accuracy(double value) => data['accuracy'] = DbQueryField.toBaseType(value);
 
   ///海拔
-  set altitude(double value) => data['altitude'] = DbQueryField.convertToBaseType(value);
+  set altitude(double value) => data['altitude'] = DbQueryField.toBaseType(value);
 
   ///角度
-  set bearing(double value) => data['bearing'] = DbQueryField.convertToBaseType(value);
+  set bearing(double value) => data['bearing'] = DbQueryField.toBaseType(value);
 
   ///速度
-  set speed(double value) => data['speed'] = DbQueryField.convertToBaseType(value);
+  set speed(double value) => data['speed'] = DbQueryField.toBaseType(value);
 
   ///国家
-  set country(String value) => data['country'] = DbQueryField.convertToBaseType(value);
+  set country(String value) => data['country'] = DbQueryField.toBaseType(value);
 
   ///省
-  set province(String value) => data['province'] = DbQueryField.convertToBaseType(value);
+  set province(String value) => data['province'] = DbQueryField.toBaseType(value);
 
   ///城市
-  set city(String value) => data['city'] = DbQueryField.convertToBaseType(value);
+  set city(String value) => data['city'] = DbQueryField.toBaseType(value);
 
   ///城镇（区）
-  set district(String value) => data['district'] = DbQueryField.convertToBaseType(value);
+  set district(String value) => data['district'] = DbQueryField.toBaseType(value);
 
   ///街道
-  set street(String value) => data['street'] = DbQueryField.convertToBaseType(value);
+  set street(String value) => data['street'] = DbQueryField.toBaseType(value);
 
   ///门牌号
-  set streetNumber(String value) => data['streetNumber'] = DbQueryField.convertToBaseType(value);
+  set streetNumber(String value) => data['streetNumber'] = DbQueryField.toBaseType(value);
 
   ///城市编码
-  set cityCode(String value) => data['cityCode'] = DbQueryField.convertToBaseType(value);
+  set cityCode(String value) => data['cityCode'] = DbQueryField.toBaseType(value);
 
   ///区域编码
-  set adCode(String value) => data['adCode'] = DbQueryField.convertToBaseType(value);
+  set adCode(String value) => data['adCode'] = DbQueryField.toBaseType(value);
 
   ///地址信息
-  set address(String value) => data['address'] = DbQueryField.convertToBaseType(value);
+  set address(String value) => data['address'] = DbQueryField.toBaseType(value);
 
   ///位置语义
-  set description(String value) => data['description'] = DbQueryField.convertToBaseType(value);
+  set description(String value) => data['description'] = DbQueryField.toBaseType(value);
 
   ///作为位置消息时的截图地址
-  set snapshotUrl(String value) => data['snapshotUrl'] = DbQueryField.convertToBaseType(value);
+  set snapshotUrl(String value) => data['snapshotUrl'] = DbQueryField.toBaseType(value);
 
   ///作为位置消息时的缩放比例
-  set zoomLevel(double value) => data['zoomLevel'] = DbQueryField.convertToBaseType(value);
+  set zoomLevel(double value) => data['zoomLevel'] = DbQueryField.toBaseType(value);
 
   ///作为POI搜索结果的距离
-  set distance(double value) => data['distance'] = DbQueryField.convertToBaseType(value);
+  set distance(double value) => data['distance'] = DbQueryField.toBaseType(value);
 }

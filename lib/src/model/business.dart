@@ -213,44 +213,44 @@ class Business extends DbBaseModel {
 
   factory Business.fromJson(Map<String, dynamic> map) {
     return Business(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      time: map['_time'],
-      no: map['no'],
-      pwd: map['pwd'],
-      nick: map['nick'],
-      desc: map['desc'],
-      icon: map['icon'],
-      phone: map['phone'],
-      email: map['email'],
-      secret: map['secret'],
-      version: map['version'],
-      adminIds: (map['adminIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
-      staffIds: (map['staffIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
-      groupIds: (map['groupIds'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
-      customLoginValidUrl: map['customLoginValidUrl'],
-      customPaymentValidUrl: map['customPaymentValidUrl'],
-      wechatAppId: map['wechatAppId'],
-      wechatAppSecret: map['wechatAppSecret'],
-      wechatMchId: map['wechatMchId'],
-      wechatMchSecret: map['wechatMchSecret'],
-      alipayPid: map['alipayPid'],
-      alipayAppId: map['alipayAppId'],
-      alipayPrivateKey: map['alipayPrivateKey'],
-      alipayPublicKey: map['alipayPublicKey'],
-      alismsAccessKeyId: map['alismsAccessKeyId'],
-      alismsAccessKeySecret: map['alismsAccessKeySecret'],
-      alismsEndpoint: map['alismsEndpoint'],
-      alismsApiVersion: map['alismsApiVersion'],
-      alismsSignName: map['alismsSignName'],
-      alismsTemplateCode: map['alismsTemplateCode'],
-      appleKeyP8: map['appleKeyP8'],
-      appleKeyP8Public: map['appleKeyP8Public'],
-      appleAuthClientId: map['appleAuthClientId'],
-      appleAuthTeamId: map['appleAuthTeamId'],
-      appleAuthKeyId: map['appleAuthKeyId'],
-      appleAuthRedirectUri: map['appleAuthRedirectUri'],
-      appleAppSiteAssociation: map['appleAppSiteAssociation'],
+      time: DbQueryField.tryParseInt(map['_time']),
+      no: DbQueryField.tryParseString(map['no']),
+      pwd: DbQueryField.tryParseString(map['pwd']),
+      nick: DbQueryField.tryParseString(map['nick']),
+      desc: DbQueryField.tryParseString(map['desc']),
+      icon: DbQueryField.tryParseString(map['icon']),
+      phone: DbQueryField.tryParseString(map['phone']),
+      email: DbQueryField.tryParseString(map['email']),
+      secret: DbQueryField.tryParseString(map['secret']),
+      version: DbQueryField.tryParseInt(map['version']),
+      adminIds: (map['adminIds'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
+      staffIds: (map['staffIds'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
+      groupIds: (map['groupIds'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
+      customLoginValidUrl: DbQueryField.tryParseString(map['customLoginValidUrl']),
+      customPaymentValidUrl: DbQueryField.tryParseString(map['customPaymentValidUrl']),
+      wechatAppId: DbQueryField.tryParseString(map['wechatAppId']),
+      wechatAppSecret: DbQueryField.tryParseString(map['wechatAppSecret']),
+      wechatMchId: DbQueryField.tryParseString(map['wechatMchId']),
+      wechatMchSecret: DbQueryField.tryParseString(map['wechatMchSecret']),
+      alipayPid: DbQueryField.tryParseString(map['alipayPid']),
+      alipayAppId: DbQueryField.tryParseString(map['alipayAppId']),
+      alipayPrivateKey: DbQueryField.tryParseString(map['alipayPrivateKey']),
+      alipayPublicKey: DbQueryField.tryParseString(map['alipayPublicKey']),
+      alismsAccessKeyId: DbQueryField.tryParseString(map['alismsAccessKeyId']),
+      alismsAccessKeySecret: DbQueryField.tryParseString(map['alismsAccessKeySecret']),
+      alismsEndpoint: DbQueryField.tryParseString(map['alismsEndpoint']),
+      alismsApiVersion: DbQueryField.tryParseString(map['alismsApiVersion']),
+      alismsSignName: DbQueryField.tryParseString(map['alismsSignName']),
+      alismsTemplateCode: DbQueryField.tryParseString(map['alismsTemplateCode']),
+      appleKeyP8: DbQueryField.tryParseString(map['appleKeyP8']),
+      appleKeyP8Public: DbQueryField.tryParseString(map['appleKeyP8Public']),
+      appleAuthClientId: DbQueryField.tryParseString(map['appleAuthClientId']),
+      appleAuthTeamId: DbQueryField.tryParseString(map['appleAuthTeamId']),
+      appleAuthKeyId: DbQueryField.tryParseString(map['appleAuthKeyId']),
+      appleAuthRedirectUri: DbQueryField.tryParseString(map['appleAuthRedirectUri']),
+      appleAppSiteAssociation: DbQueryField.tryParseString(map['appleAppSiteAssociation']),
     );
   }
 
@@ -262,44 +262,44 @@ class Business extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      '_time': DbQueryField.convertToBaseType(_time),
-      'no': DbQueryField.convertToBaseType(no),
-      'pwd': DbQueryField.convertToBaseType(pwd),
-      'nick': DbQueryField.convertToBaseType(nick),
-      'desc': DbQueryField.convertToBaseType(desc),
-      'icon': DbQueryField.convertToBaseType(icon),
-      'phone': DbQueryField.convertToBaseType(phone),
-      'email': DbQueryField.convertToBaseType(email),
-      'secret': DbQueryField.convertToBaseType(secret),
-      'version': DbQueryField.convertToBaseType(version),
-      'adminIds': DbQueryField.convertToBaseType(adminIds),
-      'staffIds': DbQueryField.convertToBaseType(staffIds),
-      'groupIds': DbQueryField.convertToBaseType(groupIds),
-      'customLoginValidUrl': DbQueryField.convertToBaseType(customLoginValidUrl),
-      'customPaymentValidUrl': DbQueryField.convertToBaseType(customPaymentValidUrl),
-      'wechatAppId': DbQueryField.convertToBaseType(wechatAppId),
-      'wechatAppSecret': DbQueryField.convertToBaseType(wechatAppSecret),
-      'wechatMchId': DbQueryField.convertToBaseType(wechatMchId),
-      'wechatMchSecret': DbQueryField.convertToBaseType(wechatMchSecret),
-      'alipayPid': DbQueryField.convertToBaseType(alipayPid),
-      'alipayAppId': DbQueryField.convertToBaseType(alipayAppId),
-      'alipayPrivateKey': DbQueryField.convertToBaseType(alipayPrivateKey),
-      'alipayPublicKey': DbQueryField.convertToBaseType(alipayPublicKey),
-      'alismsAccessKeyId': DbQueryField.convertToBaseType(alismsAccessKeyId),
-      'alismsAccessKeySecret': DbQueryField.convertToBaseType(alismsAccessKeySecret),
-      'alismsEndpoint': DbQueryField.convertToBaseType(alismsEndpoint),
-      'alismsApiVersion': DbQueryField.convertToBaseType(alismsApiVersion),
-      'alismsSignName': DbQueryField.convertToBaseType(alismsSignName),
-      'alismsTemplateCode': DbQueryField.convertToBaseType(alismsTemplateCode),
-      'appleKeyP8': DbQueryField.convertToBaseType(appleKeyP8),
-      'appleKeyP8Public': DbQueryField.convertToBaseType(appleKeyP8Public),
-      'appleAuthClientId': DbQueryField.convertToBaseType(appleAuthClientId),
-      'appleAuthTeamId': DbQueryField.convertToBaseType(appleAuthTeamId),
-      'appleAuthKeyId': DbQueryField.convertToBaseType(appleAuthKeyId),
-      'appleAuthRedirectUri': DbQueryField.convertToBaseType(appleAuthRedirectUri),
-      'appleAppSiteAssociation': DbQueryField.convertToBaseType(appleAppSiteAssociation),
+      '_id': DbQueryField.toBaseType(_id),
+      '_extra': DbQueryField.toBaseType(_extra),
+      '_time': DbQueryField.toBaseType(_time),
+      'no': DbQueryField.toBaseType(no),
+      'pwd': DbQueryField.toBaseType(pwd),
+      'nick': DbQueryField.toBaseType(nick),
+      'desc': DbQueryField.toBaseType(desc),
+      'icon': DbQueryField.toBaseType(icon),
+      'phone': DbQueryField.toBaseType(phone),
+      'email': DbQueryField.toBaseType(email),
+      'secret': DbQueryField.toBaseType(secret),
+      'version': DbQueryField.toBaseType(version),
+      'adminIds': DbQueryField.toBaseType(adminIds),
+      'staffIds': DbQueryField.toBaseType(staffIds),
+      'groupIds': DbQueryField.toBaseType(groupIds),
+      'customLoginValidUrl': DbQueryField.toBaseType(customLoginValidUrl),
+      'customPaymentValidUrl': DbQueryField.toBaseType(customPaymentValidUrl),
+      'wechatAppId': DbQueryField.toBaseType(wechatAppId),
+      'wechatAppSecret': DbQueryField.toBaseType(wechatAppSecret),
+      'wechatMchId': DbQueryField.toBaseType(wechatMchId),
+      'wechatMchSecret': DbQueryField.toBaseType(wechatMchSecret),
+      'alipayPid': DbQueryField.toBaseType(alipayPid),
+      'alipayAppId': DbQueryField.toBaseType(alipayAppId),
+      'alipayPrivateKey': DbQueryField.toBaseType(alipayPrivateKey),
+      'alipayPublicKey': DbQueryField.toBaseType(alipayPublicKey),
+      'alismsAccessKeyId': DbQueryField.toBaseType(alismsAccessKeyId),
+      'alismsAccessKeySecret': DbQueryField.toBaseType(alismsAccessKeySecret),
+      'alismsEndpoint': DbQueryField.toBaseType(alismsEndpoint),
+      'alismsApiVersion': DbQueryField.toBaseType(alismsApiVersion),
+      'alismsSignName': DbQueryField.toBaseType(alismsSignName),
+      'alismsTemplateCode': DbQueryField.toBaseType(alismsTemplateCode),
+      'appleKeyP8': DbQueryField.toBaseType(appleKeyP8),
+      'appleKeyP8Public': DbQueryField.toBaseType(appleKeyP8Public),
+      'appleAuthClientId': DbQueryField.toBaseType(appleAuthClientId),
+      'appleAuthTeamId': DbQueryField.toBaseType(appleAuthTeamId),
+      'appleAuthKeyId': DbQueryField.toBaseType(appleAuthKeyId),
+      'appleAuthRedirectUri': DbQueryField.toBaseType(appleAuthRedirectUri),
+      'appleAppSiteAssociation': DbQueryField.toBaseType(appleAppSiteAssociation),
     };
   }
 
@@ -437,118 +437,118 @@ class BusinessDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///账号
-  set no(String value) => data['no'] = DbQueryField.convertToBaseType(value);
+  set no(String value) => data['no'] = DbQueryField.toBaseType(value);
 
   ///密码
-  set pwd(String value) => data['pwd'] = DbQueryField.convertToBaseType(value);
+  set pwd(String value) => data['pwd'] = DbQueryField.toBaseType(value);
 
   ///昵称
-  set nick(String value) => data['nick'] = DbQueryField.convertToBaseType(value);
+  set nick(String value) => data['nick'] = DbQueryField.toBaseType(value);
 
   ///描述
-  set desc(String value) => data['desc'] = DbQueryField.convertToBaseType(value);
+  set desc(String value) => data['desc'] = DbQueryField.toBaseType(value);
 
   ///图标
-  set icon(String value) => data['icon'] = DbQueryField.convertToBaseType(value);
+  set icon(String value) => data['icon'] = DbQueryField.toBaseType(value);
 
   ///手机
-  set phone(String value) => data['phone'] = DbQueryField.convertToBaseType(value);
+  set phone(String value) => data['phone'] = DbQueryField.toBaseType(value);
 
   ///邮箱
-  set email(String value) => data['email'] = DbQueryField.convertToBaseType(value);
+  set email(String value) => data['email'] = DbQueryField.toBaseType(value);
 
   ///SDK加解密密钥
-  set secret(String value) => data['secret'] = DbQueryField.convertToBaseType(value);
+  set secret(String value) => data['secret'] = DbQueryField.toBaseType(value);
 
   ///最新版本号码
-  set version(int value) => data['version'] = DbQueryField.convertToBaseType(value);
+  set version(int value) => data['version'] = DbQueryField.toBaseType(value);
 
   ///管理员id列表
-  set adminIds(List<ObjectId> value) => data['adminIds'] = DbQueryField.convertToBaseType(value);
+  set adminIds(List<ObjectId> value) => data['adminIds'] = DbQueryField.toBaseType(value);
 
   ///客服号id列表
-  set staffIds(List<ObjectId> value) => data['staffIds'] = DbQueryField.convertToBaseType(value);
+  set staffIds(List<ObjectId> value) => data['staffIds'] = DbQueryField.toBaseType(value);
 
   ///通知群id列表
-  set groupIds(List<ObjectId> value) => data['groupIds'] = DbQueryField.convertToBaseType(value);
+  set groupIds(List<ObjectId> value) => data['groupIds'] = DbQueryField.toBaseType(value);
 
   ///定制登录验证URL
-  set customLoginValidUrl(String value) => data['customLoginValidUrl'] = DbQueryField.convertToBaseType(value);
+  set customLoginValidUrl(String value) => data['customLoginValidUrl'] = DbQueryField.toBaseType(value);
 
   ///定制订单验证URL
-  set customPaymentValidUrl(String value) => data['customPaymentValidUrl'] = DbQueryField.convertToBaseType(value);
+  set customPaymentValidUrl(String value) => data['customPaymentValidUrl'] = DbQueryField.toBaseType(value);
 
   ///微信应用Id
-  set wechatAppId(String value) => data['wechatAppId'] = DbQueryField.convertToBaseType(value);
+  set wechatAppId(String value) => data['wechatAppId'] = DbQueryField.toBaseType(value);
 
   ///微信应用Secret
-  set wechatAppSecret(String value) => data['wechatAppSecret'] = DbQueryField.convertToBaseType(value);
+  set wechatAppSecret(String value) => data['wechatAppSecret'] = DbQueryField.toBaseType(value);
 
   ///微信商户Id
-  set wechatMchId(String value) => data['wechatMchId'] = DbQueryField.convertToBaseType(value);
+  set wechatMchId(String value) => data['wechatMchId'] = DbQueryField.toBaseType(value);
 
   ///微信商户Secret
-  set wechatMchSecret(String value) => data['wechatMchSecret'] = DbQueryField.convertToBaseType(value);
+  set wechatMchSecret(String value) => data['wechatMchSecret'] = DbQueryField.toBaseType(value);
 
   ///支付宝商户Id
-  set alipayPid(String value) => data['alipayPid'] = DbQueryField.convertToBaseType(value);
+  set alipayPid(String value) => data['alipayPid'] = DbQueryField.toBaseType(value);
 
   ///支付宝应用Id
-  set alipayAppId(String value) => data['alipayAppId'] = DbQueryField.convertToBaseType(value);
+  set alipayAppId(String value) => data['alipayAppId'] = DbQueryField.toBaseType(value);
 
   ///支付宝商户私钥
-  set alipayPrivateKey(String value) => data['alipayPrivateKey'] = DbQueryField.convertToBaseType(value);
+  set alipayPrivateKey(String value) => data['alipayPrivateKey'] = DbQueryField.toBaseType(value);
 
   ///支付宝平台公钥
-  set alipayPublicKey(String value) => data['alipayPublicKey'] = DbQueryField.convertToBaseType(value);
+  set alipayPublicKey(String value) => data['alipayPublicKey'] = DbQueryField.toBaseType(value);
 
   ///阿里短信AccessKeyId
-  set alismsAccessKeyId(String value) => data['alismsAccessKeyId'] = DbQueryField.convertToBaseType(value);
+  set alismsAccessKeyId(String value) => data['alismsAccessKeyId'] = DbQueryField.toBaseType(value);
 
   ///阿里短信AccessKeySecret
-  set alismsAccessKeySecret(String value) => data['alismsAccessKeySecret'] = DbQueryField.convertToBaseType(value);
+  set alismsAccessKeySecret(String value) => data['alismsAccessKeySecret'] = DbQueryField.toBaseType(value);
 
   ///阿里短信Endpoint
-  set alismsEndpoint(String value) => data['alismsEndpoint'] = DbQueryField.convertToBaseType(value);
+  set alismsEndpoint(String value) => data['alismsEndpoint'] = DbQueryField.toBaseType(value);
 
   ///阿里短信ApiVersion
-  set alismsApiVersion(String value) => data['alismsApiVersion'] = DbQueryField.convertToBaseType(value);
+  set alismsApiVersion(String value) => data['alismsApiVersion'] = DbQueryField.toBaseType(value);
 
   ///阿里短信SignName
-  set alismsSignName(String value) => data['alismsSignName'] = DbQueryField.convertToBaseType(value);
+  set alismsSignName(String value) => data['alismsSignName'] = DbQueryField.toBaseType(value);
 
   ///阿里短信TemplateCode
-  set alismsTemplateCode(String value) => data['alismsTemplateCode'] = DbQueryField.convertToBaseType(value);
+  set alismsTemplateCode(String value) => data['alismsTemplateCode'] = DbQueryField.toBaseType(value);
 
   ///苹果KeyP8
-  set appleKeyP8(String value) => data['appleKeyP8'] = DbQueryField.convertToBaseType(value);
+  set appleKeyP8(String value) => data['appleKeyP8'] = DbQueryField.toBaseType(value);
 
   ///苹果KeyP8Public
   ///生成方法: openssl ec -in appleKey.p8 -pubout -out appleKey_public.p8 
-  set appleKeyP8Public(String value) => data['appleKeyP8Public'] = DbQueryField.convertToBaseType(value);
+  set appleKeyP8Public(String value) => data['appleKeyP8Public'] = DbQueryField.toBaseType(value);
 
   ///苹果AuthClientId
-  set appleAuthClientId(String value) => data['appleAuthClientId'] = DbQueryField.convertToBaseType(value);
+  set appleAuthClientId(String value) => data['appleAuthClientId'] = DbQueryField.toBaseType(value);
 
   ///苹果AuthTeamId
-  set appleAuthTeamId(String value) => data['appleAuthTeamId'] = DbQueryField.convertToBaseType(value);
+  set appleAuthTeamId(String value) => data['appleAuthTeamId'] = DbQueryField.toBaseType(value);
 
   ///苹果AuthKeyId
-  set appleAuthKeyId(String value) => data['appleAuthKeyId'] = DbQueryField.convertToBaseType(value);
+  set appleAuthKeyId(String value) => data['appleAuthKeyId'] = DbQueryField.toBaseType(value);
 
   ///苹果AuthRedirectUri
   ///定向url，网页登录需要，只是客服端登录可以不写
-  set appleAuthRedirectUri(String value) => data['appleAuthRedirectUri'] = DbQueryField.convertToBaseType(value);
+  set appleAuthRedirectUri(String value) => data['appleAuthRedirectUri'] = DbQueryField.toBaseType(value);
 
   ///苹果AppSiteAssociation
-  set appleAppSiteAssociation(String value) => data['appleAppSiteAssociation'] = DbQueryField.convertToBaseType(value);
+  set appleAppSiteAssociation(String value) => data['appleAppSiteAssociation'] = DbQueryField.toBaseType(value);
 }

@@ -84,18 +84,18 @@ class LogError extends DbBaseModel {
 
   factory LogError.fromJson(Map<String, dynamic> map) {
     return LogError(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      clientVersion: map['clientVersion'],
-      deviceType: map['deviceType'],
-      deviceVersion: map['deviceVersion'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      clientVersion: DbQueryField.tryParseInt(map['clientVersion']),
+      deviceType: DbQueryField.tryParseString(map['deviceType']),
+      deviceVersion: DbQueryField.tryParseString(map['deviceVersion']),
       deviceDetail: map['deviceDetail'] is Map ? DbJsonWraper.fromJson(map['deviceDetail']) : map['deviceDetail'],
       errorDetail: map['errorDetail'] is Map ? DbJsonWraper.fromJson(map['errorDetail']) : map['errorDetail'],
-      errorTime: map['errorTime'],
-      finished: map['finished'],
+      errorTime: DbQueryField.tryParseInt(map['errorTime']),
+      finished: DbQueryField.tryParseBool(map['finished']),
     );
   }
 
@@ -107,18 +107,18 @@ class LogError extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'clientVersion': DbQueryField.convertToBaseType(clientVersion),
-      'deviceType': DbQueryField.convertToBaseType(deviceType),
-      'deviceVersion': DbQueryField.convertToBaseType(deviceVersion),
-      'deviceDetail': DbQueryField.convertToBaseType(deviceDetail),
-      'errorDetail': DbQueryField.convertToBaseType(errorDetail),
-      'errorTime': DbQueryField.convertToBaseType(errorTime),
-      'finished': DbQueryField.convertToBaseType(finished),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'clientVersion': DbQueryField.toBaseType(clientVersion),
+      'deviceType': DbQueryField.toBaseType(deviceType),
+      'deviceVersion': DbQueryField.toBaseType(deviceVersion),
+      'deviceDetail': DbQueryField.toBaseType(deviceDetail),
+      'errorDetail': DbQueryField.toBaseType(errorDetail),
+      'errorTime': DbQueryField.toBaseType(errorTime),
+      'finished': DbQueryField.toBaseType(finished),
     };
   }
 
@@ -178,38 +178,38 @@ class LogErrorDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///所属用户id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///客户端版本号
-  set clientVersion(int value) => data['clientVersion'] = DbQueryField.convertToBaseType(value);
+  set clientVersion(int value) => data['clientVersion'] = DbQueryField.toBaseType(value);
 
   ///设备系统类型
-  set deviceType(String value) => data['deviceType'] = DbQueryField.convertToBaseType(value);
+  set deviceType(String value) => data['deviceType'] = DbQueryField.toBaseType(value);
 
   ///设备系统版本
-  set deviceVersion(String value) => data['deviceVersion'] = DbQueryField.convertToBaseType(value);
+  set deviceVersion(String value) => data['deviceVersion'] = DbQueryField.toBaseType(value);
 
   ///设备详细信息
-  set deviceDetail(DbJsonWraper value) => data['deviceDetail'] = DbQueryField.convertToBaseType(value);
+  set deviceDetail(DbJsonWraper value) => data['deviceDetail'] = DbQueryField.toBaseType(value);
 
   ///异常详细信息
-  set errorDetail(DbJsonWraper value) => data['errorDetail'] = DbQueryField.convertToBaseType(value);
+  set errorDetail(DbJsonWraper value) => data['errorDetail'] = DbQueryField.toBaseType(value);
 
   ///异常产生时间
-  set errorTime(int value) => data['errorTime'] = DbQueryField.convertToBaseType(value);
+  set errorTime(int value) => data['errorTime'] = DbQueryField.toBaseType(value);
 
   ///异常是否解决
-  set finished(bool value) => data['finished'] = DbQueryField.convertToBaseType(value);
+  set finished(bool value) => data['finished'] = DbQueryField.toBaseType(value);
 }

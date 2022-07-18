@@ -144,30 +144,30 @@ class Payment extends DbBaseModel {
 
   factory Payment.fromJson(Map<String, dynamic> map) {
     return Payment(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      type: map['type'],
-      rmbfen: map['rmbfen'],
-      goods: map['goods'],
-      thirdSendData: map['thirdSendData'],
-      thirdSendResult: map['thirdSendResult'],
-      thirdNotify: map['thirdNotify'],
-      appleOrderNo: map['appleOrderNo'],
-      appleSendData: map['appleSendData'],
-      appleSendResult: map['appleSendResult'],
-      appleSendCount: map['appleSendCount'],
-      redpackMsgId: map['redpackMsgId'] is String ? ObjectId.fromHexString(map['redpackMsgId']) : map['redpackMsgId'],
-      redpackPayId: map['redpackPayId'] is String ? ObjectId.fromHexString(map['redpackPayId']) : map['redpackPayId'],
-      redpackReturned: map['redpackReturned'],
-      customType: map['customType'],
-      customValidData: map['customValidData'],
-      customValidResult: map['customValidResult'],
-      customValidCount: map['customValidCount'],
-      finishedTime: map['finishedTime'],
-      finished: map['finished'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      type: DbQueryField.tryParseInt(map['type']),
+      rmbfen: DbQueryField.tryParseInt(map['rmbfen']),
+      goods: DbQueryField.tryParseString(map['goods']),
+      thirdSendData: DbQueryField.tryParseString(map['thirdSendData']),
+      thirdSendResult: DbQueryField.tryParseString(map['thirdSendResult']),
+      thirdNotify: DbQueryField.tryParseString(map['thirdNotify']),
+      appleOrderNo: DbQueryField.tryParseString(map['appleOrderNo']),
+      appleSendData: DbQueryField.tryParseString(map['appleSendData']),
+      appleSendResult: DbQueryField.tryParseString(map['appleSendResult']),
+      appleSendCount: DbQueryField.tryParseInt(map['appleSendCount']),
+      redpackMsgId: DbQueryField.tryParseObjectId(map['redpackMsgId']),
+      redpackPayId: DbQueryField.tryParseObjectId(map['redpackPayId']),
+      redpackReturned: DbQueryField.tryParseBool(map['redpackReturned']),
+      customType: DbQueryField.tryParseInt(map['customType']),
+      customValidData: DbQueryField.tryParseString(map['customValidData']),
+      customValidResult: DbQueryField.tryParseString(map['customValidResult']),
+      customValidCount: DbQueryField.tryParseInt(map['customValidCount']),
+      finishedTime: DbQueryField.tryParseInt(map['finishedTime']),
+      finished: DbQueryField.tryParseBool(map['finished']),
     );
   }
 
@@ -179,30 +179,30 @@ class Payment extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'type': DbQueryField.convertToBaseType(type),
-      'rmbfen': DbQueryField.convertToBaseType(rmbfen),
-      'goods': DbQueryField.convertToBaseType(goods),
-      'thirdSendData': DbQueryField.convertToBaseType(thirdSendData),
-      'thirdSendResult': DbQueryField.convertToBaseType(thirdSendResult),
-      'thirdNotify': DbQueryField.convertToBaseType(thirdNotify),
-      'appleOrderNo': DbQueryField.convertToBaseType(appleOrderNo),
-      'appleSendData': DbQueryField.convertToBaseType(appleSendData),
-      'appleSendResult': DbQueryField.convertToBaseType(appleSendResult),
-      'appleSendCount': DbQueryField.convertToBaseType(appleSendCount),
-      'redpackMsgId': DbQueryField.convertToBaseType(redpackMsgId),
-      'redpackPayId': DbQueryField.convertToBaseType(redpackPayId),
-      'redpackReturned': DbQueryField.convertToBaseType(redpackReturned),
-      'customType': DbQueryField.convertToBaseType(customType),
-      'customValidData': DbQueryField.convertToBaseType(customValidData),
-      'customValidResult': DbQueryField.convertToBaseType(customValidResult),
-      'customValidCount': DbQueryField.convertToBaseType(customValidCount),
-      'finishedTime': DbQueryField.convertToBaseType(finishedTime),
-      'finished': DbQueryField.convertToBaseType(finished),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'type': DbQueryField.toBaseType(type),
+      'rmbfen': DbQueryField.toBaseType(rmbfen),
+      'goods': DbQueryField.toBaseType(goods),
+      'thirdSendData': DbQueryField.toBaseType(thirdSendData),
+      'thirdSendResult': DbQueryField.toBaseType(thirdSendResult),
+      'thirdNotify': DbQueryField.toBaseType(thirdNotify),
+      'appleOrderNo': DbQueryField.toBaseType(appleOrderNo),
+      'appleSendData': DbQueryField.toBaseType(appleSendData),
+      'appleSendResult': DbQueryField.toBaseType(appleSendResult),
+      'appleSendCount': DbQueryField.toBaseType(appleSendCount),
+      'redpackMsgId': DbQueryField.toBaseType(redpackMsgId),
+      'redpackPayId': DbQueryField.toBaseType(redpackPayId),
+      'redpackReturned': DbQueryField.toBaseType(redpackReturned),
+      'customType': DbQueryField.toBaseType(customType),
+      'customValidData': DbQueryField.toBaseType(customValidData),
+      'customValidResult': DbQueryField.toBaseType(customValidResult),
+      'customValidCount': DbQueryField.toBaseType(customValidCount),
+      'finishedTime': DbQueryField.toBaseType(finishedTime),
+      'finished': DbQueryField.toBaseType(finished),
     };
   }
 
@@ -298,74 +298,74 @@ class PaymentDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///所属用户id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///订单类型
-  set type(int value) => data['type'] = DbQueryField.convertToBaseType(value);
+  set type(int value) => data['type'] = DbQueryField.toBaseType(value);
 
   ///RMB金额（分）
-  set rmbfen(int value) => data['rmbfen'] = DbQueryField.convertToBaseType(value);
+  set rmbfen(int value) => data['rmbfen'] = DbQueryField.toBaseType(value);
 
   ///商品信息
-  set goods(String value) => data['goods'] = DbQueryField.convertToBaseType(value);
+  set goods(String value) => data['goods'] = DbQueryField.toBaseType(value);
 
   ///第三方充值下单请求的数据
-  set thirdSendData(String value) => data['thirdSendData'] = DbQueryField.convertToBaseType(value);
+  set thirdSendData(String value) => data['thirdSendData'] = DbQueryField.toBaseType(value);
 
   ///第三方充值下单请求的结果
-  set thirdSendResult(String value) => data['thirdSendResult'] = DbQueryField.convertToBaseType(value);
+  set thirdSendResult(String value) => data['thirdSendResult'] = DbQueryField.toBaseType(value);
 
   ///第三方充值成功收到的通知数据
-  set thirdNotify(String value) => data['thirdNotify'] = DbQueryField.convertToBaseType(value);
+  set thirdNotify(String value) => data['thirdNotify'] = DbQueryField.toBaseType(value);
 
   ///苹果内购充值的订单号
-  set appleOrderNo(String value) => data['appleOrderNo'] = DbQueryField.convertToBaseType(value);
+  set appleOrderNo(String value) => data['appleOrderNo'] = DbQueryField.toBaseType(value);
 
   ///苹果内购充值验证凭据
-  set appleSendData(String value) => data['appleSendData'] = DbQueryField.convertToBaseType(value);
+  set appleSendData(String value) => data['appleSendData'] = DbQueryField.toBaseType(value);
 
   ///苹果内购充值验证结果
-  set appleSendResult(String value) => data['appleSendResult'] = DbQueryField.convertToBaseType(value);
+  set appleSendResult(String value) => data['appleSendResult'] = DbQueryField.toBaseType(value);
 
   ///苹果内购充值验证次数
-  set appleSendCount(int value) => data['appleSendCount'] = DbQueryField.convertToBaseType(value);
+  set appleSendCount(int value) => data['appleSendCount'] = DbQueryField.toBaseType(value);
 
   ///发送红包、抢到红包、退回红包订单关联的聊天消息id
-  set redpackMsgId(ObjectId value) => data['redpackMsgId'] = DbQueryField.convertToBaseType(value);
+  set redpackMsgId(ObjectId value) => data['redpackMsgId'] = DbQueryField.toBaseType(value);
 
   ///抢到红包关联的发送红包订单id、退回红包关联的发送红包订单id
-  set redpackPayId(ObjectId value) => data['redpackPayId'] = DbQueryField.convertToBaseType(value);
+  set redpackPayId(ObjectId value) => data['redpackPayId'] = DbQueryField.toBaseType(value);
 
   ///发送红包订单是否已完成退回检测
-  set redpackReturned(bool value) => data['redpackReturned'] = DbQueryField.convertToBaseType(value);
+  set redpackReturned(bool value) => data['redpackReturned'] = DbQueryField.toBaseType(value);
 
   ///自定义的订单类型
-  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
+  set customType(int value) => data['customType'] = DbQueryField.toBaseType(value);
 
   ///自定义订单验证数据
-  set customValidData(String value) => data['customValidData'] = DbQueryField.convertToBaseType(value);
+  set customValidData(String value) => data['customValidData'] = DbQueryField.toBaseType(value);
 
   ///自定义订单验证结果
-  set customValidResult(String value) => data['customValidResult'] = DbQueryField.convertToBaseType(value);
+  set customValidResult(String value) => data['customValidResult'] = DbQueryField.toBaseType(value);
 
   ///自定义订单验证次数
-  set customValidCount(int value) => data['customValidCount'] = DbQueryField.convertToBaseType(value);
+  set customValidCount(int value) => data['customValidCount'] = DbQueryField.toBaseType(value);
 
   ///订单完成时间
-  set finishedTime(int value) => data['finishedTime'] = DbQueryField.convertToBaseType(value);
+  set finishedTime(int value) => data['finishedTime'] = DbQueryField.toBaseType(value);
 
   ///订单是否完成
-  set finished(bool value) => data['finished'] = DbQueryField.convertToBaseType(value);
+  set finished(bool value) => data['finished'] = DbQueryField.toBaseType(value);
 }

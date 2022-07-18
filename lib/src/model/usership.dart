@@ -150,25 +150,25 @@ class UserShip extends DbBaseModel {
 
   factory UserShip.fromJson(Map<String, dynamic> map) {
     return UserShip(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      sid: map['sid'] is String ? ObjectId.fromHexString(map['sid']) : map['sid'],
-      rid: map['rid'] is String ? ObjectId.fromHexString(map['rid']) : map['rid'],
-      fid: map['fid'] is String ? ObjectId.fromHexString(map['fid']) : map['fid'],
-      from: map['from'],
-      state: map['state'],
-      apply: map['apply'],
-      alias: map['alias'],
-      dialog: map['dialog'],
-      notice: map['notice'],
-      top: map['top'],
-      unread: map['unread'],
-      recent: map['recent'],
-      update: map['update'],
-      active: map['active'],
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      sid: DbQueryField.tryParseObjectId(map['sid']),
+      rid: DbQueryField.tryParseObjectId(map['rid']),
+      fid: DbQueryField.tryParseObjectId(map['fid']),
+      from: DbQueryField.tryParseInt(map['from']),
+      state: DbQueryField.tryParseInt(map['state']),
+      apply: DbQueryField.tryParseString(map['apply']),
+      alias: DbQueryField.tryParseString(map['alias']),
+      dialog: DbQueryField.tryParseBool(map['dialog']),
+      notice: DbQueryField.tryParseBool(map['notice']),
+      top: DbQueryField.tryParseBool(map['top']),
+      unread: DbQueryField.tryParseInt(map['unread']),
+      recent: DbQueryField.tryParseString(map['recent']),
+      update: DbQueryField.tryParseInt(map['update']),
+      active: DbQueryField.tryParseInt(map['active']),
     );
   }
 
@@ -180,25 +180,25 @@ class UserShip extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'sid': DbQueryField.convertToBaseType(sid),
-      'rid': DbQueryField.convertToBaseType(rid),
-      'fid': DbQueryField.convertToBaseType(fid),
-      'from': DbQueryField.convertToBaseType(from),
-      'state': DbQueryField.convertToBaseType(state),
-      'apply': DbQueryField.convertToBaseType(apply),
-      'alias': DbQueryField.convertToBaseType(alias),
-      'dialog': DbQueryField.convertToBaseType(dialog),
-      'notice': DbQueryField.convertToBaseType(notice),
-      'top': DbQueryField.convertToBaseType(top),
-      'unread': DbQueryField.convertToBaseType(unread),
-      'recent': DbQueryField.convertToBaseType(recent),
-      'update': DbQueryField.convertToBaseType(update),
-      'active': DbQueryField.convertToBaseType(active),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'uid': DbQueryField.toBaseType(uid),
+      'sid': DbQueryField.toBaseType(sid),
+      'rid': DbQueryField.toBaseType(rid),
+      'fid': DbQueryField.toBaseType(fid),
+      'from': DbQueryField.toBaseType(from),
+      'state': DbQueryField.toBaseType(state),
+      'apply': DbQueryField.toBaseType(apply),
+      'alias': DbQueryField.toBaseType(alias),
+      'dialog': DbQueryField.toBaseType(dialog),
+      'notice': DbQueryField.toBaseType(notice),
+      'top': DbQueryField.toBaseType(top),
+      'unread': DbQueryField.toBaseType(unread),
+      'recent': DbQueryField.toBaseType(recent),
+      'update': DbQueryField.toBaseType(update),
+      'active': DbQueryField.toBaseType(active),
     };
   }
 
@@ -279,59 +279,59 @@ class UserShipDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///用户id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///会话id
-  set sid(ObjectId value) => data['sid'] = DbQueryField.convertToBaseType(value);
+  set sid(ObjectId value) => data['sid'] = DbQueryField.toBaseType(value);
 
   ///关联目标id（用户id或群组id）
-  set rid(ObjectId value) => data['rid'] = DbQueryField.convertToBaseType(value);
+  set rid(ObjectId value) => data['rid'] = DbQueryField.toBaseType(value);
 
   ///关系来源id（用户id或群组id）
-  set fid(ObjectId value) => data['fid'] = DbQueryField.convertToBaseType(value);
+  set fid(ObjectId value) => data['fid'] = DbQueryField.toBaseType(value);
 
   ///关系来源
-  set from(int value) => data['from'] = DbQueryField.convertToBaseType(value);
+  set from(int value) => data['from'] = DbQueryField.toBaseType(value);
 
   ///关系状态
-  set state(int value) => data['state'] = DbQueryField.convertToBaseType(value);
+  set state(int value) => data['state'] = DbQueryField.toBaseType(value);
 
   ///申请描述
-  set apply(String value) => data['apply'] = DbQueryField.convertToBaseType(value);
+  set apply(String value) => data['apply'] = DbQueryField.toBaseType(value);
 
   ///好友备注名 或 群昵称
-  set alias(String value) => data['alias'] = DbQueryField.convertToBaseType(value);
+  set alias(String value) => data['alias'] = DbQueryField.toBaseType(value);
 
   ///是否处于对话状态
-  set dialog(bool value) => data['dialog'] = DbQueryField.convertToBaseType(value);
+  set dialog(bool value) => data['dialog'] = DbQueryField.toBaseType(value);
 
   ///消息是否显示通知
-  set notice(bool value) => data['notice'] = DbQueryField.convertToBaseType(value);
+  set notice(bool value) => data['notice'] = DbQueryField.toBaseType(value);
 
   ///是否置顶聊天
-  set top(bool value) => data['top'] = DbQueryField.convertToBaseType(value);
+  set top(bool value) => data['top'] = DbQueryField.toBaseType(value);
 
   ///未读消息数量
-  set unread(int value) => data['unread'] = DbQueryField.convertToBaseType(value);
+  set unread(int value) => data['unread'] = DbQueryField.toBaseType(value);
 
   ///最近消息缩写
-  set recent(String value) => data['recent'] = DbQueryField.convertToBaseType(value);
+  set recent(String value) => data['recent'] = DbQueryField.toBaseType(value);
 
   ///最近消息时间
-  set update(int value) => data['update'] = DbQueryField.convertToBaseType(value);
+  set update(int value) => data['update'] = DbQueryField.toBaseType(value);
 
   ///对话激活时间
-  set active(int value) => data['active'] = DbQueryField.convertToBaseType(value);
+  set active(int value) => data['active'] = DbQueryField.toBaseType(value);
 }

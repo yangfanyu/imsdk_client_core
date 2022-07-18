@@ -69,15 +69,15 @@ class Randcode extends DbBaseModel {
 
   factory Randcode.fromJson(Map<String, dynamic> map) {
     return Randcode(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      phone: map['phone'],
-      code: map['code'],
-      expired: map['expired'],
-      timeout: map['timeout'],
-      testcnt: map['testcnt'],
+      phone: DbQueryField.tryParseString(map['phone']),
+      code: DbQueryField.tryParseString(map['code']),
+      expired: DbQueryField.tryParseBool(map['expired']),
+      timeout: DbQueryField.tryParseInt(map['timeout']),
+      testcnt: DbQueryField.tryParseInt(map['testcnt']),
     );
   }
 
@@ -89,15 +89,15 @@ class Randcode extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'phone': DbQueryField.convertToBaseType(phone),
-      'code': DbQueryField.convertToBaseType(code),
-      'expired': DbQueryField.convertToBaseType(expired),
-      'timeout': DbQueryField.convertToBaseType(timeout),
-      'testcnt': DbQueryField.convertToBaseType(testcnt),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'phone': DbQueryField.toBaseType(phone),
+      'code': DbQueryField.toBaseType(code),
+      'expired': DbQueryField.toBaseType(expired),
+      'timeout': DbQueryField.toBaseType(timeout),
+      'testcnt': DbQueryField.toBaseType(testcnt),
     };
   }
 
@@ -148,29 +148,29 @@ class RandcodeDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///手机号码
-  set phone(String value) => data['phone'] = DbQueryField.convertToBaseType(value);
+  set phone(String value) => data['phone'] = DbQueryField.toBaseType(value);
 
   ///验证码
-  set code(String value) => data['code'] = DbQueryField.convertToBaseType(value);
+  set code(String value) => data['code'] = DbQueryField.toBaseType(value);
 
   ///是否已失效
-  set expired(bool value) => data['expired'] = DbQueryField.convertToBaseType(value);
+  set expired(bool value) => data['expired'] = DbQueryField.toBaseType(value);
 
   ///过期时间
-  set timeout(int value) => data['timeout'] = DbQueryField.convertToBaseType(value);
+  set timeout(int value) => data['timeout'] = DbQueryField.toBaseType(value);
 
   ///检测次数
-  set testcnt(int value) => data['testcnt'] = DbQueryField.convertToBaseType(value);
+  set testcnt(int value) => data['testcnt'] = DbQueryField.toBaseType(value);
 }

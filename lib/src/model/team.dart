@@ -124,26 +124,26 @@ class Team extends DbBaseModel {
 
   factory Team.fromJson(Map<String, dynamic> map) {
     return Team(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      owner: map['owner'] is String ? ObjectId.fromHexString(map['owner']) : map['owner'],
-      admin: (map['admin'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
-      member: map['member'],
-      no: map['no'],
-      pwd: map['pwd'],
-      nick: map['nick'],
-      desc: map['desc'],
-      icon: map['icon'],
-      head: (map['head'] as List?)?.map((v) => v as String).toList(),
-      byfind: map['byfind'],
-      bycode: map['bycode'],
-      bycard: map['bycard'],
-      byteam: map['byteam'],
-      notice: map['notice'],
-      silent: map['silent'],
-      deny: map['deny'],
+      owner: DbQueryField.tryParseObjectId(map['owner']),
+      admin: (map['admin'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
+      member: DbQueryField.tryParseInt(map['member']),
+      no: DbQueryField.tryParseString(map['no']),
+      pwd: DbQueryField.tryParseString(map['pwd']),
+      nick: DbQueryField.tryParseString(map['nick']),
+      desc: DbQueryField.tryParseString(map['desc']),
+      icon: DbQueryField.tryParseString(map['icon']),
+      head: (map['head'] as List?)?.map((v) => DbQueryField.parseString(v)).toList(),
+      byfind: DbQueryField.tryParseBool(map['byfind']),
+      bycode: DbQueryField.tryParseBool(map['bycode']),
+      bycard: DbQueryField.tryParseBool(map['bycard']),
+      byteam: DbQueryField.tryParseBool(map['byteam']),
+      notice: DbQueryField.tryParseBool(map['notice']),
+      silent: DbQueryField.tryParseBool(map['silent']),
+      deny: DbQueryField.tryParseInt(map['deny']),
     );
   }
 
@@ -155,26 +155,26 @@ class Team extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'owner': DbQueryField.convertToBaseType(owner),
-      'admin': DbQueryField.convertToBaseType(admin),
-      'member': DbQueryField.convertToBaseType(member),
-      'no': DbQueryField.convertToBaseType(no),
-      'pwd': DbQueryField.convertToBaseType(pwd),
-      'nick': DbQueryField.convertToBaseType(nick),
-      'desc': DbQueryField.convertToBaseType(desc),
-      'icon': DbQueryField.convertToBaseType(icon),
-      'head': DbQueryField.convertToBaseType(head),
-      'byfind': DbQueryField.convertToBaseType(byfind),
-      'bycode': DbQueryField.convertToBaseType(bycode),
-      'bycard': DbQueryField.convertToBaseType(bycard),
-      'byteam': DbQueryField.convertToBaseType(byteam),
-      'notice': DbQueryField.convertToBaseType(notice),
-      'silent': DbQueryField.convertToBaseType(silent),
-      'deny': DbQueryField.convertToBaseType(deny),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'owner': DbQueryField.toBaseType(owner),
+      'admin': DbQueryField.toBaseType(admin),
+      'member': DbQueryField.toBaseType(member),
+      'no': DbQueryField.toBaseType(no),
+      'pwd': DbQueryField.toBaseType(pwd),
+      'nick': DbQueryField.toBaseType(nick),
+      'desc': DbQueryField.toBaseType(desc),
+      'icon': DbQueryField.toBaseType(icon),
+      'head': DbQueryField.toBaseType(head),
+      'byfind': DbQueryField.toBaseType(byfind),
+      'bycode': DbQueryField.toBaseType(bycode),
+      'bycard': DbQueryField.toBaseType(bycard),
+      'byteam': DbQueryField.toBaseType(byteam),
+      'notice': DbQueryField.toBaseType(notice),
+      'silent': DbQueryField.toBaseType(silent),
+      'deny': DbQueryField.toBaseType(deny),
     };
   }
 
@@ -258,62 +258,62 @@ class TeamDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///创建者用户id
-  set owner(ObjectId value) => data['owner'] = DbQueryField.convertToBaseType(value);
+  set owner(ObjectId value) => data['owner'] = DbQueryField.toBaseType(value);
 
   ///管理员用户id
-  set admin(List<ObjectId> value) => data['admin'] = DbQueryField.convertToBaseType(value);
+  set admin(List<ObjectId> value) => data['admin'] = DbQueryField.toBaseType(value);
 
   ///群组成员总数量
-  set member(int value) => data['member'] = DbQueryField.convertToBaseType(value);
+  set member(int value) => data['member'] = DbQueryField.toBaseType(value);
 
   ///账号
-  set no(String value) => data['no'] = DbQueryField.convertToBaseType(value);
+  set no(String value) => data['no'] = DbQueryField.toBaseType(value);
 
   ///密码
-  set pwd(String value) => data['pwd'] = DbQueryField.convertToBaseType(value);
+  set pwd(String value) => data['pwd'] = DbQueryField.toBaseType(value);
 
   ///昵称
-  set nick(String value) => data['nick'] = DbQueryField.convertToBaseType(value);
+  set nick(String value) => data['nick'] = DbQueryField.toBaseType(value);
 
   ///描述
-  set desc(String value) => data['desc'] = DbQueryField.convertToBaseType(value);
+  set desc(String value) => data['desc'] = DbQueryField.toBaseType(value);
 
   ///图标
-  set icon(String value) => data['icon'] = DbQueryField.convertToBaseType(value);
+  set icon(String value) => data['icon'] = DbQueryField.toBaseType(value);
 
   ///头像
-  set head(List<String> value) => data['head'] = DbQueryField.convertToBaseType(value);
+  set head(List<String> value) => data['head'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过搜索信息来 添加好友 或 加入群组
-  set byfind(bool value) => data['byfind'] = DbQueryField.convertToBaseType(value);
+  set byfind(bool value) => data['byfind'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过扫描二维码 添加好友 或 加入群组
-  set bycode(bool value) => data['bycode'] = DbQueryField.convertToBaseType(value);
+  set bycode(bool value) => data['bycode'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过分享的名片 添加好友 或 加入群组
-  set bycard(bool value) => data['bycard'] = DbQueryField.convertToBaseType(value);
+  set bycard(bool value) => data['bycard'] = DbQueryField.toBaseType(value);
 
   ///是否允许 通过群组内关系 添加好友 或 互加好友
-  set byteam(bool value) => data['byteam'] = DbQueryField.convertToBaseType(value);
+  set byteam(bool value) => data['byteam'] = DbQueryField.toBaseType(value);
 
   ///是否开启 收到消息有后台通知 或 群组资料修改后发送通知
-  set notice(bool value) => data['notice'] = DbQueryField.convertToBaseType(value);
+  set notice(bool value) => data['notice'] = DbQueryField.toBaseType(value);
 
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
-  set silent(bool value) => data['silent'] = DbQueryField.convertToBaseType(value);
+  set silent(bool value) => data['silent'] = DbQueryField.toBaseType(value);
 
   ///被封禁状态（>=0：被封禁时间截止时间；<0：永久封禁或永久注销）
-  set deny(int value) => data['deny'] = DbQueryField.convertToBaseType(value);
+  set deny(int value) => data['deny'] = DbQueryField.toBaseType(value);
 }

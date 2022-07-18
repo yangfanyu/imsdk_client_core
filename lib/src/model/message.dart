@@ -169,32 +169,32 @@ class Message extends DbBaseModel {
 
   factory Message.fromJson(Map<String, dynamic> map) {
     return Message(
-      id: map['_id'] is String ? ObjectId.fromHexString(map['_id']) : map['_id'],
-      bsid: map['_bsid'] is String ? ObjectId.fromHexString(map['_bsid']) : map['_bsid'],
-      time: map['_time'],
+      id: DbQueryField.tryParseObjectId(map['_id']),
+      bsid: DbQueryField.tryParseObjectId(map['_bsid']),
+      time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
-      sid: map['sid'] is String ? ObjectId.fromHexString(map['sid']) : map['sid'],
-      uid: map['uid'] is String ? ObjectId.fromHexString(map['uid']) : map['uid'],
-      from: map['from'],
-      type: map['type'],
-      title: map['title'],
-      body: map['body'],
-      short: map['short'],
-      mediaTimeS: map['mediaTimeS'],
-      mediaTimeE: map['mediaTimeE'],
-      mediaGoing: map['mediaGoing'],
-      mediaJoined: (map['mediaJoined'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
-      rmbfenTotal: map['rmbfenTotal'],
-      rmbfenCount: map['rmbfenCount'],
-      rmbfenEvery: (map['rmbfenEvery'] as List?)?.map((v) => v as int).toList(),
-      rmbfenLuckly: (map['rmbfenLuckly'] as List?)?.map((v) => v is String ? ObjectId.fromHexString(v) : v as ObjectId).toList(),
-      shareCardId: map['shareCardId'] is String ? ObjectId.fromHexString(map['shareCardId']) : map['shareCardId'],
-      shareIconUrl: map['shareIconUrl'],
-      shareHeadUrl: (map['shareHeadUrl'] as List?)?.map((v) => v as String).toList(),
-      shareLinkUrl: map['shareLinkUrl'],
+      sid: DbQueryField.tryParseObjectId(map['sid']),
+      uid: DbQueryField.tryParseObjectId(map['uid']),
+      from: DbQueryField.tryParseInt(map['from']),
+      type: DbQueryField.tryParseInt(map['type']),
+      title: DbQueryField.tryParseString(map['title']),
+      body: DbQueryField.tryParseString(map['body']),
+      short: DbQueryField.tryParseString(map['short']),
+      mediaTimeS: DbQueryField.tryParseInt(map['mediaTimeS']),
+      mediaTimeE: DbQueryField.tryParseInt(map['mediaTimeE']),
+      mediaGoing: DbQueryField.tryParseBool(map['mediaGoing']),
+      mediaJoined: (map['mediaJoined'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
+      rmbfenTotal: DbQueryField.tryParseInt(map['rmbfenTotal']),
+      rmbfenCount: DbQueryField.tryParseInt(map['rmbfenCount']),
+      rmbfenEvery: (map['rmbfenEvery'] as List?)?.map((v) => DbQueryField.parseInt(v)).toList(),
+      rmbfenLuckly: (map['rmbfenLuckly'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
+      shareCardId: DbQueryField.tryParseObjectId(map['shareCardId']),
+      shareIconUrl: DbQueryField.tryParseString(map['shareIconUrl']),
+      shareHeadUrl: (map['shareHeadUrl'] as List?)?.map((v) => DbQueryField.parseString(v)).toList(),
+      shareLinkUrl: DbQueryField.tryParseString(map['shareLinkUrl']),
       shareLocation: map['shareLocation'] is Map ? Location.fromJson(map['shareLocation']) : map['shareLocation'],
-      customType: map['customType'],
-      revoked: map['revoked'],
+      customType: DbQueryField.tryParseInt(map['customType']),
+      revoked: DbQueryField.tryParseBool(map['revoked']),
     );
   }
 
@@ -206,32 +206,32 @@ class Message extends DbBaseModel {
   @override
   Map<String, dynamic> toJson() {
     return {
-      '_id': DbQueryField.convertToBaseType(_id),
-      '_bsid': DbQueryField.convertToBaseType(_bsid),
-      '_time': DbQueryField.convertToBaseType(_time),
-      '_extra': DbQueryField.convertToBaseType(_extra),
-      'sid': DbQueryField.convertToBaseType(sid),
-      'uid': DbQueryField.convertToBaseType(uid),
-      'from': DbQueryField.convertToBaseType(from),
-      'type': DbQueryField.convertToBaseType(type),
-      'title': DbQueryField.convertToBaseType(title),
-      'body': DbQueryField.convertToBaseType(body),
-      'short': DbQueryField.convertToBaseType(short),
-      'mediaTimeS': DbQueryField.convertToBaseType(mediaTimeS),
-      'mediaTimeE': DbQueryField.convertToBaseType(mediaTimeE),
-      'mediaGoing': DbQueryField.convertToBaseType(mediaGoing),
-      'mediaJoined': DbQueryField.convertToBaseType(mediaJoined),
-      'rmbfenTotal': DbQueryField.convertToBaseType(rmbfenTotal),
-      'rmbfenCount': DbQueryField.convertToBaseType(rmbfenCount),
-      'rmbfenEvery': DbQueryField.convertToBaseType(rmbfenEvery),
-      'rmbfenLuckly': DbQueryField.convertToBaseType(rmbfenLuckly),
-      'shareCardId': DbQueryField.convertToBaseType(shareCardId),
-      'shareIconUrl': DbQueryField.convertToBaseType(shareIconUrl),
-      'shareHeadUrl': DbQueryField.convertToBaseType(shareHeadUrl),
-      'shareLinkUrl': DbQueryField.convertToBaseType(shareLinkUrl),
-      'shareLocation': DbQueryField.convertToBaseType(shareLocation),
-      'customType': DbQueryField.convertToBaseType(customType),
-      'revoked': DbQueryField.convertToBaseType(revoked),
+      '_id': DbQueryField.toBaseType(_id),
+      '_bsid': DbQueryField.toBaseType(_bsid),
+      '_time': DbQueryField.toBaseType(_time),
+      '_extra': DbQueryField.toBaseType(_extra),
+      'sid': DbQueryField.toBaseType(sid),
+      'uid': DbQueryField.toBaseType(uid),
+      'from': DbQueryField.toBaseType(from),
+      'type': DbQueryField.toBaseType(type),
+      'title': DbQueryField.toBaseType(title),
+      'body': DbQueryField.toBaseType(body),
+      'short': DbQueryField.toBaseType(short),
+      'mediaTimeS': DbQueryField.toBaseType(mediaTimeS),
+      'mediaTimeE': DbQueryField.toBaseType(mediaTimeE),
+      'mediaGoing': DbQueryField.toBaseType(mediaGoing),
+      'mediaJoined': DbQueryField.toBaseType(mediaJoined),
+      'rmbfenTotal': DbQueryField.toBaseType(rmbfenTotal),
+      'rmbfenCount': DbQueryField.toBaseType(rmbfenCount),
+      'rmbfenEvery': DbQueryField.toBaseType(rmbfenEvery),
+      'rmbfenLuckly': DbQueryField.toBaseType(rmbfenLuckly),
+      'shareCardId': DbQueryField.toBaseType(shareCardId),
+      'shareIconUrl': DbQueryField.toBaseType(shareIconUrl),
+      'shareHeadUrl': DbQueryField.toBaseType(shareHeadUrl),
+      'shareLinkUrl': DbQueryField.toBaseType(shareLinkUrl),
+      'shareLocation': DbQueryField.toBaseType(shareLocation),
+      'customType': DbQueryField.toBaseType(customType),
+      'revoked': DbQueryField.toBaseType(revoked),
     };
   }
 
@@ -333,80 +333,80 @@ class MessageDirty {
   final Map<String, dynamic> data = {};
 
   ///唯一id
-  set id(ObjectId value) => data['_id'] = DbQueryField.convertToBaseType(value);
+  set id(ObjectId value) => data['_id'] = DbQueryField.toBaseType(value);
 
   ///商户id
-  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.convertToBaseType(value);
+  set bsid(ObjectId value) => data['_bsid'] = DbQueryField.toBaseType(value);
 
   ///创建时间
-  set time(int value) => data['_time'] = DbQueryField.convertToBaseType(value);
+  set time(int value) => data['_time'] = DbQueryField.toBaseType(value);
 
   ///自定义数据
-  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.convertToBaseType(value);
+  set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
 
   ///聊天会话id
-  set sid(ObjectId value) => data['sid'] = DbQueryField.convertToBaseType(value);
+  set sid(ObjectId value) => data['sid'] = DbQueryField.toBaseType(value);
 
   ///发送者的id
-  set uid(ObjectId value) => data['uid'] = DbQueryField.convertToBaseType(value);
+  set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
 
   ///消息来源
-  set from(int value) => data['from'] = DbQueryField.convertToBaseType(value);
+  set from(int value) => data['from'] = DbQueryField.toBaseType(value);
 
   ///消息类型
-  set type(int value) => data['type'] = DbQueryField.convertToBaseType(value);
+  set type(int value) => data['type'] = DbQueryField.toBaseType(value);
 
   ///消息标题
-  set title(String value) => data['title'] = DbQueryField.convertToBaseType(value);
+  set title(String value) => data['title'] = DbQueryField.toBaseType(value);
 
   ///消息主体
-  set body(String value) => data['body'] = DbQueryField.convertToBaseType(value);
+  set body(String value) => data['body'] = DbQueryField.toBaseType(value);
 
   ///消息缩写
-  set short(String value) => data['short'] = DbQueryField.convertToBaseType(value);
+  set short(String value) => data['short'] = DbQueryField.toBaseType(value);
 
   ///媒体的开始时间
-  set mediaTimeS(int value) => data['mediaTimeS'] = DbQueryField.convertToBaseType(value);
+  set mediaTimeS(int value) => data['mediaTimeS'] = DbQueryField.toBaseType(value);
 
   ///媒体的结束时间
-  set mediaTimeE(int value) => data['mediaTimeE'] = DbQueryField.convertToBaseType(value);
+  set mediaTimeE(int value) => data['mediaTimeE'] = DbQueryField.toBaseType(value);
 
   ///媒体正在进行中
-  set mediaGoing(bool value) => data['mediaGoing'] = DbQueryField.convertToBaseType(value);
+  set mediaGoing(bool value) => data['mediaGoing'] = DbQueryField.toBaseType(value);
 
   ///媒体读取或参与过的用户id
-  set mediaJoined(List<ObjectId> value) => data['mediaJoined'] = DbQueryField.convertToBaseType(value);
+  set mediaJoined(List<ObjectId> value) => data['mediaJoined'] = DbQueryField.toBaseType(value);
 
   ///RMB金额总数
-  set rmbfenTotal(int value) => data['rmbfenTotal'] = DbQueryField.convertToBaseType(value);
+  set rmbfenTotal(int value) => data['rmbfenTotal'] = DbQueryField.toBaseType(value);
 
   ///RMB已经被抢次数
-  set rmbfenCount(int value) => data['rmbfenCount'] = DbQueryField.convertToBaseType(value);
+  set rmbfenCount(int value) => data['rmbfenCount'] = DbQueryField.toBaseType(value);
 
   ///RMB金额分配情况
-  set rmbfenEvery(List<int> value) => data['rmbfenEvery'] = DbQueryField.convertToBaseType(value);
+  set rmbfenEvery(List<int> value) => data['rmbfenEvery'] = DbQueryField.toBaseType(value);
 
   ///RMB金额对应的幸运用户id
-  set rmbfenLuckly(List<ObjectId> value) => data['rmbfenLuckly'] = DbQueryField.convertToBaseType(value);
+  set rmbfenLuckly(List<ObjectId> value) => data['rmbfenLuckly'] = DbQueryField.toBaseType(value);
 
   ///分享名片的目标id（用户id或群组id）
-  set shareCardId(ObjectId value) => data['shareCardId'] = DbQueryField.convertToBaseType(value);
+  set shareCardId(ObjectId value) => data['shareCardId'] = DbQueryField.toBaseType(value);
 
   ///分享名片的图标url
-  set shareIconUrl(String value) => data['shareIconUrl'] = DbQueryField.convertToBaseType(value);
+  set shareIconUrl(String value) => data['shareIconUrl'] = DbQueryField.toBaseType(value);
 
   ///分享名片的头像url
-  set shareHeadUrl(List<String> value) => data['shareHeadUrl'] = DbQueryField.convertToBaseType(value);
+  set shareHeadUrl(List<String> value) => data['shareHeadUrl'] = DbQueryField.toBaseType(value);
 
   ///分享网址url、媒体附件url
-  set shareLinkUrl(String value) => data['shareLinkUrl'] = DbQueryField.convertToBaseType(value);
+  set shareLinkUrl(String value) => data['shareLinkUrl'] = DbQueryField.toBaseType(value);
 
   ///位置分享消息的数据
-  set shareLocation(Location value) => data['shareLocation'] = DbQueryField.convertToBaseType(value);
+  set shareLocation(Location value) => data['shareLocation'] = DbQueryField.toBaseType(value);
 
   ///自定义的消息类型
-  set customType(int value) => data['customType'] = DbQueryField.convertToBaseType(value);
+  set customType(int value) => data['customType'] = DbQueryField.toBaseType(value);
 
   ///本条是否已撤销
-  set revoked(bool value) => data['revoked'] = DbQueryField.convertToBaseType(value);
+  set revoked(bool value) => data['revoked'] = DbQueryField.toBaseType(value);
 }

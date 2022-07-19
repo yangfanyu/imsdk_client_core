@@ -1,4 +1,4 @@
-## 1.2.6
+## 1.2.8
 
 - Update dependencies, re generate models.
 

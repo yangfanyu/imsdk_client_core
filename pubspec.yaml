@@ -1,6 +1,6 @@
 name: imsdk_client_core
 description: The client core library of Zhiyou real-time communication cloud service.
-version: 1.2.6
+version: 1.2.8
 homepage: https://github.com/yangfanyu/imsdk_client_core
 
 environment:
@@ -9,7 +9,7 @@ environment:
 
 dependencies: 
   lpinyin: ^2.0.3
-  shelf_easy: ^1.0.6
+  shelf_easy: ^1.0.8
 
 dev_dependencies:
   lints: ^2.0.0

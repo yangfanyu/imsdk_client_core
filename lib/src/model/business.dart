@@ -1,4 +1,5 @@
 import 'package:shelf_easy/shelf_easy.dart';
+import 'paygoods.dart';
 
 ///
 ///商户
@@ -40,6 +41,12 @@ class Business extends DbBaseModel {
   ///最新版本号码
   int version;
 
+  ///语言环境类型
+  String language;
+
+  ///超级管理员id
+  ObjectId systemUid;
+
   ///管理员id列表
   List<ObjectId> adminIds;
 
@@ -49,11 +56,17 @@ class Business extends DbBaseModel {
   ///通知群id列表
   List<ObjectId> groupIds;
 
-  ///定制登录验证URL
-  String customLoginValidUrl;
+  ///充值商品列表
+  List<PayGoods> rechargeGoodsList;
 
-  ///定制订单验证URL
-  String customPaymentValidUrl;
+  ///虚拟商品列表
+  List<PayGoods> virvalueGoodsList;
+
+  ///提现交易金额的分红比例
+  int cashoutRate;
+
+  ///虚拟交易金额的分红比例
+  int vritualRate;
 
   ///微信应用Id
   String wechatAppId;
@@ -67,17 +80,26 @@ class Business extends DbBaseModel {
   ///微信商户Secret
   String wechatMchSecret;
 
-  ///支付宝商户Id
-  String alipayPid;
-
   ///支付宝应用Id
   String alipayAppId;
 
-  ///支付宝商户私钥
-  String alipayPrivateKey;
+  ///接口内容密钥
+  String alipayAesKey;
 
   ///支付宝平台公钥
   String alipayPublicKey;
+
+  ///支付宝商户私钥
+  String alipayAppPrivateKey;
+
+  ///支付宝平台根证书（证书模式）
+  String alipayCertRoot;
+
+  ///支付宝平台公钥证书（证书模式）
+  String alipayCertPublicKey;
+
+  ///支付宝商户应用公钥证书（证书模式））
+  String alipayCertAppPublicKey;
 
   ///阿里短信AccessKeyId
   String alismsAccessKeyId;
@@ -142,19 +164,26 @@ class Business extends DbBaseModel {
     String? email,
     String? secret,
     int? version,
+    String? language,
+    ObjectId? systemUid,
     List<ObjectId>? adminIds,
     List<ObjectId>? staffIds,
     List<ObjectId>? groupIds,
-    String? customLoginValidUrl,
-    String? customPaymentValidUrl,
+    List<PayGoods>? rechargeGoodsList,
+    List<PayGoods>? virvalueGoodsList,
+    int? cashoutRate,
+    int? vritualRate,
     String? wechatAppId,
     String? wechatAppSecret,
     String? wechatMchId,
     String? wechatMchSecret,
-    String? alipayPid,
     String? alipayAppId,
-    String? alipayPrivateKey,
+    String? alipayAesKey,
     String? alipayPublicKey,
+    String? alipayAppPrivateKey,
+    String? alipayCertRoot,
+    String? alipayCertPublicKey,
+    String? alipayCertAppPublicKey,
     String? alismsAccessKeyId,
     String? alismsAccessKeySecret,
     String? alismsEndpoint,
@@ -180,19 +209,26 @@ class Business extends DbBaseModel {
         email = email ?? '',
         secret = secret ?? '',
         version = version ?? 0,
+        language = language ?? 'zh',
+        systemUid = systemUid ?? ObjectId.fromHexString('000000000000000000000000'),
         adminIds = adminIds ?? [],
         staffIds = staffIds ?? [],
         groupIds = groupIds ?? [],
-        customLoginValidUrl = customLoginValidUrl ?? '',
-        customPaymentValidUrl = customPaymentValidUrl ?? '',
+        rechargeGoodsList = rechargeGoodsList ?? [],
+        virvalueGoodsList = virvalueGoodsList ?? [],
+        cashoutRate = cashoutRate ?? 0,
+        vritualRate = vritualRate ?? 0,
         wechatAppId = wechatAppId ?? '',
         wechatAppSecret = wechatAppSecret ?? '',
         wechatMchId = wechatMchId ?? '',
         wechatMchSecret = wechatMchSecret ?? '',
-        alipayPid = alipayPid ?? '',
         alipayAppId = alipayAppId ?? '',
-        alipayPrivateKey = alipayPrivateKey ?? '',
+        alipayAesKey = alipayAesKey ?? '',
         alipayPublicKey = alipayPublicKey ?? '',
+        alipayAppPrivateKey = alipayAppPrivateKey ?? '',
+        alipayCertRoot = alipayCertRoot ?? '',
+        alipayCertPublicKey = alipayCertPublicKey ?? '',
+        alipayCertAppPublicKey = alipayCertAppPublicKey ?? '',
         alismsAccessKeyId = alismsAccessKeyId ?? '',
         alismsAccessKeySecret = alismsAccessKeySecret ?? '',
         alismsEndpoint = alismsEndpoint ?? '',
@@ -225,19 +261,26 @@ class Business extends DbBaseModel {
       email: DbQueryField.tryParseString(map['email']),
       secret: DbQueryField.tryParseString(map['secret']),
       version: DbQueryField.tryParseInt(map['version']),
+      language: DbQueryField.tryParseString(map['language']),
+      systemUid: DbQueryField.tryParseObjectId(map['systemUid']),
       adminIds: (map['adminIds'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       staffIds: (map['staffIds'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       groupIds: (map['groupIds'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
-      customLoginValidUrl: DbQueryField.tryParseString(map['customLoginValidUrl']),
-      customPaymentValidUrl: DbQueryField.tryParseString(map['customPaymentValidUrl']),
+      rechargeGoodsList: (map['rechargeGoodsList'] as List?)?.map((v) => PayGoods.fromJson(v)).toList(),
+      virvalueGoodsList: (map['virvalueGoodsList'] as List?)?.map((v) => PayGoods.fromJson(v)).toList(),
+      cashoutRate: DbQueryField.tryParseInt(map['cashoutRate']),
+      vritualRate: DbQueryField.tryParseInt(map['vritualRate']),
       wechatAppId: DbQueryField.tryParseString(map['wechatAppId']),
       wechatAppSecret: DbQueryField.tryParseString(map['wechatAppSecret']),
       wechatMchId: DbQueryField.tryParseString(map['wechatMchId']),
       wechatMchSecret: DbQueryField.tryParseString(map['wechatMchSecret']),
-      alipayPid: DbQueryField.tryParseString(map['alipayPid']),
       alipayAppId: DbQueryField.tryParseString(map['alipayAppId']),
-      alipayPrivateKey: DbQueryField.tryParseString(map['alipayPrivateKey']),
+      alipayAesKey: DbQueryField.tryParseString(map['alipayAesKey']),
       alipayPublicKey: DbQueryField.tryParseString(map['alipayPublicKey']),
+      alipayAppPrivateKey: DbQueryField.tryParseString(map['alipayAppPrivateKey']),
+      alipayCertRoot: DbQueryField.tryParseString(map['alipayCertRoot']),
+      alipayCertPublicKey: DbQueryField.tryParseString(map['alipayCertPublicKey']),
+      alipayCertAppPublicKey: DbQueryField.tryParseString(map['alipayCertAppPublicKey']),
       alismsAccessKeyId: DbQueryField.tryParseString(map['alismsAccessKeyId']),
       alismsAccessKeySecret: DbQueryField.tryParseString(map['alismsAccessKeySecret']),
       alismsEndpoint: DbQueryField.tryParseString(map['alismsEndpoint']),
@@ -274,19 +317,26 @@ class Business extends DbBaseModel {
       'email': DbQueryField.toBaseType(email),
       'secret': DbQueryField.toBaseType(secret),
       'version': DbQueryField.toBaseType(version),
+      'language': DbQueryField.toBaseType(language),
+      'systemUid': DbQueryField.toBaseType(systemUid),
       'adminIds': DbQueryField.toBaseType(adminIds),
       'staffIds': DbQueryField.toBaseType(staffIds),
       'groupIds': DbQueryField.toBaseType(groupIds),
-      'customLoginValidUrl': DbQueryField.toBaseType(customLoginValidUrl),
-      'customPaymentValidUrl': DbQueryField.toBaseType(customPaymentValidUrl),
+      'rechargeGoodsList': DbQueryField.toBaseType(rechargeGoodsList),
+      'virvalueGoodsList': DbQueryField.toBaseType(virvalueGoodsList),
+      'cashoutRate': DbQueryField.toBaseType(cashoutRate),
+      'vritualRate': DbQueryField.toBaseType(vritualRate),
       'wechatAppId': DbQueryField.toBaseType(wechatAppId),
       'wechatAppSecret': DbQueryField.toBaseType(wechatAppSecret),
       'wechatMchId': DbQueryField.toBaseType(wechatMchId),
       'wechatMchSecret': DbQueryField.toBaseType(wechatMchSecret),
-      'alipayPid': DbQueryField.toBaseType(alipayPid),
       'alipayAppId': DbQueryField.toBaseType(alipayAppId),
-      'alipayPrivateKey': DbQueryField.toBaseType(alipayPrivateKey),
+      'alipayAesKey': DbQueryField.toBaseType(alipayAesKey),
       'alipayPublicKey': DbQueryField.toBaseType(alipayPublicKey),
+      'alipayAppPrivateKey': DbQueryField.toBaseType(alipayAppPrivateKey),
+      'alipayCertRoot': DbQueryField.toBaseType(alipayCertRoot),
+      'alipayCertPublicKey': DbQueryField.toBaseType(alipayCertPublicKey),
+      'alipayCertAppPublicKey': DbQueryField.toBaseType(alipayCertAppPublicKey),
       'alismsAccessKeyId': DbQueryField.toBaseType(alismsAccessKeyId),
       'alismsAccessKeySecret': DbQueryField.toBaseType(alismsAccessKeySecret),
       'alismsEndpoint': DbQueryField.toBaseType(alismsEndpoint),
@@ -318,19 +368,26 @@ class Business extends DbBaseModel {
       'email': email,
       'secret': secret,
       'version': version,
+      'language': language,
+      'systemUid': systemUid,
       'adminIds': adminIds,
       'staffIds': staffIds,
       'groupIds': groupIds,
-      'customLoginValidUrl': customLoginValidUrl,
-      'customPaymentValidUrl': customPaymentValidUrl,
+      'rechargeGoodsList': rechargeGoodsList,
+      'virvalueGoodsList': virvalueGoodsList,
+      'cashoutRate': cashoutRate,
+      'vritualRate': vritualRate,
       'wechatAppId': wechatAppId,
       'wechatAppSecret': wechatAppSecret,
       'wechatMchId': wechatMchId,
       'wechatMchSecret': wechatMchSecret,
-      'alipayPid': alipayPid,
       'alipayAppId': alipayAppId,
-      'alipayPrivateKey': alipayPrivateKey,
+      'alipayAesKey': alipayAesKey,
       'alipayPublicKey': alipayPublicKey,
+      'alipayAppPrivateKey': alipayAppPrivateKey,
+      'alipayCertRoot': alipayCertRoot,
+      'alipayCertPublicKey': alipayCertPublicKey,
+      'alipayCertAppPublicKey': alipayCertAppPublicKey,
       'alismsAccessKeyId': alismsAccessKeyId,
       'alismsAccessKeySecret': alismsAccessKeySecret,
       'alismsEndpoint': alismsEndpoint,
@@ -362,19 +419,26 @@ class Business extends DbBaseModel {
     if (map.containsKey('email')) email = parser.email;
     if (map.containsKey('secret')) secret = parser.secret;
     if (map.containsKey('version')) version = parser.version;
+    if (map.containsKey('language')) language = parser.language;
+    if (map.containsKey('systemUid')) systemUid = parser.systemUid;
     if (map.containsKey('adminIds')) adminIds = parser.adminIds;
     if (map.containsKey('staffIds')) staffIds = parser.staffIds;
     if (map.containsKey('groupIds')) groupIds = parser.groupIds;
-    if (map.containsKey('customLoginValidUrl')) customLoginValidUrl = parser.customLoginValidUrl;
-    if (map.containsKey('customPaymentValidUrl')) customPaymentValidUrl = parser.customPaymentValidUrl;
+    if (map.containsKey('rechargeGoodsList')) rechargeGoodsList = parser.rechargeGoodsList;
+    if (map.containsKey('virvalueGoodsList')) virvalueGoodsList = parser.virvalueGoodsList;
+    if (map.containsKey('cashoutRate')) cashoutRate = parser.cashoutRate;
+    if (map.containsKey('vritualRate')) vritualRate = parser.vritualRate;
     if (map.containsKey('wechatAppId')) wechatAppId = parser.wechatAppId;
     if (map.containsKey('wechatAppSecret')) wechatAppSecret = parser.wechatAppSecret;
     if (map.containsKey('wechatMchId')) wechatMchId = parser.wechatMchId;
     if (map.containsKey('wechatMchSecret')) wechatMchSecret = parser.wechatMchSecret;
-    if (map.containsKey('alipayPid')) alipayPid = parser.alipayPid;
     if (map.containsKey('alipayAppId')) alipayAppId = parser.alipayAppId;
-    if (map.containsKey('alipayPrivateKey')) alipayPrivateKey = parser.alipayPrivateKey;
+    if (map.containsKey('alipayAesKey')) alipayAesKey = parser.alipayAesKey;
     if (map.containsKey('alipayPublicKey')) alipayPublicKey = parser.alipayPublicKey;
+    if (map.containsKey('alipayAppPrivateKey')) alipayAppPrivateKey = parser.alipayAppPrivateKey;
+    if (map.containsKey('alipayCertRoot')) alipayCertRoot = parser.alipayCertRoot;
+    if (map.containsKey('alipayCertPublicKey')) alipayCertPublicKey = parser.alipayCertPublicKey;
+    if (map.containsKey('alipayCertAppPublicKey')) alipayCertAppPublicKey = parser.alipayCertAppPublicKey;
     if (map.containsKey('alismsAccessKeyId')) alismsAccessKeyId = parser.alismsAccessKeyId;
     if (map.containsKey('alismsAccessKeySecret')) alismsAccessKeySecret = parser.alismsAccessKeySecret;
     if (map.containsKey('alismsEndpoint')) alismsEndpoint = parser.alismsEndpoint;
@@ -404,19 +468,26 @@ class Business extends DbBaseModel {
     if (map.containsKey('email')) email = map['email'];
     if (map.containsKey('secret')) secret = map['secret'];
     if (map.containsKey('version')) version = map['version'];
+    if (map.containsKey('language')) language = map['language'];
+    if (map.containsKey('systemUid')) systemUid = map['systemUid'];
     if (map.containsKey('adminIds')) adminIds = map['adminIds'];
     if (map.containsKey('staffIds')) staffIds = map['staffIds'];
     if (map.containsKey('groupIds')) groupIds = map['groupIds'];
-    if (map.containsKey('customLoginValidUrl')) customLoginValidUrl = map['customLoginValidUrl'];
-    if (map.containsKey('customPaymentValidUrl')) customPaymentValidUrl = map['customPaymentValidUrl'];
+    if (map.containsKey('rechargeGoodsList')) rechargeGoodsList = map['rechargeGoodsList'];
+    if (map.containsKey('virvalueGoodsList')) virvalueGoodsList = map['virvalueGoodsList'];
+    if (map.containsKey('cashoutRate')) cashoutRate = map['cashoutRate'];
+    if (map.containsKey('vritualRate')) vritualRate = map['vritualRate'];
     if (map.containsKey('wechatAppId')) wechatAppId = map['wechatAppId'];
     if (map.containsKey('wechatAppSecret')) wechatAppSecret = map['wechatAppSecret'];
     if (map.containsKey('wechatMchId')) wechatMchId = map['wechatMchId'];
     if (map.containsKey('wechatMchSecret')) wechatMchSecret = map['wechatMchSecret'];
-    if (map.containsKey('alipayPid')) alipayPid = map['alipayPid'];
     if (map.containsKey('alipayAppId')) alipayAppId = map['alipayAppId'];
-    if (map.containsKey('alipayPrivateKey')) alipayPrivateKey = map['alipayPrivateKey'];
+    if (map.containsKey('alipayAesKey')) alipayAesKey = map['alipayAesKey'];
     if (map.containsKey('alipayPublicKey')) alipayPublicKey = map['alipayPublicKey'];
+    if (map.containsKey('alipayAppPrivateKey')) alipayAppPrivateKey = map['alipayAppPrivateKey'];
+    if (map.containsKey('alipayCertRoot')) alipayCertRoot = map['alipayCertRoot'];
+    if (map.containsKey('alipayCertPublicKey')) alipayCertPublicKey = map['alipayCertPublicKey'];
+    if (map.containsKey('alipayCertAppPublicKey')) alipayCertAppPublicKey = map['alipayCertAppPublicKey'];
     if (map.containsKey('alismsAccessKeyId')) alismsAccessKeyId = map['alismsAccessKeyId'];
     if (map.containsKey('alismsAccessKeySecret')) alismsAccessKeySecret = map['alismsAccessKeySecret'];
     if (map.containsKey('alismsEndpoint')) alismsEndpoint = map['alismsEndpoint'];
@@ -472,6 +543,12 @@ class BusinessDirty {
   ///最新版本号码
   set version(int value) => data['version'] = DbQueryField.toBaseType(value);
 
+  ///语言环境类型
+  set language(String value) => data['language'] = DbQueryField.toBaseType(value);
+
+  ///超级管理员id
+  set systemUid(ObjectId value) => data['systemUid'] = DbQueryField.toBaseType(value);
+
   ///管理员id列表
   set adminIds(List<ObjectId> value) => data['adminIds'] = DbQueryField.toBaseType(value);
 
@@ -481,11 +558,17 @@ class BusinessDirty {
   ///通知群id列表
   set groupIds(List<ObjectId> value) => data['groupIds'] = DbQueryField.toBaseType(value);
 
-  ///定制登录验证URL
-  set customLoginValidUrl(String value) => data['customLoginValidUrl'] = DbQueryField.toBaseType(value);
+  ///充值商品列表
+  set rechargeGoodsList(List<PayGoods> value) => data['rechargeGoodsList'] = DbQueryField.toBaseType(value);
 
-  ///定制订单验证URL
-  set customPaymentValidUrl(String value) => data['customPaymentValidUrl'] = DbQueryField.toBaseType(value);
+  ///虚拟商品列表
+  set virvalueGoodsList(List<PayGoods> value) => data['virvalueGoodsList'] = DbQueryField.toBaseType(value);
+
+  ///提现交易金额的分红比例
+  set cashoutRate(int value) => data['cashoutRate'] = DbQueryField.toBaseType(value);
+
+  ///虚拟交易金额的分红比例
+  set vritualRate(int value) => data['vritualRate'] = DbQueryField.toBaseType(value);
 
   ///微信应用Id
   set wechatAppId(String value) => data['wechatAppId'] = DbQueryField.toBaseType(value);
@@ -499,17 +582,26 @@ class BusinessDirty {
   ///微信商户Secret
   set wechatMchSecret(String value) => data['wechatMchSecret'] = DbQueryField.toBaseType(value);
 
-  ///支付宝商户Id
-  set alipayPid(String value) => data['alipayPid'] = DbQueryField.toBaseType(value);
-
   ///支付宝应用Id
   set alipayAppId(String value) => data['alipayAppId'] = DbQueryField.toBaseType(value);
 
-  ///支付宝商户私钥
-  set alipayPrivateKey(String value) => data['alipayPrivateKey'] = DbQueryField.toBaseType(value);
+  ///接口内容密钥
+  set alipayAesKey(String value) => data['alipayAesKey'] = DbQueryField.toBaseType(value);
 
   ///支付宝平台公钥
   set alipayPublicKey(String value) => data['alipayPublicKey'] = DbQueryField.toBaseType(value);
+
+  ///支付宝商户私钥
+  set alipayAppPrivateKey(String value) => data['alipayAppPrivateKey'] = DbQueryField.toBaseType(value);
+
+  ///支付宝平台根证书（证书模式）
+  set alipayCertRoot(String value) => data['alipayCertRoot'] = DbQueryField.toBaseType(value);
+
+  ///支付宝平台公钥证书（证书模式）
+  set alipayCertPublicKey(String value) => data['alipayCertPublicKey'] = DbQueryField.toBaseType(value);
+
+  ///支付宝商户应用公钥证书（证书模式））
+  set alipayCertAppPublicKey(String value) => data['alipayCertAppPublicKey'] = DbQueryField.toBaseType(value);
 
   ///阿里短信AccessKeyId
   set alismsAccessKeyId(String value) => data['alismsAccessKeyId'] = DbQueryField.toBaseType(value);

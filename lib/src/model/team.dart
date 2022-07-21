@@ -16,6 +16,9 @@ class Team extends DbBaseModel {
   ///自定义数据
   DbJsonWraper _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> _trans;
+
   ///创建者用户id
   ObjectId owner;
 
@@ -55,7 +58,7 @@ class Team extends DbBaseModel {
   ///是否允许 通过群组内关系 添加好友 或 互加好友
   bool byteam;
 
-  ///是否开启 收到消息有后台通知 或 群组资料修改后发送通知
+  ///是否开启 收到消息有后台通知 或 群组成员变化后发送通知
   bool notice;
 
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
@@ -76,11 +79,15 @@ class Team extends DbBaseModel {
   ///自定义数据
   DbJsonWraper get extra => _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> get trans => _trans;
+
   Team({
     ObjectId? id,
     ObjectId? bsid,
     int? time,
     DbJsonWraper? extra,
+    List<ObjectId>? trans,
     ObjectId? owner,
     List<ObjectId>? admin,
     int? member,
@@ -101,6 +108,7 @@ class Team extends DbBaseModel {
         _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
         _extra = extra ?? DbJsonWraper(),
+        _trans = trans ?? [],
         owner = owner ?? ObjectId.fromHexString('000000000000000000000000'),
         admin = admin ?? [],
         member = member ?? 0,
@@ -128,6 +136,7 @@ class Team extends DbBaseModel {
       bsid: DbQueryField.tryParseObjectId(map['_bsid']),
       time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
+      trans: (map['_trans'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       owner: DbQueryField.tryParseObjectId(map['owner']),
       admin: (map['admin'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       member: DbQueryField.tryParseInt(map['member']),
@@ -159,6 +168,7 @@ class Team extends DbBaseModel {
       '_bsid': DbQueryField.toBaseType(_bsid),
       '_time': DbQueryField.toBaseType(_time),
       '_extra': DbQueryField.toBaseType(_extra),
+      '_trans': DbQueryField.toBaseType(_trans),
       'owner': DbQueryField.toBaseType(owner),
       'admin': DbQueryField.toBaseType(admin),
       'member': DbQueryField.toBaseType(member),
@@ -185,6 +195,7 @@ class Team extends DbBaseModel {
       '_bsid': _bsid,
       '_time': _time,
       '_extra': _extra,
+      '_trans': _trans,
       'owner': owner,
       'admin': admin,
       'member': member,
@@ -211,6 +222,7 @@ class Team extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
     if (map.containsKey('_time')) _time = parser._time;
     if (map.containsKey('_extra')) _extra = parser._extra;
+    if (map.containsKey('_trans')) _trans = parser._trans;
     if (map.containsKey('owner')) owner = parser.owner;
     if (map.containsKey('admin')) admin = parser.admin;
     if (map.containsKey('member')) member = parser.member;
@@ -235,6 +247,7 @@ class Team extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = map['_bsid'];
     if (map.containsKey('_time')) _time = map['_time'];
     if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('_trans')) _trans = map['_trans'];
     if (map.containsKey('owner')) owner = map['owner'];
     if (map.containsKey('admin')) admin = map['admin'];
     if (map.containsKey('member')) member = map['member'];
@@ -268,6 +281,9 @@ class TeamDirty {
 
   ///自定义数据
   set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
+
+  ///未完成的事务列表
+  set trans(List<ObjectId> value) => data['_trans'] = DbQueryField.toBaseType(value);
 
   ///创建者用户id
   set owner(ObjectId value) => data['owner'] = DbQueryField.toBaseType(value);
@@ -308,7 +324,7 @@ class TeamDirty {
   ///是否允许 通过群组内关系 添加好友 或 互加好友
   set byteam(bool value) => data['byteam'] = DbQueryField.toBaseType(value);
 
-  ///是否开启 收到消息有后台通知 或 群组资料修改后发送通知
+  ///是否开启 收到消息有后台通知 或 群组成员变化后发送通知
   set notice(bool value) => data['notice'] = DbQueryField.toBaseType(value);
 
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息

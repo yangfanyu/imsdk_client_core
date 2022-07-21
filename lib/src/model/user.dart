@@ -17,6 +17,9 @@ class User extends DbBaseModel {
   ///自定义数据
   DbJsonWraper _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> _trans;
+
   ///手机号码
   String phone;
 
@@ -101,7 +104,7 @@ class User extends DbBaseModel {
   ///是否允许 通过群组内关系 添加好友 或 互加好友
   bool byteam;
 
-  ///是否开启 收到消息有后台通知 或 群组资料修改后发送通知
+  ///是否开启 收到消息有后台通知 或 群组成员变化后发送通知
   bool notice;
 
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息
@@ -122,11 +125,15 @@ class User extends DbBaseModel {
   ///自定义数据
   DbJsonWraper get extra => _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> get trans => _trans;
+
   User({
     ObjectId? id,
     ObjectId? bsid,
     int? time,
     DbJsonWraper? extra,
+    List<ObjectId>? trans,
     String? phone,
     String? token,
     String? rmbpwd,
@@ -162,6 +169,7 @@ class User extends DbBaseModel {
         _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
         _extra = extra ?? DbJsonWraper(),
+        _trans = trans ?? [],
         phone = phone ?? '',
         token = token ?? '',
         rmbpwd = rmbpwd ?? '',
@@ -204,6 +212,7 @@ class User extends DbBaseModel {
       bsid: DbQueryField.tryParseObjectId(map['_bsid']),
       time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
+      trans: (map['_trans'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       phone: DbQueryField.tryParseString(map['phone']),
       token: DbQueryField.tryParseString(map['token']),
       rmbpwd: DbQueryField.tryParseString(map['rmbpwd']),
@@ -250,6 +259,7 @@ class User extends DbBaseModel {
       '_bsid': DbQueryField.toBaseType(_bsid),
       '_time': DbQueryField.toBaseType(_time),
       '_extra': DbQueryField.toBaseType(_extra),
+      '_trans': DbQueryField.toBaseType(_trans),
       'phone': DbQueryField.toBaseType(phone),
       'token': DbQueryField.toBaseType(token),
       'rmbpwd': DbQueryField.toBaseType(rmbpwd),
@@ -291,6 +301,7 @@ class User extends DbBaseModel {
       '_bsid': _bsid,
       '_time': _time,
       '_extra': _extra,
+      '_trans': _trans,
       'phone': phone,
       'token': token,
       'rmbpwd': rmbpwd,
@@ -332,6 +343,7 @@ class User extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
     if (map.containsKey('_time')) _time = parser._time;
     if (map.containsKey('_extra')) _extra = parser._extra;
+    if (map.containsKey('_trans')) _trans = parser._trans;
     if (map.containsKey('phone')) phone = parser.phone;
     if (map.containsKey('token')) token = parser.token;
     if (map.containsKey('rmbpwd')) rmbpwd = parser.rmbpwd;
@@ -371,6 +383,7 @@ class User extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = map['_bsid'];
     if (map.containsKey('_time')) _time = map['_time'];
     if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('_trans')) _trans = map['_trans'];
     if (map.containsKey('phone')) phone = map['phone'];
     if (map.containsKey('token')) token = map['token'];
     if (map.containsKey('rmbpwd')) rmbpwd = map['rmbpwd'];
@@ -419,6 +432,9 @@ class UserDirty {
 
   ///自定义数据
   set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
+
+  ///未完成的事务列表
+  set trans(List<ObjectId> value) => data['_trans'] = DbQueryField.toBaseType(value);
 
   ///手机号码
   set phone(String value) => data['phone'] = DbQueryField.toBaseType(value);
@@ -504,7 +520,7 @@ class UserDirty {
   ///是否允许 通过群组内关系 添加好友 或 互加好友
   set byteam(bool value) => data['byteam'] = DbQueryField.toBaseType(value);
 
-  ///是否开启 收到消息有后台通知 或 群组资料修改后发送通知
+  ///是否开启 收到消息有后台通知 或 群组成员变化后发送通知
   set notice(bool value) => data['notice'] = DbQueryField.toBaseType(value);
 
   ///是否开启 收到消息无声音提醒 或 群组管理员才能发送消息

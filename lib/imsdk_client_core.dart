@@ -11,6 +11,7 @@ export 'src/model/loglogin.dart';
 export 'src/model/logreport.dart';
 export 'src/model/message.dart';
 export 'src/model/metadata.dart';
+export 'src/model/paygoods.dart';
 export 'src/model/payment.dart';
 export 'src/model/randcode.dart';
 export 'src/model/team.dart';
@@ -22,7 +23,6 @@ export 'src/netclient.dart';
 
 export '/src/tool/compage.dart';
 export '/src/tool/comtools.dart';
-export '/src/tool/datapage.dart';
 export '/src/tool/session.dart';
 
 export 'package:shelf_easy/shelf_easy.dart' show ObjectId, DbJsonWraper, DbQueryField, MediaType, EasyLogHandler, EasyLogLevel, EasyLogger, EasyPacket;

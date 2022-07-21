@@ -1,6 +1,7 @@
 import 'package:lpinyin/lpinyin.dart';
 import 'package:shelf_easy/shelf_easy.dart';
 
+import 'model/business.dart';
 import 'model/constant.dart';
 import 'model/cusmark.dart';
 import 'model/cusstar.dart';
@@ -11,13 +12,13 @@ import 'model/loglogin.dart';
 import 'model/logreport.dart';
 import 'model/message.dart';
 import 'model/metadata.dart';
+import 'model/payment.dart';
 import 'model/team.dart';
 import 'model/teamship.dart';
 import 'model/user.dart';
 import 'model/usership.dart';
 import 'tool/compage.dart';
 import 'tool/comtools.dart';
-import 'tool/datapage.dart';
 import 'tool/session.dart';
 
 class NetClient {
@@ -48,11 +49,8 @@ class NetClient {
   ///登录凭据回调
   final void Function(String nick, String? credentials) onCredentials;
 
-  ///定制配置信息
-  final DbJsonWraper configs;
-
-  ///管理员的标志
-  final List<ObjectId> adminIds;
+  ///商户公开的配置信息
+  final Business business;
 
   ///最新的客户端版本号
   int version;
@@ -115,8 +113,7 @@ class NetClient {
   final Map<ObjectId, bool> _dirtyTeamuserStateMap;
 
   NetClient({this.logger = EasyLogger.printLogger, this.logLevel = EasyLogLevel.debug, this.logTag, required this.host, required this.bsid, required this.secret, this.binary = true, this.isolate = false, required this.onCredentials})
-      : configs = DbJsonWraper(),
-        adminIds = [],
+      : business = Business(),
         version = 0,
         user = User(id: DbQueryField.hexstr2ObjectId('000000000000000000000000')),
         _sessionState = NetClientAzState(),
@@ -144,13 +141,7 @@ class NetClient {
   Future<EasyPacket<void>> appConfigure() async {
     final response = await _guestClient.httpRequest('$host/appConfigure', data: {'bsid': bsid});
     if (response.ok) {
-      version = response.data!['version'] as int;
-      final adminIdList = response.data!['adminIds'] as List;
-      adminIds.clear();
-      for (var element in adminIdList) {
-        adminIds.add(DbQueryField.hexstr2ObjectId(element));
-      }
-      configs.updateByJson(response.data!['configs']);
+      business.updateByJson(response.data!['configure']);
     }
     return response;
   }
@@ -226,6 +217,32 @@ class NetClient {
   ///发送验证码到[phone]
   Future<EasyPacket<void>> sendRandcode({required String phone}) async {
     final response = await _guestClient.httpRequest('$host/sendRandcode', data: {'bsid': bsid, 'phone': phone});
+    return response;
+  }
+
+  ///微信充值下单
+  Future<EasyPacket<Map<String, dynamic>?>> wechatStart({required int goodsNo}) async {
+    final response = await _aliveClient.httpRequest('$host/wechatStart', data: {'bsid': bsid, 'uid': user.id, 'goodsNo': goodsNo});
+    if (response.ok) {
+      return response.cloneExtra(response.data!['result']);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///支付宝充值下单
+  Future<EasyPacket<String?>> alipayStart({required int goodsNo}) async {
+    final response = await _aliveClient.httpRequest('$host/alipayStart', data: {'bsid': bsid, 'uid': user.id, 'goodsNo': goodsNo});
+    if (response.ok) {
+      return response.cloneExtra(response.data!['result']);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///苹果充值下单
+  Future<EasyPacket<void>> iospayStart({required int goodsNo, required String inpayId, required String verifyData}) async {
+    final response = await _aliveClient.httpRequest('$host/iospayStart', data: {'bsid': bsid, 'uid': user.id, 'goodsNo': goodsNo, 'inpayId': inpayId, 'verifyData': verifyData});
     return response;
   }
 
@@ -547,19 +564,19 @@ class NetClient {
   }
 
   ///发送消息-普通红包，[rmbfenTotal]为红包总金额，[rmbfenCount]为红包个数
-  Future<EasyPacket<void>> messageSendRedpackNormal({required ObjectId sid, required int from, required int rmbfenTotal, required int rmbfenCount, required String cashPassword}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRedpackNormal, 'rmbfenTotal': rmbfenTotal, 'rmbfenCount': rmbfenCount, 'cashPassword': cashPassword});
+  Future<EasyPacket<void>> messageSendRedpackNormal({required ObjectId sid, required int from, required String body, required int rmbfenTotal, required int rmbfenCount, String? cashPassword}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRedpackNormal, 'body': body, 'rmbfenTotal': rmbfenTotal, 'rmbfenCount': rmbfenCount, 'cashPassword': cashPassword});
     return response;
   }
 
   ///发送消息-幸运红包，[rmbfenTotal]为红包总金额，[rmbfenCount]为红包个数
-  Future<EasyPacket<void>> messageSendRedpackLucky({required ObjectId sid, required int from, required int rmbfenTotal, required int rmbfenCount, required String cashPassword}) async {
-    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRedpackLuckly, 'rmbfenTotal': rmbfenTotal, 'rmbfenCount': rmbfenCount, 'cashPassword': cashPassword});
+  Future<EasyPacket<void>> messageSendRedpackLuckly({required ObjectId sid, required int from, required String body, required int rmbfenTotal, required int rmbfenCount, String? cashPassword}) async {
+    final response = await _aliveClient.websocketRequest('messageSend', data: {'bsid': bsid, 'sid': sid, 'from': from, 'type': Constant.msgTypeRedpackLuckly, 'body': body, 'rmbfenTotal': rmbfenTotal, 'rmbfenCount': rmbfenCount, 'cashPassword': cashPassword});
     return response;
   }
 
-  ///发送消息-自定义消息，[customType]为自定义类型，[customExtra]为自定义类型
-  Future<EasyPacket<void>> messageSendCustom({required ObjectId sid, required int from, String? title, String? body, ObjectId? shareCardId, String? shareIconUrl, List<String>? shareHeadUrl, String? shareLinkUrl, required int customType, Map<String, dynamic>? customExtra}) async {
+  ///发送消息-自定义消息，[customType]为自定义类型，[customExtra]为扩展数据
+  Future<EasyPacket<void>> messageSendCustomContent({required ObjectId sid, required int from, String? title, String? body, ObjectId? shareCardId, String? shareIconUrl, List<String>? shareHeadUrl, String? shareLinkUrl, required int customType, String? customShort, Map<String, dynamic>? customExtra}) async {
     final response = await _aliveClient.websocketRequest('messageSend', data: {
       'bsid': bsid,
       'sid': sid,
@@ -572,6 +589,7 @@ class NetClient {
       'shareHeadUrl': shareHeadUrl,
       'shareLinkUrl': shareLinkUrl,
       'customType': customType,
+      'customShort': customShort,
       'customExtra': customExtra,
     });
     return response;
@@ -626,6 +644,49 @@ class NetClient {
   Future<EasyPacket<void>> messageWebrtc({required ObjectId id, required ObjectId? toUid, required Map<String, dynamic> signals}) async {
     final response = await _aliveClient.websocketRequest('messageWebtrc', data: {'bsid': bsid, 'id': id, 'toUid': toUid, 'signals': signals});
     return response;
+  }
+
+  ///创建提现交易订单
+  Future<EasyPacket<void>> paymentCashout({required int rmbfen, required String accountTp, required String accountNo, String? cashPassword}) async {
+    final response = await _aliveClient.websocketRequest('paymentCashout', data: {'bsid': bsid, 'rmbfen': rmbfen, 'accountTp': accountTp, 'accountNo': accountNo, 'cashPassword': cashPassword});
+    return response;
+  }
+
+  ///创建虚拟交易订单
+  Future<EasyPacket<void>> paymentVirtual({required bool valueMode, required int customXNo, required ObjectId customXId, int? goodsNo, String? cashPassword}) async {
+    final response = await _aliveClient.websocketRequest('paymentVirtual', data: {'bsid': bsid, 'valueMode': valueMode, 'customXNo': customXNo, 'customXId': customXId, 'goodsNo': goodsNo, 'cashPassword': cashPassword});
+    return response;
+  }
+
+  ///加载交易账单列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据
+  Future<EasyPacket<bool>> paymentLoad({required ComPage<Payment> comPage, required bool reload, required int start, required int end}) async {
+    if (reload) comPage.pgcache.clear(); //清除缓存
+    final last = comPage.pgcache.isEmpty ? 3742732800000 : comPage.pgcache.last.time; //2088-08-08 00:00:00 毫秒值 3742732800000
+    final nin = <ObjectId>[]; //排除重复
+    for (int i = comPage.pgcache.length - 1; i >= 0; i--) {
+      final item = comPage.pgcache[i];
+      if (item.time != last) break;
+      nin.add(item.id);
+    }
+    comPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('paymentLoad', data: {'bsid': bsid, 'last': last, 'nin': nin, 'pgasync': comPage.pgasync, 'start': start, 'end': end});
+    if (response.ok) {
+      final pgasync = response.data!['pgasync'] as int;
+      final totalcnt = response.data!['totalcnt'] as int;
+      final paymentList = response.data!['paymentList'] as List;
+      if (pgasync == comPage.pgasync) {
+        for (var data in paymentList) {
+          comPage.pgcache.add(Payment.fromJson(data));
+        }
+        comPage.total = totalcnt;
+        return response.cloneExtra(paymentList.isEmpty || comPage.total == comPage.pgcache.length); //是否已加载全部数据
+      } else {
+        _aliveClient.logError(['paymentLoad =>', '远程响应号已过期 $pgasync']);
+        return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
+      }
+    } else {
+      return response.cloneExtra(null);
+    }
   }
 
   ///创建自定义数据，[no]为数据集合分类序号，返回数据包含全部字段
@@ -758,17 +819,17 @@ class NetClient {
   ///加载自定义数据列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
   ///
   ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
-  Future<EasyPacket<bool>> customXLoad({required DataPage dataPage, required bool reload, Map<String, dynamic> eqFilter = const {}, Map<String, dynamic> neFilter = const {}, Map<String, dynamic> matchFilter = const {}, Map<String, dynamic> sorter = const {}, bool body1 = false, bool body2 = false, bool body3 = false}) async {
-    if (reload) dataPage.pgcache.clear(); //清除缓存
-    dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'eqFilter': eqFilter, 'neFilter': neFilter, 'matchFilter': matchFilter, 'sorter': sorter, 'body1': body1, 'body2': body2, 'body3': body3});
+  Future<EasyPacket<bool>> customXLoad({required ComPage<CustomX> comPage, required bool reload, Map<String, dynamic> eqFilter = const {}, Map<String, dynamic> neFilter = const {}, Map<String, dynamic> matchFilter = const {}, Map<String, dynamic> sorter = const {}, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    if (reload) comPage.pgcache.clear(); //清除缓存
+    comPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('customXLoad', data: {'bsid': bsid, 'no': comPage.no, 'skip': comPage.pgcache.length, 'pgasync': comPage.pgasync, 'eqFilter': eqFilter, 'neFilter': neFilter, 'matchFilter': matchFilter, 'sorter': sorter, 'body1': body1, 'body2': body2, 'body3': body3});
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
       final totalcnt = response.data!['totalcnt'] as int;
       final customxList = response.data!['customxList'] as List;
       final cusmarkList = response.data!['cusmarkList'] as List;
       final cusstarList = response.data!['cusstarList'] as List;
-      if (pgasync == dataPage.pgasync) {
+      if (pgasync == comPage.pgasync) {
         final cusmarkMap = <ObjectId, Cusmark>{};
         for (var data in cusmarkList) {
           final cusmark = Cusmark.fromJson(data);
@@ -783,10 +844,10 @@ class NetClient {
           final customx = CustomX.fromJson(data);
           customx.cusmark = cusmarkMap[customx.id];
           customx.cusstar = cusstarMap[customx.id];
-          dataPage.append(customx);
+          comPage.append(customx, (a, b) => a.id == b.id);
         }
-        dataPage.total = totalcnt;
-        return response.cloneExtra(customxList.isEmpty || dataPage.total == dataPage.pgcache.length); //是否已加载全部数据
+        comPage.total = totalcnt;
+        return response.cloneExtra(customxList.isEmpty || comPage.total == comPage.pgcache.length); //是否已加载全部数据
       } else {
         _aliveClient.logError(['customXLoad =>', '远程响应号已过期 $pgasync']);
         return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
@@ -799,17 +860,17 @@ class NetClient {
   ///加载自定义标记列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
   ///
   ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
-  Future<EasyPacket<bool>> cusmarkLoad({required DataPage dataPage, required bool reload, bool body1 = false, bool body2 = false, bool body3 = false}) async {
-    if (reload) dataPage.pgcache.clear(); //清除缓存
-    dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('cusmarkLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'body1': body1, 'body2': body2, 'body3': body3});
+  Future<EasyPacket<bool>> cusmarkLoad({required ComPage<CustomX> comPage, required bool reload, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    if (reload) comPage.pgcache.clear(); //清除缓存
+    comPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('cusmarkLoad', data: {'bsid': bsid, 'no': comPage.no, 'skip': comPage.pgcache.length, 'pgasync': comPage.pgasync, 'body1': body1, 'body2': body2, 'body3': body3});
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
       final totalcnt = response.data!['totalcnt'] as int;
       final customxList = response.data!['customxList'] as List;
       final cusmarkList = response.data!['cusmarkList'] as List;
       final cusstarList = response.data!['cusstarList'] as List;
-      if (pgasync == dataPage.pgasync) {
+      if (pgasync == comPage.pgasync) {
         final cusmarkMap = <ObjectId, Cusmark>{};
         for (var data in cusmarkList) {
           final cusmark = Cusmark.fromJson(data);
@@ -824,10 +885,10 @@ class NetClient {
           final customx = CustomX.fromJson(data);
           customx.cusmark = cusmarkMap[customx.id];
           customx.cusstar = cusstarMap[customx.id];
-          dataPage.append(customx);
+          comPage.append(customx, (a, b) => a.id == b.id);
         }
-        dataPage.total = totalcnt;
-        return response.cloneExtra(customxList.isEmpty || dataPage.total == dataPage.pgcache.length); //是否已加载全部数据
+        comPage.total = totalcnt;
+        return response.cloneExtra(customxList.isEmpty || comPage.total == comPage.pgcache.length); //是否已加载全部数据
       } else {
         _aliveClient.logError(['cusmarkLoad =>', '远程响应号已过期 $pgasync']);
         return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
@@ -840,17 +901,17 @@ class NetClient {
   ///加载自定义收藏列表，[reload]为true时清除缓存重新加载，返回值[EasyPacket.extra]字段为true时表示已加载全部数据。
   ///
   ///[body1]为false时返回数据不包含[CustomX.body1]字段，[body2]为false时返回数据不包含[CustomX.body2]字段，[body3]为false时返回数据不包含[CustomX.body3]字段
-  Future<EasyPacket<bool>> cusstarLoad({required DataPage dataPage, required bool reload, bool body1 = false, bool body2 = false, bool body3 = false}) async {
-    if (reload) dataPage.pgcache.clear(); //清除缓存
-    dataPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
-    final response = await _aliveClient.websocketRequest('cusstarLoad', data: {'bsid': bsid, 'no': dataPage.no, 'skip': dataPage.pgcache.length, 'pgasync': dataPage.pgasync, 'body1': body1, 'body2': body2, 'body3': body3});
+  Future<EasyPacket<bool>> cusstarLoad({required ComPage<CustomX> comPage, required bool reload, bool body1 = false, bool body2 = false, bool body3 = false}) async {
+    if (reload) comPage.pgcache.clear(); //清除缓存
+    comPage.pgasync = DateTime.now().microsecondsSinceEpoch; //设置最近一次异步加载的识别号（防止并发加载导致数据混乱）
+    final response = await _aliveClient.websocketRequest('cusstarLoad', data: {'bsid': bsid, 'no': comPage.no, 'skip': comPage.pgcache.length, 'pgasync': comPage.pgasync, 'body1': body1, 'body2': body2, 'body3': body3});
     if (response.ok) {
       final pgasync = response.data!['pgasync'] as int;
       final totalcnt = response.data!['totalcnt'] as int;
       final customxList = response.data!['customxList'] as List;
       final cusmarkList = response.data!['cusmarkList'] as List;
       final cusstarList = response.data!['cusstarList'] as List;
-      if (pgasync == dataPage.pgasync) {
+      if (pgasync == comPage.pgasync) {
         final cusmarkMap = <ObjectId, Cusmark>{};
         for (var data in cusmarkList) {
           final cusmark = Cusmark.fromJson(data);
@@ -865,10 +926,10 @@ class NetClient {
           final customx = CustomX.fromJson(data);
           customx.cusmark = cusmarkMap[customx.id];
           customx.cusstar = cusstarMap[customx.id];
-          dataPage.append(customx);
+          comPage.append(customx, (a, b) => a.id == b.id);
         }
-        dataPage.total = totalcnt;
-        return response.cloneExtra(customxList.isEmpty || dataPage.total == dataPage.pgcache.length); //是否已加载全部数据
+        comPage.total = totalcnt;
+        return response.cloneExtra(customxList.isEmpty || comPage.total == comPage.pgcache.length); //是否已加载全部数据
       } else {
         _aliveClient.logError(['cusstarLoad =>', '远程响应号已过期 $pgasync']);
         return response.requestTimeoutError().cloneExtra(null); //说明本次响应不是最近一次异步加载，直接遗弃数据，当成超时错误处理
@@ -999,6 +1060,28 @@ class NetClient {
   ///管理员设置反馈状态
   Future<EasyPacket<void>> adminReportState({required ObjectId id, required int state}) async {
     final response = await _aliveClient.websocketRequest('adminReportState', data: {'bsid': bsid, 'id': id, 'state': state});
+    return response;
+  }
+
+  ///管理员获取订单列表
+  Future<EasyPacket<ComPage<Payment>>> adminPaymentList({required int page, required int type, required int state, int? substate}) async {
+    final response = await _aliveClient.websocketRequest('adminPaymentList', data: {'bsid': bsid, 'page': page, 'type': type, 'state': state, 'substate': substate});
+    if (response.ok) {
+      final paymentList = response.data!['paymentList'] as List;
+      final paymentCount = response.data!['paymentCount'] as int;
+      final result = ComPage<Payment>(page: page, total: paymentCount);
+      for (var element in paymentList) {
+        result.pgcache.add(Payment.fromJson(element));
+      }
+      return response.cloneExtra(result);
+    } else {
+      return response.cloneExtra(null);
+    }
+  }
+
+  ///管理员设置订单状态（仅支持已完成事务的提现订单设置substate状态，后续实现自动提现转账功能后后会禁用此功能）
+  Future<EasyPacket<void>> adminPaymentState({required ObjectId id, required int substate}) async {
+    final response = await _aliveClient.websocketRequest('adminPaymentState', data: {'bsid': bsid, 'id': id, 'substate': substate});
     return response;
   }
 

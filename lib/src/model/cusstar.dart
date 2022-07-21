@@ -16,6 +16,9 @@ class Cusstar extends DbBaseModel {
   ///自定义数据
   DbJsonWraper _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> _trans;
+
   ///所属用户id
   ObjectId uid;
 
@@ -34,17 +37,22 @@ class Cusstar extends DbBaseModel {
   ///自定义数据
   DbJsonWraper get extra => _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> get trans => _trans;
+
   Cusstar({
     ObjectId? id,
     ObjectId? bsid,
     int? time,
     DbJsonWraper? extra,
+    List<ObjectId>? trans,
     ObjectId? uid,
     ObjectId? rid,
   })  : _id = id ?? ObjectId(),
         _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
         _extra = extra ?? DbJsonWraper(),
+        _trans = trans ?? [],
         uid = uid ?? ObjectId.fromHexString('000000000000000000000000'),
         rid = rid ?? ObjectId.fromHexString('000000000000000000000000');
 
@@ -58,6 +66,7 @@ class Cusstar extends DbBaseModel {
       bsid: DbQueryField.tryParseObjectId(map['_bsid']),
       time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
+      trans: (map['_trans'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       uid: DbQueryField.tryParseObjectId(map['uid']),
       rid: DbQueryField.tryParseObjectId(map['rid']),
     );
@@ -75,6 +84,7 @@ class Cusstar extends DbBaseModel {
       '_bsid': DbQueryField.toBaseType(_bsid),
       '_time': DbQueryField.toBaseType(_time),
       '_extra': DbQueryField.toBaseType(_extra),
+      '_trans': DbQueryField.toBaseType(_trans),
       'uid': DbQueryField.toBaseType(uid),
       'rid': DbQueryField.toBaseType(rid),
     };
@@ -87,6 +97,7 @@ class Cusstar extends DbBaseModel {
       '_bsid': _bsid,
       '_time': _time,
       '_extra': _extra,
+      '_trans': _trans,
       'uid': uid,
       'rid': rid,
     };
@@ -99,6 +110,7 @@ class Cusstar extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
     if (map.containsKey('_time')) _time = parser._time;
     if (map.containsKey('_extra')) _extra = parser._extra;
+    if (map.containsKey('_trans')) _trans = parser._trans;
     if (map.containsKey('uid')) uid = parser.uid;
     if (map.containsKey('rid')) rid = parser.rid;
   }
@@ -109,6 +121,7 @@ class Cusstar extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = map['_bsid'];
     if (map.containsKey('_time')) _time = map['_time'];
     if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('_trans')) _trans = map['_trans'];
     if (map.containsKey('uid')) uid = map['uid'];
     if (map.containsKey('rid')) rid = map['rid'];
   }
@@ -128,6 +141,9 @@ class CusstarDirty {
 
   ///自定义数据
   set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
+
+  ///未完成的事务列表
+  set trans(List<ObjectId> value) => data['_trans'] = DbQueryField.toBaseType(value);
 
   ///所属用户id
   set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);

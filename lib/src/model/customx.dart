@@ -18,6 +18,9 @@ class CustomX extends DbBaseModel {
   ///自定义数据
   DbJsonWraper _extra;
 
+  ///未完成的事务列表
+  List<ObjectId> _trans;
+
   ///创建者标志
   ObjectId uid;
 
@@ -96,6 +99,15 @@ class CustomX extends DbBaseModel {
   ///子customx.rid3为本customx.id的子customx数量
   int cnt3;
 
+  ///交易的受益人
+  ObjectId earner;
+
+  ///虚拟商品价格
+  int rmbfen;
+
+  ///虚拟货币数量
+  int virval;
+
   ///唯一id
   ObjectId get id => _id;
 
@@ -107,6 +119,9 @@ class CustomX extends DbBaseModel {
 
   ///自定义数据
   DbJsonWraper get extra => _extra;
+
+  ///未完成的事务列表
+  List<ObjectId> get trans => _trans;
 
   ///
   ///关联的自定义标记对象
@@ -123,6 +138,7 @@ class CustomX extends DbBaseModel {
     ObjectId? bsid,
     int? time,
     DbJsonWraper? extra,
+    List<ObjectId>? trans,
     ObjectId? uid,
     ObjectId? rid1,
     ObjectId? rid2,
@@ -149,10 +165,14 @@ class CustomX extends DbBaseModel {
     int? cnt1,
     int? cnt2,
     int? cnt3,
+    ObjectId? earner,
+    int? rmbfen,
+    int? virval,
   })  : _id = id ?? ObjectId(),
         _bsid = bsid ?? ObjectId.fromHexString('000000000000000000000000'),
         _time = time ?? DateTime.now().millisecondsSinceEpoch,
         _extra = extra ?? DbJsonWraper(),
+        _trans = trans ?? [],
         uid = uid ?? ObjectId.fromHexString('000000000000000000000000'),
         rid1 = rid1 ?? ObjectId.fromHexString('000000000000000000000000'),
         rid2 = rid2 ?? ObjectId.fromHexString('000000000000000000000000'),
@@ -178,7 +198,10 @@ class CustomX extends DbBaseModel {
         hotx = hotx ?? 0,
         cnt1 = cnt1 ?? 0,
         cnt2 = cnt2 ?? 0,
-        cnt3 = cnt3 ?? 0;
+        cnt3 = cnt3 ?? 0,
+        earner = earner ?? ObjectId.fromHexString('000000000000000000000000'),
+        rmbfen = rmbfen ?? 0,
+        virval = virval ?? 0;
 
   factory CustomX.fromString(String data) {
     return CustomX.fromJson(jsonDecode(data.substring(data.indexOf('(') + 1, data.lastIndexOf(')'))));
@@ -190,6 +213,7 @@ class CustomX extends DbBaseModel {
       bsid: DbQueryField.tryParseObjectId(map['_bsid']),
       time: DbQueryField.tryParseInt(map['_time']),
       extra: map['_extra'] is Map ? DbJsonWraper.fromJson(map['_extra']) : map['_extra'],
+      trans: (map['_trans'] as List?)?.map((v) => DbQueryField.parseObjectId(v)).toList(),
       uid: DbQueryField.tryParseObjectId(map['uid']),
       rid1: DbQueryField.tryParseObjectId(map['rid1']),
       rid2: DbQueryField.tryParseObjectId(map['rid2']),
@@ -216,6 +240,9 @@ class CustomX extends DbBaseModel {
       cnt1: DbQueryField.tryParseInt(map['cnt1']),
       cnt2: DbQueryField.tryParseInt(map['cnt2']),
       cnt3: DbQueryField.tryParseInt(map['cnt3']),
+      earner: DbQueryField.tryParseObjectId(map['earner']),
+      rmbfen: DbQueryField.tryParseInt(map['rmbfen']),
+      virval: DbQueryField.tryParseInt(map['virval']),
     );
   }
 
@@ -231,6 +258,7 @@ class CustomX extends DbBaseModel {
       '_bsid': DbQueryField.toBaseType(_bsid),
       '_time': DbQueryField.toBaseType(_time),
       '_extra': DbQueryField.toBaseType(_extra),
+      '_trans': DbQueryField.toBaseType(_trans),
       'uid': DbQueryField.toBaseType(uid),
       'rid1': DbQueryField.toBaseType(rid1),
       'rid2': DbQueryField.toBaseType(rid2),
@@ -257,6 +285,9 @@ class CustomX extends DbBaseModel {
       'cnt1': DbQueryField.toBaseType(cnt1),
       'cnt2': DbQueryField.toBaseType(cnt2),
       'cnt3': DbQueryField.toBaseType(cnt3),
+      'earner': DbQueryField.toBaseType(earner),
+      'rmbfen': DbQueryField.toBaseType(rmbfen),
+      'virval': DbQueryField.toBaseType(virval),
     };
   }
 
@@ -267,6 +298,7 @@ class CustomX extends DbBaseModel {
       '_bsid': _bsid,
       '_time': _time,
       '_extra': _extra,
+      '_trans': _trans,
       'uid': uid,
       'rid1': rid1,
       'rid2': rid2,
@@ -293,6 +325,9 @@ class CustomX extends DbBaseModel {
       'cnt1': cnt1,
       'cnt2': cnt2,
       'cnt3': cnt3,
+      'earner': earner,
+      'rmbfen': rmbfen,
+      'virval': virval,
     };
   }
 
@@ -303,6 +338,7 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = parser._bsid;
     if (map.containsKey('_time')) _time = parser._time;
     if (map.containsKey('_extra')) _extra = parser._extra;
+    if (map.containsKey('_trans')) _trans = parser._trans;
     if (map.containsKey('uid')) uid = parser.uid;
     if (map.containsKey('rid1')) rid1 = parser.rid1;
     if (map.containsKey('rid2')) rid2 = parser.rid2;
@@ -329,6 +365,9 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('cnt1')) cnt1 = parser.cnt1;
     if (map.containsKey('cnt2')) cnt2 = parser.cnt2;
     if (map.containsKey('cnt3')) cnt3 = parser.cnt3;
+    if (map.containsKey('earner')) earner = parser.earner;
+    if (map.containsKey('rmbfen')) rmbfen = parser.rmbfen;
+    if (map.containsKey('virval')) virval = parser.virval;
   }
 
   @override
@@ -337,6 +376,7 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('_bsid')) _bsid = map['_bsid'];
     if (map.containsKey('_time')) _time = map['_time'];
     if (map.containsKey('_extra')) _extra = map['_extra'];
+    if (map.containsKey('_trans')) _trans = map['_trans'];
     if (map.containsKey('uid')) uid = map['uid'];
     if (map.containsKey('rid1')) rid1 = map['rid1'];
     if (map.containsKey('rid2')) rid2 = map['rid2'];
@@ -363,6 +403,9 @@ class CustomX extends DbBaseModel {
     if (map.containsKey('cnt1')) cnt1 = map['cnt1'];
     if (map.containsKey('cnt2')) cnt2 = map['cnt2'];
     if (map.containsKey('cnt3')) cnt3 = map['cnt3'];
+    if (map.containsKey('earner')) earner = map['earner'];
+    if (map.containsKey('rmbfen')) rmbfen = map['rmbfen'];
+    if (map.containsKey('virval')) virval = map['virval'];
   }
 }
 
@@ -380,6 +423,9 @@ class CustomXDirty {
 
   ///自定义数据
   set extra(DbJsonWraper value) => data['_extra'] = DbQueryField.toBaseType(value);
+
+  ///未完成的事务列表
+  set trans(List<ObjectId> value) => data['_trans'] = DbQueryField.toBaseType(value);
 
   ///创建者标志
   set uid(ObjectId value) => data['uid'] = DbQueryField.toBaseType(value);
@@ -458,4 +504,13 @@ class CustomXDirty {
 
   ///子customx.rid3为本customx.id的子customx数量
   set cnt3(int value) => data['cnt3'] = DbQueryField.toBaseType(value);
+
+  ///交易的受益人
+  set earner(ObjectId value) => data['earner'] = DbQueryField.toBaseType(value);
+
+  ///虚拟商品价格
+  set rmbfen(int value) => data['rmbfen'] = DbQueryField.toBaseType(value);
+
+  ///虚拟货币数量
+  set virval(int value) => data['virval'] = DbQueryField.toBaseType(value);
 }

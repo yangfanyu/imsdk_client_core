@@ -37,6 +37,24 @@ class Validator extends DbBaseModel {
   ///自定义标记类允许的最大分数
   static const int cusmarkScoreMax = 100;
 
+  ///远程验证请求最大尝试次数
+  static const int remoteVerifyMax = 10;
+
+  ///远程通知请求最大通知次数
+  static const int remoteNotifyMax = 20;
+
+  ///事务检测间隔时间（秒）
+  static const int transcationSpan = 60;
+
+  ///分红相关操作的RMB金额最小数量（分）
+  static const int rmbfenBonusesMin = 100;
+
+  ///外部路由禁止再抢已发红包的超时时间（秒）
+  static const int readpackTimeoutForbid = 86400;
+
+  ///任务检测红包是否需要退回的超时时间（秒）
+  static const int readpackTimeoutReturn = 86520;
+
   ///ID最小长度
   static const int identLenMin = 8;
 

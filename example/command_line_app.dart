@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
 
 import 'dart:io';
 
@@ -46,7 +48,7 @@ class CommandLineApp extends EasyLogger {
   ///登录页
   void loginPage() {
     _netClient.appConfigure().then(((value) {
-      logDebug([_netClient.adminIds, _netClient.version, _netClient.configs]);
+      logDebug([_netClient.business]);
     }));
     renderPage(
       '登录',
@@ -202,6 +204,9 @@ class CommandLineApp extends EasyLogger {
       MenuItem('我的信息', () {
         navigationTo(from: homePage, to: infomationPage);
       }),
+      MenuItem('交易模块', () {
+        navigationTo(from: homePage, to: paymentPage);
+      }),
       MenuItem('数据模块', () {
         navigationTo(from: homePage, to: customxPage);
       }),
@@ -241,6 +246,34 @@ class CommandLineApp extends EasyLogger {
           Future.delayed(delayDuration, () => sessionsPage());
         }
       }),
+      MenuItem('发送红包消息给好友', () async {
+        logInfo(['发送红包消息给好友请输入会话id:']);
+        final sid = (await readStdinLine()).trim();
+        logInfo(['发送红包消息给好友请输入消息内容:']);
+        final body = (await readStdinLine()).trim();
+        final result = await _netClient.messageSendRedpackNormal(sid: DbQueryField.hexstr2ObjectId(sid), from: Constant.msgFromUser, body: body, rmbfenTotal: 100, rmbfenCount: 10, cashPassword: _netClient.user.rmbpwd);
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => sessionsPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => sessionsPage());
+        }
+      }),
+      MenuItem('发送红包消息到群组', () async {
+        logInfo(['发送红包消息到群组请输入会话id:']);
+        final sid = (await readStdinLine()).trim();
+        logInfo(['发送红包消息到群组请输入消息内容:']);
+        final body = (await readStdinLine()).trim();
+        final result = await _netClient.messageSendRedpackLuckly(sid: DbQueryField.hexstr2ObjectId(sid), from: Constant.msgFromTeam, body: body, rmbfenTotal: 100, rmbfenCount: 10, cashPassword: _netClient.user.rmbpwd);
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => sessionsPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => sessionsPage());
+        }
+      }),
       MenuItem('加载会话消息列表', () async {
         logInfo(['加载会话消息列表请输入会话序号:']);
         final no = (await readStdinLine()).trim();
@@ -255,7 +288,7 @@ class CommandLineApp extends EasyLogger {
           final result = await _netClient.messageLoad(session: _netClient.createSession(usership: ship), reload: reload == 'true');
           if (result.ok) {
             for (var message in ship.msgcache) {
-              logDebug(['sender(${message.displayNick})', message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
+              logDebug(['sender(${message.displayNick})', message.short, message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
             }
             if (result.extra == true) logDebug(['加载完毕！']);
             Future.delayed(delayDuration, () => sessionsPage());
@@ -271,13 +304,25 @@ class CommandLineApp extends EasyLogger {
           final result = await _netClient.messageLoad(session: _netClient.createSession(teamship: ship), reload: reload == 'true');
           if (result.ok) {
             for (var message in ship.msgcache) {
-              logDebug(['sender(${message.displayNick})', message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
+              logDebug(['sender(${message.displayNick})', message.short, message.body, ComTools.formatDateTime(message.time, yyMMdd: true, hhmmss: true)]);
             }
             Future.delayed(delayDuration, () => sessionsPage());
           } else {
             logWarn([result.desc]);
             Future.delayed(delayDuration, () => sessionsPage());
           }
+        }
+      }),
+      MenuItem('抢红包的更新', () async {
+        logInfo(['抢红包的更新请输入消息id:']);
+        final id = (await readStdinLine()).trim();
+        final result = await _netClient.messageUpdate(id: DbQueryField.hexstr2ObjectId(id), redpackGrab: true);
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => sessionsPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => sessionsPage());
         }
       }),
       MenuItem('打印会话列表', () {
@@ -697,7 +742,62 @@ class CommandLineApp extends EasyLogger {
     ]);
   }
 
-  final datapage = DataPage(0);
+  void paymentPage() {
+    renderPage('首页->交易模块', [
+      MenuItem('微信下单', () async {
+        logInfo(['微信下单输入商品序号:']);
+        final goodsNo = (await readStdinLine()).trim();
+        final result = await _netClient.wechatStart(goodsNo: int.parse(goodsNo));
+        if (result.ok) {
+          logDebug([result.extra!]);
+          Future.delayed(delayDuration, () => paymentPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => paymentPage());
+        }
+      }),
+      MenuItem('支付宝下单', () async {
+        logInfo(['支付宝下单输入商品序号:']);
+        final goodsNo = (await readStdinLine()).trim();
+        final result = await _netClient.alipayStart(goodsNo: int.parse(goodsNo));
+        if (result.ok) {
+          logDebug([result.extra!]);
+          Future.delayed(delayDuration, () => paymentPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => paymentPage());
+        }
+      }),
+      MenuItem('苹果下单', () async {
+        logInfo(['苹果下单输入商品序号:']);
+        final goodsNo = (await readStdinLine()).trim();
+        final result = await _netClient.iospayStart(goodsNo: int.parse(goodsNo), inpayId: DbQueryField.createObjectId().toHexString(), verifyData: 'fdsfsdafdsafdsa');
+        if (result.ok) {
+          logDebug([result.desc]);
+          Future.delayed(delayDuration, () => paymentPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => paymentPage());
+        }
+      }),
+      MenuItem('模拟微信支付回调', () async {
+        logInfo(['模拟微信支付回调输入订单id:']);
+        final id = (await readStdinLine()).trim();
+        final response = await http.post(Uri.parse('${_netClient.host}/wechatNotify'), body: objMapToXmlStr({'out_trade_no': id}));
+        logDebug([response.statusCode, response.body]);
+        Future.delayed(delayDuration, () => paymentPage());
+      }),
+      MenuItem('模拟支付宝支付回调', () async {
+        logInfo(['模拟支付宝支付回调输入订单id:']);
+        final id = (await readStdinLine()).trim();
+        final response = await http.post(Uri.parse('${_netClient.host}/alipayNotify'), body: jsonEncode({'out_trade_no': id, 'trade_status': 'TRADE_SUCCESS'}));
+        logDebug([response.statusCode, response.body]);
+        Future.delayed(delayDuration, () => paymentPage());
+      }),
+    ]);
+  }
+
+  final datapage = ComPage<CustomX>(no: 0);
 
   void customxPage() {
     renderPage('首页->数据模块', [
@@ -793,11 +893,11 @@ class CommandLineApp extends EasyLogger {
         logInfo(['加载自定义数据列表请输入是否重置 (true, false):']);
         final reload = (await readStdinLine()).trim();
         final sorter = CustomXDirty()..update = -1;
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
-        _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
-        final result = await _netClient.customXLoad(dataPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(comPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(comPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(comPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        _netClient.customXLoad(comPage: datapage, reload: reload == 'true', sorter: sorter.data);
+        final result = await _netClient.customXLoad(comPage: datapage, reload: reload == 'true', sorter: sorter.data);
         if (result.ok) {
           int no = 0;
           for (var customx in datapage.pgcache) {
@@ -812,11 +912,11 @@ class CommandLineApp extends EasyLogger {
       MenuItem('加载自定义标记列表', () async {
         logInfo(['加载自定义标记列表请输入是否重置 (true, false):']);
         final reload = (await readStdinLine()).trim();
-        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
-        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
-        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
-        _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
-        final result = await _netClient.cusmarkLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(comPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(comPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(comPage: datapage, reload: reload == 'true');
+        _netClient.cusmarkLoad(comPage: datapage, reload: reload == 'true');
+        final result = await _netClient.cusmarkLoad(comPage: datapage, reload: reload == 'true');
         if (result.ok) {
           int no = 0;
           for (var customx in datapage.pgcache) {
@@ -831,11 +931,11 @@ class CommandLineApp extends EasyLogger {
       MenuItem('加载自定义收藏列表', () async {
         logInfo(['加载自定义收藏列表请输入是否重置 (true, false):']);
         final reload = (await readStdinLine()).trim();
-        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
-        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
-        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
-        _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
-        final result = await _netClient.cusstarLoad(dataPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(comPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(comPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(comPage: datapage, reload: reload == 'true');
+        _netClient.cusstarLoad(comPage: datapage, reload: reload == 'true');
+        final result = await _netClient.cusstarLoad(comPage: datapage, reload: reload == 'true');
         if (result.ok) {
           int no = 0;
           for (var customx in datapage.pgcache) {
@@ -955,6 +1055,28 @@ class CommandLineApp extends EasyLogger {
           Future.delayed(delayDuration, () => adminPage());
         }
       }),
+      MenuItem('加载订单列表', () async {
+        logInfo([
+          '加载订单列表请输入订单类型${[Constant.payTypeRechargeWechat, Constant.payTypeRechargeAlipay, Constant.payTypeRechargeApple]}:'
+        ]);
+        final type = (await readStdinLine()).trim();
+        logInfo([
+          '加载订单列表请输入处理状态${[Constant.payStateInitial, Constant.payStateFinished, Constant.payStateMaxVerify]}:'
+        ]);
+        final state = (await readStdinLine()).trim();
+        final result = await _netClient.adminPaymentList(page: 0, type: int.parse(type), state: int.parse(state));
+        if (result.ok) {
+          logDebug([result.extra!.page, result.extra!.total]);
+          int no = 0;
+          for (var item in result.extra!.pgcache) {
+            logDebug([no++, '=>', item]);
+          }
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
       MenuItem('设置用户限制', () async {
         logInfo(['设置用户限制请输入用户id:']);
         final uid = (await readStdinLine()).trim();
@@ -1005,6 +1127,18 @@ class CommandLineApp extends EasyLogger {
         ]);
         final state = (await readStdinLine()).trim();
         final result = await _netClient.adminReportState(id: DbQueryField.hexstr2ObjectId(id), state: int.parse(state));
+        if (result.ok) {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        } else {
+          logWarn([result.desc]);
+          Future.delayed(delayDuration, () => adminPage());
+        }
+      }),
+      MenuItem('设置订单状态', () async {
+        logInfo(['设置订单状态请输入订单id:']);
+        final id = (await readStdinLine()).trim();
+        final result = await _netClient.adminPaymentState(id: DbQueryField.hexstr2ObjectId(id), substate: Constant.payStateFinished);
         if (result.ok) {
           logWarn([result.desc]);
           Future.delayed(delayDuration, () => adminPage());
@@ -1091,6 +1225,9 @@ class CommandLineApp extends EasyLogger {
 
   ///常量读取
   String readConstMap(int key) => Constant.constMap['zh']![key]!;
+
+  ///Map对象转换为xml字符串
+  String objMapToXmlStr(Map<String, dynamic> data) => '<xml>\n${data.keys.toList().map((key) => '<$key>${data[key]}</$key>').toList().join('\n')}\n</xml>';
 }
 
 class MenuItem {

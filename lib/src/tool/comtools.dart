@@ -143,4 +143,25 @@ class ComTools {
   static int getDayEndMillisByDateOffset(DateTime dateTime, {int offsetDay = 0}) {
     return DateTime(dateTime.year, dateTime.month, dateTime.day + offsetDay, 23, 59, 59, 999).millisecondsSinceEpoch;
   }
+
+  ///是否为退回红包通知消息的通知id数组
+  static bool isRedpackReturnNotice(List<ObjectId> redpackNotice) => redpackNotice.length == 2;
+
+  ///是否抢到红包通知消息的通知id数组
+  static bool isRedpackSnatchNotice(List<ObjectId> redpackNotice) => redpackNotice.length == 3;
+
+  ///创建退回红包通知消息的通知id数组
+  static List<ObjectId> createRedpackNoticeForReturn({required ObjectId relationId, required ObjectId sendUserId}) => [relationId, sendUserId];
+
+  ///创建抢到红包通知消息的通知id数组
+  static List<ObjectId> createRedpackNoticeForSnatch({required ObjectId relationId, required ObjectId sendUserId, required ObjectId luckUserId}) => [relationId, sendUserId, luckUserId];
+
+  ///从通知id数组读取原始红包消息的id
+  static ObjectId getRelationIdFromRedpackNotice(List<ObjectId> redpackNotice) => redpackNotice[0];
+
+  ///从通知id数组读取原始红包消息的id
+  static ObjectId getSendUserIdFromRedpackNotice(List<ObjectId> redpackNotice) => redpackNotice[1];
+
+  ///从通知id数组读取原始红包消息的id
+  static ObjectId getLuckUserIdFromRedpackNotice(List<ObjectId> redpackNotice) => redpackNotice[2];
 }

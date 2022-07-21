@@ -115,6 +115,9 @@ class Constant extends DbBaseModel {
   ///消息类型-幸运红包
   static const int msgTypeRedpackLuckly = 106015;
 
+  ///消息类型-红包通知
+  static const int msgTypeRedpackNotice = 106016;
+
   ///消息类型-自定义
   static const int msgTypeCustom = 106088;
 
@@ -134,46 +137,70 @@ class Constant extends DbBaseModel {
   static const int payTypeRechargeApple = 108003;
 
   ///订单类型-抢到红包获得
-  static const int payTypeRecivedRedpackSnath = 108004;
+  static const int payTypeRecivedRedpackSnatch = 108011;
 
   ///订单类型-退回红包获得
-  static const int payTypeRecivedRedpackReturn = 108005;
+  static const int payTypeRecivedRedpackReturn = 108012;
+
+  ///订单类型-交易分红获得
+  static const int payTypeRecivedBonuses = 108013;
 
   ///订单类型-发出红包消耗
-  static const int payTypeConsumeRedpackSend = 108006;
+  static const int payTypeConsumeRedpackSend = 108021;
 
-  ///订单类型-提现消耗
-  static const int payTypeConsumeCashout = 108007;
+  ///订单类型-兑换现金消耗
+  static const int payTypeConsumeCashout = 108022;
 
-  ///订单类型-自定义获得
-  static const int payTypeRecivedCustom = 108088;
+  ///订单类型-虚拟交易消耗
+  static const int payTypeConsumeVirtual = 108023;
 
-  ///订单类型-自定义消耗
-  static const int payTypeConsumeCustom = 108099;
+  ///订单状态-初始化
+  static const int payStateInitial = 109001;
+
+  ///订单状态-应用中
+  static const int payStatePending = 109002;
+
+  ///订单状态-已应用
+  static const int payStateApplied = 109003;
+
+  ///订单状态-已取消
+  static const int payStateCanceled = 109004;
+
+  ///订单状态-已完成
+  static const int payStateFinished = 109005;
+
+  ///订单状态-通知超次
+  static const int payStateMaxNotify = 109006;
+
+  ///订单状态-验证超次
+  static const int payStateMaxVerify = 109007;
+
+  ///订单状态-提现错误
+  static const int payStateCashError = 109008;
 
   ///投诉类型-用户
-  static const int reportTypeUser = 109001;
+  static const int reportTypeUser = 110001;
 
   ///投诉类型-群组
-  static const int reportTypeTeam = 109002;
+  static const int reportTypeTeam = 110002;
 
   ///投诉类型-域名
-  static const int reportTypeHost = 109003;
+  static const int reportTypeHost = 110003;
 
   ///投诉类型-反馈
-  static const int reportTypeAdvise = 109004;
+  static const int reportTypeAdvise = 110004;
 
   ///投诉类型-自定义
-  static const int reportTypeCustom = 109088;
+  static const int reportTypeCustom = 110088;
 
   ///投诉状态-待处理
-  static const int reportStateWait = 110001;
+  static const int reportStateWait = 111001;
 
   ///投诉状态-已拒绝
-  static const int reportStateDeny = 110002;
+  static const int reportStateDeny = 111002;
 
   ///投诉状态-已通过
-  static const int reportStatePass = 110003;
+  static const int reportStatePass = 111003;
 
   static const Map<String, Map<int, String>> constMap = {
     'zh': {
@@ -214,26 +241,35 @@ class Constant extends DbBaseModel {
       106013: '群组名片',
       106014: '普通红包',
       106015: '幸运红包',
+      106016: '红包通知',
       106088: '自定义',
       107001: '永久文件',
       107002: '消息附件',
       108001: '微信充值',
       108002: '支付宝充值',
       108003: '苹果内购充值',
-      108004: '抢到红包获得',
-      108005: '退回红包获得',
-      108006: '发出红包消耗',
-      108007: '提现消耗',
-      108088: '自定义获得',
-      108099: '自定义消耗',
-      109001: '用户',
-      109002: '群组',
-      109003: '域名',
-      109004: '反馈',
-      109088: '自定义',
-      110001: '待处理',
-      110002: '已拒绝',
-      110003: '已通过',
+      108011: '抢到红包获得',
+      108012: '退回红包获得',
+      108013: '交易分红获得',
+      108021: '发出红包消耗',
+      108022: '兑换现金消耗',
+      108023: '虚拟交易消耗',
+      109001: '初始化',
+      109002: '应用中',
+      109003: '已应用',
+      109004: '已取消',
+      109005: '已完成',
+      109006: '通知超次',
+      109007: '验证超次',
+      109008: '提现错误',
+      110001: '用户',
+      110002: '群组',
+      110003: '域名',
+      110004: '反馈',
+      110088: '自定义',
+      111001: '待处理',
+      111002: '已拒绝',
+      111003: '已通过',
     },
     'en': {
       0: 'Unknow',
@@ -273,26 +309,35 @@ class Constant extends DbBaseModel {
       106013: 'Share team card',
       106014: 'Normal red envelope',
       106015: 'Luckly red envelope',
+      106016: 'Red envelope notice',
       106088: 'Custom',
       107001: 'Forever file',
       107002: 'Message file',
-      108001: 'Wechat recharged',
-      108002: 'Alipay recharged',
-      108003: 'Apple in app recharged',
-      108004: 'Red envelope snatched',
-      108005: 'Red envelope returned',
-      108006: 'Red envelope sended',
-      108007: 'Cash out',
-      108088: 'Custom recived',
-      108099: 'Custom consume',
-      109001: 'User',
-      109002: 'Team',
-      109003: 'Host',
-      109004: 'Advise',
-      109088: 'Custom',
-      110001: 'Waiting',
-      110002: 'Denyed',
-      110003: 'Passed',
+      108001: 'Recharge by wechat',
+      108002: 'Recharge by alipay',
+      108003: 'Recharge by apple',
+      108011: 'Gained by red envelope snatch',
+      108012: 'Gained by red envelope return',
+      108013: 'Gained by trade bonuses',
+      108021: 'Consumed by red envelope send',
+      108022: 'Consumed by cashout trade',
+      108023: 'Consumed by vritual trade',
+      109001: 'Initial',
+      109002: 'Pending',
+      109003: 'Applied',
+      109004: 'Canceled',
+      109005: 'Finished',
+      109006: 'Notify times error',
+      109007: 'Verify times error',
+      109008: 'Cashout info error',
+      110001: 'User',
+      110002: 'Team',
+      110003: 'Host',
+      110004: 'Advise',
+      110088: 'Custom',
+      111001: 'Waiting',
+      111002: 'Denyed',
+      111003: 'Passed',
     },
   };
 

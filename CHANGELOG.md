@@ -1,3 +1,7 @@
+## 1.3.0
+
+- Add payment api.
+  
 ## 1.2.8
 
 - Update dependencies, re generate models.
